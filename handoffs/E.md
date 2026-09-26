@@ -1,6 +1,7 @@
 # Handoff — Lane E (Maps)
 
-**Status:** repo map backend on its PR (E2, P2.1). Evidence map UI (E1) is on the web redesign branch.
+**Status:** E1 evidence map and E2 repo map are on `main` (#25 backend, #26 web). E3
+(`CHANGE_NOTES.md` template) is open.
 
 ## Works
 - `app/repo_map.py` — `build(checkout, repo_root, repo, sha) -> RepoMap` (`map-0.1`, FINAL_PLAN §16.3):
@@ -16,12 +17,25 @@
 - CLI `behavior-review map --ref HEAD --out repo_map.json` (reads the committed revision through
   `open_pair`, never the working tree). The Action uploads `repo_map.json` in the same artifact
   as `report.json`.
+- Web, evidence map (`web/src/components/EvidenceMap.tsx`, `web/src/lib/evidence-map.ts`): React
+  Flow + ELK, folder → file → function, callers left of the changed code, each node colored by its
+  own probe outcome (icon + text, never color only). Draggable with Reset layout, bezier edges with
+  one port per edge, call sites in edge tooltips and the details Sheet, test callers grouped per
+  target, unknown edges dashed, a tier badge per file and a tier legend.
+- Web, Repo map tab (`web/src/components/RepoMapTab.tsx`, `web/src/lib/repo-map.ts`): the same
+  nesting at file level with imports, tier and last commit/PR per file. It opens on the PR's files
+  and their import neighbors; a touched file links back to the evidence map. Unknown imports are
+  listed below the map.
+- Both maps take any run: **Open report…** reads a local `report.json` + `repo_map.json` in the
+  browser (a map of another commit than the report's head is rejected).
 
 ## Checks run
-`pytest -q` → 124 passed. On this repository at `e784d08`: 53 modules (30 Python, 23 TypeScript),
-106 import edges, 1 unknown (`tools/run_probe.py:20 importlib.import_module(module_path)`), every
-module with a PR number; about 1 second.
+`pytest -q` → 124 passed (at #25). Web: `npm run typecheck`, `npm run build`, `npm run check:report`
+pass on `main`. In a browser: the shipped Scenario 1 report shows `price_total` as outside the diff
+and behavior differs; a locally generated report with 330 impact paths lays out 318 functions in
+about a second, and its repo map highlights the 22 touched files.
 
 ## Next
-- Web: "Repo map" tab reads `web/public/data/repo_map.json` from the Action artifact.
-- `CHANGE_NOTES.md` template for D's Bob mode (§16.4).
+- `CHANGE_NOTES.md` template for D's Bob mode (§16.4, `TODO(D)-2`).
+- Large diffs: the evidence map fits every node, which is unreadable past ~50 functions; open it on
+  the changed functions first, as the repo map already does.

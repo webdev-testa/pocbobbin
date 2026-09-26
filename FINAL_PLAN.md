@@ -247,8 +247,8 @@ behavior-review/
 | Multi-language | `tree-sitter` + `tree-sitter-language-pack`, required since #23 (languages are auto-detected when there is no `behavior.json`) |
 | Test/probe execution | Each language's own runner, called as an argv command (pytest, Vitest, or what `behavior.json` configures) |
 | Web | React 18 + Vite + TypeScript + Tailwind v4, shadcn-style components in `web/src/components/ui/` |
-| Maps (Lane E, new) | **React Flow (`@xyflow/react`)** with group nodes (folder → file → function) + **ELK (`elkjs`)** for nested layout, lazy-loaded — `TODO(C)`: approve the two dependencies in `web/package.json`. (Not dagre: React Flow's docs note dagre mis-lays sub-flows whose nodes connect outside the group — exactly our cross-folder case.) |
-| UI components | **shadcn/ui only** (installed via the shadcn CLI or the free shadcn MCP in Bob/Claude Code) for the UI refresh — `TODO(C)`, rules in §16.6. No 21st.dev. |
+| Maps (Lane E, new) | **React Flow (`@xyflow/react`)** with group nodes (folder → file → function) + **ELK (`elkjs`)** for nested layout, lazy-loaded (in `web/package.json` since #26). (Not dagre: React Flow's docs note dagre mis-lays sub-flows whose nodes connect outside the group — exactly our cross-folder case.) |
+| UI components | **shadcn/ui only** (installed via the shadcn CLI or the free shadcn MCP in Bob/Claude Code) for the UI refresh — done in #26, rules in §16.6. No 21st.dev. |
 
 Still no ORM, Redis, graph DB, vector store, or webhook server.
 
@@ -502,20 +502,20 @@ Lane E creates only new files. Everything below touches another lane's files and
 
 | ID | Owner | Task | Why E needs it | Status |
 |---|---|---|---|---|
-| `TODO(C)-1` | C | Add `@xyflow/react` and `elkjs` to `web/package.json` (lazy-load the map tabs) | Map rendering | [ ] |
-| `TODO(E)-2` | E | Apply the §16.2 interaction/readability requirements and migrate the map from dagre to ELK nested groups on `feat/web-shadcn-redesign` (prompt: team chat / `handoffs/E.md`) | Map currently hard to read and not draggable | [ ] |
+| `TODO(C)-1` | C | Add `@xyflow/react` and `elkjs` to `web/package.json` (lazy-load the map tabs) | Map rendering | [x] both lazy-loaded; licenses in `web/THIRD_PARTY.md` (#26) |
+| `TODO(E)-2` | E | Apply the §16.2 interaction/readability requirements and migrate the map from dagre to ELK nested groups on `feat/web-shadcn-redesign` (prompt: team chat / `handoffs/E.md`) | Map currently hard to read and not draggable | [x] ELK folder → file → function, draggable, bezier edges with one port each, grouped test callers (#26) |
 | `TODO(B)-4` | B | Optional: enrich `sample_project/` to 3–4 folders (e.g. `pricing/`, `billing/`, `reports/`, `api/`) so the impacted caller sits in a **different folder** from the changed function; Scenarios 1–5 must keep their verified results | Nested map looks meaningful in the video | [ ] |
-| `TODO(C)-2` | C | Mount `<EvidenceMap>` in `App.tsx` (near/instead of the list in `ImpactPath.tsx`) and later a "Repo map" tab | Show the map on the page | [ ] |
-| `TODO(C)-3` | C | Expose raw `impact.edges`, `impact.unknowns`, `comparisons`, `needs_bob_action`, `decisions` from `report-adapter.ts`, **or** let E read the raw report JSON directly | Node states need these fields | [ ] |
-| `TODO(C)-4` | C | Copy `repo_map.json` into `web/public/data/` next to `report.json` | Repo map tab | [ ] |
-| `TODO(C)-5` | C | UI refresh with shadcn/ui (rules in §16.6; prompt in `handoffs/C.md` or the team chat); define theme tokens first so the maps use the same colors | Consistent look | [ ] |
+| `TODO(C)-2` | C | Mount `<EvidenceMap>` in `App.tsx` (near/instead of the list in `ImpactPath.tsx`) and later a "Repo map" tab | Show the map on the page | [x] evidence map on the PR review tab, plus a Repo map tab (#26) |
+| `TODO(C)-3` | C | Expose raw `impact.edges`, `impact.unknowns`, `comparisons`, `needs_bob_action`, `decisions` from `report-adapter.ts`, **or** let E read the raw report JSON directly | Node states need these fields | [x] the viewer reads `ReviewReport` directly; `report-adapter.ts` is gone (#26) |
+| `TODO(C)-4` | C | Copy `repo_map.json` into `web/public/data/` next to `report.json` | Repo map tab | [x] from the same Action artifact (#26); any other run can be opened with **Open report…** (#27) |
+| `TODO(C)-5` | C | UI refresh with shadcn/ui (rules in §16.6; prompt in `handoffs/C.md` or the team chat); define theme tokens first so the maps use the same colors | Consistent look | [x] one token set for light/dark, shared by the maps (#26) |
 | `TODO(A)-1` | A | Add the `map` subcommand in `cli.py` calling `repo_map.build` (E writes the function) | CLI entry | [x] `behavior-review map --ref HEAD --out repo_map.json` |
 | `TODO(A)-2` | A | Expose a small public function for import parsing/resolution in `impact_treesitter.py` (today `_parse_language_imports` / `_resolve_import` are private) | Reuse adapters, no copy-paste | [x] `import_graph()` in both `impact.py` and `impact_treesitter.py`, returning `ImportRef`s |
 | `TODO(A)-3` | A | Check name-based call matching for false edges (e.g. the PHP fixture calls `apply($value)` inside a class — in PHP that is a global function, not `$this->apply`) | Maps must not draw edges that don't exist | [x] bare calls resolve to a sibling method only in implicit-receiver languages; PHP `$this->`/`static::` now resolve (#24) |
 | `TODO(D)-1` | D | Action also runs `behavior-review map` and uploads `repo_map.json` as an artifact | Real, linkable map data | [x] same artifact as `report.json` |
 | `TODO(D)-2` | D | Add the `CHANGE_NOTES.md` instructions (E's template) to `.bob/custom_modes.yaml` | P1.5 | [ ] |
 | `TODO(B)-1` | B | Confirm `comparisons[].probe.target` always matches the `SymbolRef` used in `impact` (same path + symbol spelling) — **for every supported language**, e.g. Tree-sitter's `Discount.apply` in Java (§19 row 9) | Map joins outcomes to nodes by that key | [ ] |
-| `TODO(A)-4…`, `TODO(B)-2`, `TODO(C)-6`, `TODO(D)-3…`, `TODO(E)-1` | various | Multi-language consistency items | See §19 | [ ] |
+| `TODO(A)-4…`, `TODO(B)-2`, `TODO(C)-6`, `TODO(D)-3…`, `TODO(E)-1` | various | Multi-language consistency items | See §19 | [ ] A and E done; C-6 web side done; see §19.3 |
 | `TODO(C/pitch)-1` | C | Put the evidence map frame in the video (§13) and the tier table on a slide | Story | [ ] |
 
 ### 16.6 UI rules (for `TODO(C)-5`)
@@ -608,9 +608,9 @@ A announces the change, updates `contracts/` fixtures and `tests/test_contracts.
 | 7 | Bob custom mode | Reads `behavior.json`; writes probes in the right format for that language; base branch from argument, not hard-coded `main`; states the tier and its limits to the author | Python-style probe format only, `--base main` hard-coded | **`TODO(D)-4`** |
 | 8 | PR comment (Markdown) | Shows language + tier line at the top | Not shown | **`TODO(C)-6`** in `report.render` |
 | 9 | Symbol naming | Probe targets use exactly the symbol spelling the adapter emits (e.g. `Discount.apply` for Java, `priceTotal` for TS) so outcomes join to graph nodes | Join is by `(path, symbol)`; spelling rules not documented per language | **`TODO(B)-1`** (extended) + list the spelling per language in the README probe table |
-| 10 | Web page | Header badge: language + tier from `report.analysis`; unknown/inconclusive visible for every language | UI strings are already language-neutral ✓; no badge | **`TODO(C)-6`** (same item as row 8, UI side) |
-| 11 | Evidence map | Uses `report.analysis.tier`; never styles a node "same" if its suite was inconclusive | Not built yet | **`TODO(E)-1`** |
-| 12 | Repo map | Per-module tier from `AdapterSpec.tier`; unknown imports listed | Not built yet | E (§16.3) |
+| 10 | Web page | Header badge: language + tier from `report.analysis`; unknown/inconclusive visible for every language | ✅ language · tier badges with plain-words limits in the summary (#26) | ~~`TODO(C)-6`~~ UI side done |
+| 11 | Evidence map | Uses `report.analysis.tier`; never styles a node "same" if its suite was inconclusive | ✅ tier badge per file box and a tier legend; node status comes only from that probe's own outcome (#26) | ~~`TODO(E)-1`~~ done |
+| 12 | Repo map | Per-module tier from `AdapterSpec.tier`; unknown imports listed | ✅ `repo_map.py` (#25) and the Repo map tab (#26) | done |
 | 13 | README / slides | Tier table generated from (or checked against) the registry, not typed by hand | Not written | **`TODO(C/pitch)-1`** |
 
 ### 19.4 Proof of consistency (acceptance)

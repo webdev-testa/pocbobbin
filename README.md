@@ -125,7 +125,7 @@ is recorded with `app.decisions.validate_and_save`.
 ## On every PR: GitHub Action
 
 `.github/workflows/behavior-review.yml` runs on each pull request push: it runs the CLI with `--run`
-against the PR's base branch, uploads `report.json` as a build artifact (stamped with `links.action_run`,
+against the PR's base branch, uploads `report.json` and `repo_map.json` as a build artifact (stamped with `links.action_run`,
 the URL of that run's public log), and creates or updates one PR comment with the evidence. It reuses committed probes and never calls Bob; if an impacted caller has
 no probe, the comment says so (`needs_bob_action`).
 
@@ -138,10 +138,13 @@ labeled as such. History informs a review; it never approves a new difference.
 
 ## Web evidence viewer
 
-`web/` is a static React viewer for a report (impact paths, old vs new outputs, decisions). It ships
-the unmodified `report.json` artifact of the Action run on the Scenario 1 demo PR, and links to that
-run's public log. See `web/README.md` to run or deploy it. Decisions made there are session-only and
-approve nothing.
+`web/` is a static React viewer for a report: an evidence map (callers → changed code, nested by
+folder and file, colored by what execution showed), old vs new outputs, decisions, and a repo map
+of every file's imports. It ships the unmodified `report.json` and `repo_map.json` artifact of the
+Action run on the Scenario 1 demo PR, and links to that run's public log. **Open report…** views any
+other run's files in the browser, without uploading them. **Download decision** writes the ledger
+record for `behavior_decisions/`; the page itself saves and approves nothing. See `web/README.md`
+to run or deploy it.
 
 ## Limits
 
