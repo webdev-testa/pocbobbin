@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app.config import BehaviorConfig, load_config, resolve_tests_dir
+from app.config import LANGUAGE_DEFAULTS, BehaviorConfig, load_config, resolve_tests_dir
 
 # A's shared schema is the source of truth. Import it when it is on the path;
 # fall back to plain dicts so this module stays usable standalone.
@@ -453,6 +453,42 @@ def _canon(value) -> str:
 # --- the contract -------------------------------------------------------------
 
 
+def _select_probe_runner(
+    config: BehaviorConfig, base_wt: Path, head_wt: Path
+) -> tuple[str, tuple[str, ...]]:
+    """Choose the probe runner this repository can actually run.
+
+    Returns (runner script path relative to the repo, probe_runner command). Preference order:
+    the configured primary adapter, then every other detected adapter, then the Python default.
+    A candidate counts only if its script exists on the base or head revision, so a probe that is
+    committed is never skipped merely because a different adapter was configured first.
+    """
+    candidates: list[tuple[str, tuple[str, ...]]] = [(config.probe_runner[0], config.probe_runner)]
+    for language in config.languages:
+        defaults = LANGUAGE_DEFAULTS.get(language)
+        if defaults:
+            candidates.append((language, defaults["probe_runner"]))
+
+    def script_of(command: tuple[str, ...]) -> str | None:
+        return next(
+            (token for token in command if token.endswith((".py", ".ts", ".tsx", ".js", ".mjs"))),
+            None,
+        )
+
+    fallback: tuple[str, tuple[str, ...]] | None = None
+    for _language, command in candidates:
+        script = script_of(command)
+        if not script:
+            continue
+        if fallback is None:
+            fallback = (script, command)
+        if (base_wt / script).exists() or (head_wt / script).exists():
+            return script, command
+    if fallback is not None:
+        return fallback
+    return "tools/run_probe.py", ("python", "tools/run_probe.py")
+
+
 def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROBES_DIR,
             tests_rel: str = TESTS_DIR, impact=None, config: BehaviorConfig | None = None,
             prior_report=None):
@@ -506,10 +542,11 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
             freeze_error = str(exc)
             notes.append(f"{exc} No paired test run was performed, so no test-based claim is made.")
         suite_hash = _hash_extensions(frozen / "tests", settings.extensions) if freeze_error is None else ""
-        runner_rel = next(
-            (token for token in settings.probe_runner if token.endswith((".py", ".ts", ".tsx", ".js", ".mjs"))),
-            "tools/run_probe.py",
-        )
+        # In a mixed-language repository the global config carries the primary adapter's probe
+        # runner, which may be absent from the repo (e.g. a TypeScript runner in a repo that only
+        # ships Python probes). Pick the runner the repository actually has, so a probe that is
+        # present is not skipped because a different adapter was chosen first.
+        runner_rel, probe_runner = _select_probe_runner(settings, base_wt, head_wt)
         # Probes and the probe runner are opt-in: a repository under review need not ship them.
         # When absent, the paired test-suite comparison still runs and is still evidence; no
         # behaviour claim is made from probes, and the report says so.
@@ -540,8 +577,8 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
         if frozen_runner is not None:
             for probe_file in sorted((frozen / "probes").glob("*.json")):
                 spec = json.loads(probe_file.read_text())
-                b = run_probe_configured(base_wt, settings.probe_runner, frozen_runner, probe_file, python)
-                h = run_probe_configured(head_wt, settings.probe_runner, frozen_runner, probe_file, python)
+                b = run_probe_configured(base_wt, probe_runner, frozen_runner, probe_file, python)
+                h = run_probe_configured(head_wt, probe_runner, frozen_runner, probe_file, python)
                 outcome = classify(b, h)
                 probe_hash = "sha256:" + _sha8(probe_file.read_text())
                 reruns = None
