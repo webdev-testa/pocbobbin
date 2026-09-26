@@ -1,7 +1,7 @@
 """Order invoice totals.
 
 Calls apply_discount() from discount.py. This file is deliberately NOT part of
-the demo PR diff: the whole point of the PoC is that changing discount.py
+the demo PR diff: the whole point of the PoC is that a change to discount.py
 silently changes what price_total() returns.
 """
 
@@ -22,7 +22,7 @@ def subtotal(lines: Sequence[Dict]) -> float:
 
 def price_total(lines: Sequence[Dict], discount_pct: float = 0.0) -> float:
     """Net total payable for an order: subtotal with the discount applied."""
-    return discount.apply_discount(line_gross_amounts(lines), discount_pct)
+    return discount.apply_discount(subtotal(lines), discount_pct)
 
 
 def line_breakdown(lines: Sequence[Dict]) -> List[Dict]:

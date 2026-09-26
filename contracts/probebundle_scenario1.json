@@ -1,0 +1,45 @@
+{
+  "probes": [
+    {
+      "id": "apply_discount_contract",
+      "target": {
+        "path": "sample_project/pricing/discount.py",
+        "symbol": "apply_discount"
+      },
+      "input": {
+        "args": [
+          105.26,
+          5.0
+        ]
+      },
+      "hash": "sha256:8fd4d67e1175b9b9",
+      "authored_by": "human"
+    },
+    {
+      "id": "price_total_boundary",
+      "target": {
+        "path": "sample_project/pricing/invoice.py",
+        "symbol": "price_total"
+      },
+      "input": {
+        "args": [
+          [
+            {
+              "description": "widget",
+              "unit_price": 39.46,
+              "qty": 2
+            },
+            {
+              "description": "gizmo",
+              "unit_price": 8.78,
+              "qty": 3
+            }
+          ],
+          5.0
+        ]
+      },
+      "hash": "sha256:2fc04e30e7dc39d0",
+      "authored_by": "human"
+    }
+  ]
+}

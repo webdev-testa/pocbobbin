@@ -7,17 +7,12 @@ touches. Its caller lives in invoice.py, which is NOT in that diff.
 MAX_DISCOUNT_PCT = 50.0
 
 
-def discount_factor(discount_pct: float) -> float:
-    """Validate the percentage and return the multiplier to apply."""
+def apply_discount(amount: float, discount_pct: float) -> float:
+    """Return `amount` after a percentage discount, in whole cents.
+
+    Rounds once, on the order total, half-up.
+    """
     if not 0 <= discount_pct <= MAX_DISCOUNT_PCT:
         raise ValueError("discount_pct out of range")
-    return (100.0 - discount_pct) / 100.0
-
-
-def apply_discount(line_amounts, discount_pct: float) -> float:
-    """Apply a percentage discount and return the net amount in whole cents.
-
-    Rounds once, on the order total.
-    """
-    factor = discount_factor(discount_pct)
-    return round(sum(line_amounts) * factor + 1e-9, 2)
+    discounted = amount * (100.0 - discount_pct) / 100.0
+    return round(discounted + 1e-9, 2)

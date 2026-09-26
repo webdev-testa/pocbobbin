@@ -8,5 +8,5 @@
     ],
     5.0
   ],
-  "note": "Boundary input where the rounding location matters: subtotal 105.26 at 5% off is 99.997. Authored for the uncovered caller invoice.price_total."
+  "note": "Probe for the caller that is NOT in the diff. Subtotal 105.26 at 5% off is exactly 99.997, so the location of the rounding decides the answer."
 }
