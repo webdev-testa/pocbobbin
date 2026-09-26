@@ -148,19 +148,39 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
     """A's contract: RevisionPair + ProbeBundle -> (suite runs, comparisons, needs_bob_action).
 
     `bundle` is accepted for A's signature; the probes actually executed are the
-    committed files from the BASE checkout, so the Action and the IDE cannot
-    diverge on which bytes ran.
+    committed files, so the Action and the IDE cannot diverge on which bytes ran.
+
+    Sources: the frozen test suite always comes from BASE. The probe runner and the
+    probe files come from BASE when they exist there, else from HEAD (a PR that adds
+    the harness itself), and the report says which revision supplied them.
     """
     python = python or sys.executable
     base_wt, head_wt = Path(pair.base_path), Path(pair.head_path)
+    notes: list[str] = []
+
+    def source_of(rel: str) -> Path:
+        """BASE is authoritative; fall back to HEAD and record why."""
+        if (base_wt / rel).exists():
+            return base_wt / rel
+        if (head_wt / rel).exists():
+            notes.append(
+                f"'{rel}' does not exist on the base revision; the head revision supplied it, "
+                "so both sides ran the head copy of that file."
+            )
+            return head_wt / rel
+        raise FileNotFoundError(f"neither revision contains '{rel}'")
 
     # Freeze the base test suite and the probe runner before touching any checkout.
     with tempfile.TemporaryDirectory(prefix="behavior-review-frozen-") as tmp:
         frozen = Path(tmp)
         shutil.copytree(base_wt / tests_rel, frozen / "tests")
         suite_hash = _hash_files(frozen / "tests", "*.py")
-        shutil.copy2(base_wt / "tools" / "run_probe.py", frozen / "run_probe.py")
-        shutil.copytree(base_wt / probes_dir, frozen / "probes")
+        runner_src = source_of("tools/run_probe.py")
+        shutil.copy2(runner_src, frozen / "run_probe.py")
+        probes_src = source_of(probes_dir)
+        shutil.copytree(probes_src, frozen / "probes")
+        if not sorted((frozen / "probes").glob("*.json")):
+            notes.append("no committed probes were found; no behavior claim is made from execution.")
 
         suites = []
         for revision, wt, sha in (("base", base_wt, pair.revisions.base_sha),
@@ -182,7 +202,7 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
             )
             probed.add((_target_path(spec), spec["target"].partition(":")[2]))
 
-    return suites, comparisons, needs_bob_action(pair, comparisons, probed)
+    return suites, comparisons, needs_bob_action(pair, comparisons, probed), notes
 
 
 def _target_path(spec: dict) -> str:
@@ -237,8 +257,10 @@ def pipeline(repo, base: str, head: str, max_hops: int = 2, python: str | None =
 
     with open_pair(repo, base, head) as pair:
         impact = analyze(pair, max_hops)
-        suites, comparisons, missing = compare(pair, python=python)
+        suites, comparisons, missing, notes = compare(pair, python=python)
         probed = {c.probe.target.key for c in comparisons if HAS_SCHEMA}
+        limits = _limits(impact, ran_execution=bool(suites or comparisons), probed=probed)
+        limits += notes
         return ReviewReport(
             repo=pair.repo,
             revisions=pair.revisions,
@@ -246,5 +268,5 @@ def pipeline(repo, base: str, head: str, max_hops: int = 2, python: str | None =
             tests=suites,
             comparisons=comparisons,
             needs_bob_action=missing,
-            limits=_limits(impact, ran_execution=bool(suites or comparisons), probed=probed),
+            limits=limits,
         )
