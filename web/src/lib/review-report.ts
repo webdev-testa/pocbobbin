@@ -95,9 +95,20 @@ export interface LanguageSupport {
   tier: Tier;
 }
 
+/** What executed the project's tests and probes; only present after a --run. */
+export interface Runtime {
+  /** Repository-relative, or only the file name; null when no Python command ran. */
+  python: string | null;
+  version: string | null;
+  /** How the interpreter was chosen: flag, config, virtual_env, venv or fallback. */
+  source: string | null;
+  probe_runner: { path: string; source: "base" | "packaged"; sha256: string } | null;
+}
+
 export interface Analysis extends LanguageSupport {
   config_source: string;
   languages: LanguageSupport[];
+  runtime?: Runtime | null;
 }
 
 export interface ReviewReport {

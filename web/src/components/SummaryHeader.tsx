@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ExternalLink, TriangleAlert } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge, TONE_CLASSES } from "@/components/StatusBadge";
 import { TierBadge } from "@/components/TierBadge";
 import { tierLimit, verdictCounts, type VerdictCounts } from "@/lib/evidence";
-import { shortSha, type ReviewReport } from "@/lib/review-report";
+import { shortSha, type ReviewReport, type Runtime } from "@/lib/review-report";
 
 const VERDICT_ORDER: (keyof VerdictCounts)[] = ["behavior_differs", "same", "inconclusive", "needs_probe", "unknown_edge"];
 
@@ -44,6 +45,41 @@ function LanguageLine({ report }: { report: ReviewReport }) {
   );
 }
 
+const PYTHON_SOURCE: Record<string, string> = {
+  flag: "set with --python",
+  config: "set in the config",
+  virtual_env: "the active virtual environment",
+  venv: "the repository's venv",
+  fallback: "behavior-review's own; see limits",
+};
+
+/** "Ran with .venv/bin/python 3.12.4 (the repository's venv) · probe runner tools/run_probe.py (packaged)". */
+function RuntimeLine({ runtime }: { runtime: Runtime | null | undefined }) {
+  const parts: ReactNode[] = [];
+  if (runtime?.python) {
+    parts.push(
+      <span key="python">
+        <code className="text-foreground">{runtime.python}</code>{runtime.version ? ` ${runtime.version}` : ""}
+        {runtime.source ? ` (${PYTHON_SOURCE[runtime.source] ?? runtime.source})` : ""}
+      </span>,
+    );
+  }
+  if (runtime?.probe_runner) {
+    parts.push(
+      <span key="runner">
+        probe runner <code className="text-foreground">{runtime.probe_runner.path}</code> ({runtime.probe_runner.source})
+      </span>,
+    );
+  }
+  if (!parts.length) return null;
+  return (
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      <span>Ran with</span>
+      {parts.map((part, index) => [index ? <span key={`dot-${index}`} aria-hidden="true">·</span> : null, part])}
+    </p>
+  );
+}
+
 export function SummaryHeader({ report }: { report: ReviewReport }) {
   const counts = verdictCounts(report);
   const actionRun = report.links.action_run?.startsWith("https://") ? report.links.action_run : undefined;
@@ -62,6 +98,7 @@ export function SummaryHeader({ report }: { report: ReviewReport }) {
             <time dateTime={report.generated_at}>{formatTime(report.generated_at)}</time>
           </p>
           <LanguageLine report={report} />
+          <RuntimeLine runtime={report.analysis?.runtime} />
         </CardHeader>
         <Separator />
         <CardContent className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-center sm:justify-between">
