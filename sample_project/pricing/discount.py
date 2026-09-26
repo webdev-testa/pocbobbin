@@ -4,7 +4,7 @@
 touches. Its caller lives in invoice.py, which is NOT in that diff.
 """
 
-MAX_DISCOUNT_PCT = 50.0
+MAX_DISCOUNT_PCT = 30.0
 
 
 def apply_discount(amount: float, discount_pct: float) -> float:
