@@ -37,6 +37,15 @@ npm run reports:index   # validates each report; skips and warns about any that 
 paths, and checks that the index matches its folders. The single-report fallback must also show a
 caller outside the diff and probe comparisons, since it is the demo story on its own.
 
+## Packaged page (`behavior-review ui`)
+
+The Python package serves this app from `app/web_dist/`, committed because `uv tool install
+git+…` builds the package from source and users need no Node. After changing anything under
+`web/`, run `npm run build:package` (build, then copy without the demo `data/`) and commit
+`app/web_dist/`; the `Web` CI workflow fails when the committed copy is stale. For development,
+run `behavior-review ui --no-browser` and `npm run dev` (it proxies `/api` to port 8765), and open
+the dev page with the server's `?token=`.
+
 ## Local commands
 
 ```bash

@@ -41,6 +41,11 @@ def test_every_api_call_needs_the_token(repo):
     assert TestClient(app, base_url="http://127.0.0.1").get(f"/api/health?token={TOKEN}").json()["mode"] == "local"
 
 
+def test_the_packaged_page_is_served(repo):
+    page = TestClient(create_app(repo, TOKEN), base_url="http://127.0.0.1").get("/")
+    assert page.status_code == 200 and '<div id="root">' in page.text
+
+
 def test_a_foreign_host_is_refused(repo):
     assert _client(create_app(repo, TOKEN), host="evil.example").get("/api/health").status_code == 403
 

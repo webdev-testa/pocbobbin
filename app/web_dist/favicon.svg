@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Two boxes joined by an arrow: a caller reaching changed code. #0f62fe is the theme's primary. -->
+  <rect x="2" y="9" width="10" height="14" rx="2" fill="none" stroke="#0f62fe" stroke-width="2.5"/>
+  <rect x="20" y="9" width="10" height="14" rx="2" fill="#0f62fe"/>
+  <path d="M12 16h6m-2.5-3 3 3-3 3" fill="none" stroke="#0f62fe" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -28,9 +28,10 @@ behavior-review = "app.cli:main"
 [tool.setuptools.packages.find]
 include = ["app*"]
 
-# The probe runners ship with the tool, so a reviewed repository doesn't have to copy them.
+# The probe runners and the built web page ship with the tool, so a reviewed repository copies nothing
+# and users need no Node (web/scripts/copy-to-package.mjs builds app/web_dist).
 [tool.setuptools.package-data]
-app = ["harness/*"]
+app = ["harness/*", "web_dist/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
