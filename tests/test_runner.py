@@ -15,7 +15,7 @@ from app.schemas import Outcome, RunStatus
 from app.snapshot import open_pair
 
 REPO = Path(__file__).resolve().parents[1]
-BASE, HEAD = "origin/base", "origin/scenario1-head"
+BASE, HEAD = "ref/base", "origin/scenario1-head"
 S3, S4 = "origin/scenario3-head", "origin/scenario4-head"
 
 
@@ -139,12 +139,12 @@ def test_compare_survives_a_base_without_the_harness(tmp_path):
     run = lambda *args: subprocess.run(["git", "-C", str(repo), *args], check=True, env=env)
     run("init", "-q")
     # base: the package, with the tests and the demo caller, but no tools/ and no probes/
-    run("fetch", "-q", str(REPO), "refs/remotes/origin/base:refs/heads/base")
+    run("fetch", "-q", str(REPO), "refs/tags/ref/base:refs/heads/base")
     run("checkout", "-q", "base")
     run("rm", "-r", "-q", "tools", "probes")
     run("commit", "-qm", "base without the harness")
     # head: the harness added by the PR
-    run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/head")
+    run("fetch", "-q", str(REPO), "refs/heads/scenario1-head:refs/heads/head")
     run("checkout", "-q", "head")
 
     with open_pair(repo, "base", "HEAD") as pair:
@@ -191,7 +191,7 @@ def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
            "PATH": "/usr/bin:/bin:/usr/local/bin", "HOME": str(tmp_path)}
     run = lambda *args: subprocess.run(["git", "-C", str(repo), *args], check=True, env=env)
     run("init", "-q")
-    run("fetch", "-q", str(REPO), "refs/remotes/origin/base:refs/heads/noprobe")
+    run("fetch", "-q", str(REPO), "refs/tags/ref/base:refs/heads/noprobe")
     run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/scenario1-head")
     run("checkout", "-q", "noprobe")
     (repo / "probes" / "price_total_boundary.json").unlink()
