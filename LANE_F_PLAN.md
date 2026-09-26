@@ -49,6 +49,8 @@ Companion to `FINAL_PLAN.md` (§20 points here). Written 27 Sept 2026 from readi
 
 ## 4. F-B — Run tests and probes with the project's interpreter
 
+**Status: done** (#35): `app/interpreter.py`, `--python`, `"python"` in `behavior.json`, and `analysis.runtime` (interpreter shown repository-relative or by file name only, so a published report holds no local path); tests in `tests/test_interpreter.py`, including a real `.venv` holding a dependency the tool's environment lacks. The interpreter is resolved only when the configured test or probe command uses Python. The Action passes `--python` (its tool and project share one interpreter), so our own reports don't carry the fallback limit.
+
 **Why:** the tool should live in its own isolated environment (§7.1), but the project's tests need the project's libraries.
 
 Resolution order (first hit wins), for Python test/probe execution:
@@ -70,7 +72,7 @@ Notes:
 
 ## 5. F-C — Probe runners shipped in the package (teammate's fix, hardened)
 
-**Status: done**, runners in `app/harness/` (inside the wheel), tests in `tests/test_probe_sources.py`. Two parts left for F-B, which changes the same return path anyway: the runner is named in `limits` ("probes ran with the packaged 'run_probe.py' (sha256:…)") rather than a structured `analysis.runtime.probe_runner`, and the optional `python_path` config is not added (the checkout root and `src/` cover the layouts seen so far).
+**Status: done** (#34, provenance in #35's `analysis.runtime.probe_runner`), runners in `app/harness/` (inside the wheel), tests in `tests/test_probe_sources.py`. The optional `python_path` config is not added: the checkout root and `src/` cover the layouts seen so far.
 
 ### 5.1 The teammate's report (agreed)
 

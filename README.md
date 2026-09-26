@@ -104,12 +104,21 @@ are listed under `unknowns`. The GitHub Action uploads it next to `report.json`.
 | `--repo` | `.` | Any path inside the git repository |
 | `--max-hops` | `2` | How many caller levels to trace back from each changed symbol |
 | `--run` | off | Also run the frozen base test suite and `probes/*.json` on both revisions |
+| `--python PATH` | detected | Interpreter for the project's Python tests and probes (see below) |
 | `--prior-report PATH` | — | An earlier `report.json`: a probe that showed a delta there and shows none now is linked to it (`reruns`), but only if the probe bytes are unchanged |
 | `--json PATH` | stdout | Where to write the report JSON |
 | `--markdown PATH` | — | Also write the report as Markdown (the PR comment body) |
 | `--link NAME=URL` | — | Record where this run's evidence lives, e.g. `action_run=<CI run URL>` (repeatable) |
 
 Exit code is `0` on success and `2` if a revision can't be resolved.
+
+With `--run`, the project's Python tests and probes run with the **project's** interpreter, so the
+tool can live in its own environment (`uv tool` / `pipx`) while the tests still find the project's
+libraries. The first of these wins: `--python`, `"python"` in `behavior.json` (a path relative to
+the repository, an absolute path, or a command on `PATH`), the active `$VIRTUAL_ENV`, `.venv/` or
+`venv/` in the repository, and last the tool's own interpreter, which the report states as a limit.
+The report's `analysis.runtime` says which interpreter ran (repository-relative, never a local
+path), its version, and which probe runner ran.
 
 The report's shape is defined in `app/schemas.py` (`ReviewReport`); `contracts/report_scenario1.json`
 is a labeled example.
