@@ -12,7 +12,7 @@ from pathlib import Path
 
 from app.adapters.registry import TIER_LIMITS, get_adapter
 from app.config import BehaviorConfig, ConfigError, load_revision_config
-from app.decisions import load_branch_decisions_via_git, lookup
+from app.decisions import ledger_dir, load_branch_decisions_via_git, lookup, validate_and_save
 from app.interpreter import FALLBACK_LIMIT, display_path, python_version, resolve_python
 from app.impact import analyze
 from app.repo_map import build as build_repo_map
@@ -30,7 +30,7 @@ from app.schemas import (
     SymbolRef,
     Triage,
 )
-from app.snapshot import SnapshotError, open_pair
+from app.snapshot import SnapshotError, open_pair, repo_root
 from app.triage import triage
 
 
@@ -294,6 +294,46 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _observed(observation) -> object:
+    return observation.exception if observation.exception is not None else observation.output
+
+
+def decide_main(argv: list[str]) -> int:
+    """Record the author's decision on one probe's behavior difference, from a review's report.json.
+
+    The Bob mode calls this instead of importing the package, which an isolated install
+    (uv tool / pipx) doesn't make importable from the project. Writes a proposed record;
+    merging it is what approves it.
+    """
+    parser = argparse.ArgumentParser(prog="behavior-review decide", description=decide_main.__doc__.splitlines()[0])
+    parser.add_argument("--report", type=Path, default=Path("report.json"), help="The review's report.json (default: report.json)")
+    parser.add_argument("--probe", required=True, help="The probe id whose difference this decides")
+    parser.add_argument("--intent", required=True, choices=["intended", "unintended", "unresolved"])
+    parser.add_argument("--rationale", default=None, help="Why; required (10+ characters) for 'intended'")
+    parser.add_argument("--requirement", default=None, help="Optional requirement or ticket reference")
+    parser.add_argument("--repo", default=".", help="Path inside the git repository (default: .)")
+    args = parser.parse_args(argv)
+    try:
+        report = ReviewReport.model_validate_json(args.report.read_text(encoding="utf-8"))
+        comparison = next((c for c in report.comparisons if c.probe.id == args.probe), None)
+        if comparison is None:
+            raise ValueError(f"{args.report} has no comparison for probe '{args.probe}'")
+        root = repo_root(args.repo)
+        delta = {"target": comparison.probe.target, "probe_hash": comparison.probe.hash,
+                 "before": _observed(comparison.base), "after": _observed(comparison.head)}
+        decision = validate_and_save(
+            delta, args.intent, args.rationale, repo_root=root, repo=report.repo, base_sha=report.revisions.base_sha,
+            head_sha=report.revisions.head_sha, requirement_ref=args.requirement,
+        )
+    except (OSError, ValueError, SnapshotError) as exc:
+        print(f"behavior-review decide: {exc}", file=sys.stderr)
+        return 2
+    written = (ledger_dir(root) / f"{decision.id}.json").relative_to(root).as_posix()
+    print(f"proposed decision {decision.id} ({decision.intent}) on {decision.target.key} -> {written}")
+    print(f"commit it on this branch: git add {written}; it counts as approved once the PR is merged.")
+    return 0
+
+
 def map_main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="behavior-review map",
@@ -321,6 +361,8 @@ def main(argv: list[str] | None = None) -> int:
     sys.stdout.reconfigure(encoding="utf-8")
     if argv[:1] == ["map"]:
         return map_main(argv[1:])
+    if argv[:1] == ["decide"]:
+        return decide_main(argv[1:])
     args = _parser().parse_args(argv)
 
     try:

@@ -55,8 +55,13 @@ def _repo_slug(root: Path) -> str:
     return match.group(1) if match else root.name
 
 
+def repo_root(repo: str | Path) -> Path:
+    """The top of the git repository that `repo` is inside."""
+    return Path(_git(Path(repo), "rev-parse", "--show-toplevel"))
+
+
 def resolve_pair(repo: str | Path, base: str, head: str, dest: str | Path) -> RevisionPair:
-    root = Path(_git(Path(repo), "rev-parse", "--show-toplevel"))
+    root = repo_root(repo)
     base_sha = _rev_parse(root, base)
     head_sha = _rev_parse(root, head)
 

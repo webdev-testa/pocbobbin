@@ -31,11 +31,12 @@ customModes:
          - Impact graph (callers outside diff, 1st and 2nd degree hops)
          - Probes & tests executed on both revisions (Lane B paired runner)
          - Outcomes: `same_on_tested_cases`, `delta_observed`, or `inconclusive`
-         - Prior decisions cited from the `behavior_decisions/` ledger (Lane D)
+         - Prior decisions cited from the ledger (`.behavior-review/decisions/`, or `behavior_decisions/` in older layouts)
 
       4. For any impacted caller lacking a committed probe (`needs_bob_action`):
          - Propose a targeted, deterministic probe (pure inputs -> deterministic outputs, JSON serializable).
-         - Save it as `probes/<caller_symbol>_boundary.json` in the format of the caller's language
+         - Save it as `.behavior-review/probes/<caller_symbol>_boundary.json` (`probes/` if the repository has no
+           `.behavior-review/` folder) in the format of the caller's language
            (the README's probe format table has an example per language):
            * Python (the packaged `run_probe.py`, the default runner):
              `{"id": "<id>", "target": "<package.module>:<function>", "args": [...], "note": "..."}`
@@ -59,7 +60,9 @@ customModes:
            * unintended: Author recognizes this as a regression/bug -> Bob assists in proposing a code fix.
            * intended: Author intended this change -> Author must provide a clear rationale (minimum 10 characters).
            * unresolved: Needs further investigation or domain expert review.
-         - For intended changes, record the decision using `app.decisions.validate_and_save(...)` into `behavior_decisions/<id>.json`.
+         - Record the author's decision with the CLI, using the author's own words for the rationale:
+           `behavior-review decide --report report.json --probe <probe id> --intent <intended|unintended|unresolved> --rationale "<author's words>"`
+           It writes a proposed ledger record and prints the `git add` to run; never import the package for this.
 
       6. For unintended deltas:
          - Guide the author to fix the code in the head revision.

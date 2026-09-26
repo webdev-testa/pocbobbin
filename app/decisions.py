@@ -17,7 +17,18 @@ from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
+from app.config import DECISION_DIRS, HOME_DIR
 from app.schemas import Decision, DecisionStatus, Intent, SymbolRef
+
+
+def ledger_dir(repo_root: Path) -> Path:
+    """Where a new decision goes: `.behavior-review/decisions/` once the repo has that folder."""
+    return repo_root / (DECISION_DIRS[0] if (repo_root / HOME_DIR).is_dir() else DECISION_DIRS[1])
+
+
+def load_ledger(repo_root: Path) -> List[Decision]:
+    """Every decision in either ledger folder, so a repository mid-migration keeps its history."""
+    return [decision for name in DECISION_DIRS for decision in load_all_decisions(repo_root / name)]
 
 
 class DecisionMatch(BaseModel):
@@ -73,7 +84,7 @@ def validate_and_save(
     supersedes: Optional[str] = None,
     status: Union[str, DecisionStatus] = DecisionStatus.PROPOSED,
 ) -> Decision:
-    """Validate a behavior decision and record it into the behavior_decisions/ ledger.
+    """Validate a behavior decision and record it into the ledger (`ledger_dir`).
 
     Args:
         delta: Dictionary or object containing observed difference metadata
@@ -96,8 +107,6 @@ def validate_and_save(
                     or required symbol/path details are absent.
     """
     root_path = Path(repo_root) if repo_root else Path.cwd()
-    ledger_dir = root_path / "behavior_decisions"
-    ledger_dir.mkdir(parents=True, exist_ok=True)
 
     # Normalize disposition to Intent
     if isinstance(disposition, Intent):
@@ -180,7 +189,7 @@ def validate_and_save(
     decision_id = generate_decision_id(repo, symbol, base_sha, head_sha, probe_hash)
     auto_supersedes = supersedes
     if auto_supersedes is None:
-        current = current_decision(load_all_decisions(ledger_dir), path, symbol, exclude=decision_id)
+        current = current_decision(load_ledger(root_path), path, symbol, exclude=decision_id)
         auto_supersedes = current.id if current else None
 
     target = SymbolRef(path=path, symbol=symbol)
@@ -202,8 +211,9 @@ def validate_and_save(
     )
 
     # Persist decision JSON
-    target_file = ledger_dir / f"{decision_id}.json"
-    target_file.write_text(decision.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    target_dir = ledger_dir(root_path)
+    target_dir.mkdir(parents=True, exist_ok=True)
+    (target_dir / f"{decision_id}.json").write_text(decision.model_dump_json(indent=2) + "\n", encoding="utf-8")
 
     return decision
 
@@ -238,12 +248,12 @@ def load_branch_decisions_via_git(
     repo_root: Union[Path, str],
     branch: str = "main",
 ) -> List[Decision]:
-    """Read decisions from behavior_decisions/ on a git branch without checking it out."""
+    """Read decisions from both ledger folders on a git branch without checking it out."""
     root = Path(repo_root)
     decisions: List[Decision] = []
 
     try:
-        cmd_ls = ["git", "ls-tree", "-r", "--name-only", branch, "behavior_decisions/"]
+        cmd_ls = ["git", "ls-tree", "-r", "--name-only", branch, "--", *(f"{name}/" for name in DECISION_DIRS)]
         res_ls = subprocess.run(
             cmd_ls, cwd=root, capture_output=True, text=True, check=True
         )
@@ -295,11 +305,7 @@ def lookup(
         if not records:
             # Local ledger only, and only records that are explicitly approved. A record that
             # is merely present was proposed on a feature branch and never reviewed.
-            ledger_dir = root_path / "behavior_decisions"
-            records = [
-                d for d in load_all_decisions(ledger_dir)
-                if d.status == DecisionStatus.APPROVED
-            ]
+            records = [d for d in load_ledger(root_path) if d.status == DecisionStatus.APPROVED]
 
     superseded_ids = {d.supersedes for d in records if d.supersedes}
 
@@ -341,7 +347,8 @@ def approve_decision(
 ) -> Decision:
     """Mark a decision as approved (e.g. following PR merge)."""
     root_path = Path(repo_root) if repo_root else Path.cwd()
-    file_path = root_path / "behavior_decisions" / f"{decision_id}.json"
+    candidates = [root_path / name / f"{decision_id}.json" for name in DECISION_DIRS]
+    file_path = next((path for path in candidates if path.is_file()), candidates[-1])
     decision = load_decision_from_file(file_path)
     updated = decision.model_copy(update={"status": DecisionStatus.APPROVED})
     file_path.write_text(updated.model_dump_json(indent=2) + "\n", encoding="utf-8")

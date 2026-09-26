@@ -1,7 +1,7 @@
 import type { Comparison, Decision, Intent, Observation, ReviewReport } from "@/lib/review-report";
 
 // Builds the same ledger record as app/decisions.py `validate_and_save`, so a downloaded file
-// can be committed to behavior_decisions/ unchanged and read back by `lookup`.
+// can be committed to the ledger (.behavior-review/decisions/, or behavior_decisions/) unchanged and read back by `lookup`.
 
 /** validate_and_save rejects an "intended" decision with a shorter rationale. */
 export const MIN_RATIONALE = 10;

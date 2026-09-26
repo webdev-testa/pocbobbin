@@ -453,17 +453,31 @@ class BehaviorConfig:
         )
 
 
-def load_config(repo: str | Path, filename: str = "behavior.json") -> BehaviorConfig:
+# Everything a repository keeps for behavior-review lives in one folder (`behavior-review init`
+# creates it); the root-level layout it replaced is still read when the folder is absent.
+HOME_DIR = ".behavior-review"
+CONFIG_FILES = (f"{HOME_DIR}/config.json", "behavior.json")
+PROBE_DIRS = (f"{HOME_DIR}/probes", "probes")
+DECISION_DIRS = (f"{HOME_DIR}/decisions", "behavior_decisions")
+
+
+def config_file(repo: str | Path) -> str | None:
+    """The repository's config file, preferring `.behavior-review/config.json`; None if it has none."""
+    return next((name for name in CONFIG_FILES if (Path(repo) / name).is_file()), None)
+
+
+def load_config(repo: str | Path, filename: str | None = None) -> BehaviorConfig:
     """Load explicit configuration or detect adapters from a repository root.
 
-    Explicit behavior.json remains authoritative. When it is absent, known
+    An explicit config file remains authoritative. When there is none, known
     manifests and source extensions select one or more adapters. A repository
     with no detectable language keeps the legacy Python defaults; a detected
     non-Python repository never silently falls back to Python.
     """
 
-    path = Path(repo) / filename
-    if not path.exists():
+    filename = filename or config_file(repo)
+    path = Path(repo) / filename if filename else None
+    if path is None or not path.exists():
         return _auto_detect_config(Path(repo))
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -474,22 +488,21 @@ def load_config(repo: str | Path, filename: str = "behavior.json") -> BehaviorCo
     return replace(BehaviorConfig.from_mapping(value), source=filename)
 
 
-def load_revision_config(
-    base_path: str | Path, head_path: str | Path, filename: str = "behavior.json"
-) -> tuple[BehaviorConfig, list[str]]:
-    """The base revision's configuration, plus a note when the change edits it.
+def load_revision_config(base_path: str | Path, head_path: str | Path) -> tuple[BehaviorConfig, list[str]]:
+    """The base revision's configuration, plus a note when the change edits (or adds) a config file.
 
     Like the frozen test suite and probes, configuration comes from the base
     revision: a change must not be able to pick its own test command or scope.
     """
-    base_file, head_file = Path(base_path) / filename, Path(head_path) / filename
-    base_bytes = base_file.read_bytes() if base_file.exists() else None
-    head_bytes = head_file.read_bytes() if head_file.exists() else None
     notes = []
-    if base_bytes != head_bytes:
-        notes.append(f"{filename} differs in this change; the base revision's configuration was used.")
-    return load_config(base_path, filename), notes
+    for name in CONFIG_FILES:
+        base_file, head_file = Path(base_path) / name, Path(head_path) / name
+        base_bytes = base_file.read_bytes() if base_file.exists() else None
+        head_bytes = head_file.read_bytes() if head_file.exists() else None
+        if base_bytes != head_bytes:
+            notes.append(f"{name} differs in this change; the base revision's configuration was used.")
+    return load_config(base_path), notes
 
 
-__all__ = ["BehaviorConfig", "ConfigError", "detect_tests_dir", "load_config",
-           "load_revision_config", "resolve_tests_dir"]
+__all__ = ["BehaviorConfig", "CONFIG_FILES", "ConfigError", "DECISION_DIRS", "HOME_DIR", "PROBE_DIRS", "config_file",
+           "detect_tests_dir", "load_config", "load_revision_config", "resolve_tests_dir"]

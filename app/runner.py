@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app.config import BehaviorConfig, load_config, resolve_tests_dir
+from app.config import PROBE_DIRS, BehaviorConfig, load_config, resolve_tests_dir
 
 # A's shared schema is the source of truth. Import it when it is on the path;
 # fall back to plain dicts so this module stays usable standalone.
@@ -53,7 +53,6 @@ except ImportError:  # pragma: no cover
 TIMEOUT_S = 300
 # Legacy sentinel meaning "resolve the test directory from the repository under review".
 TESTS_DIR = "sample_project/tests"
-PROBES_DIR = "probes"
 
 
 # --- process plumbing ---------------------------------------------------------
@@ -300,7 +299,7 @@ def _freeze_tests(source: Path, tests_rel: str, frozen: Path, config: BehaviorCo
     if not source.exists():
         raise FileNotFoundError(
             f"no test directory at '{tests_rel or '.'}' in the base revision; "
-            "set 'tests_dir' in behavior.json to point at the suite to run"
+            "set 'tests_dir' in .behavior-review/config.json (or behavior.json) to point at the suite to run"
         )
     if tests_rel not in {"", "."}:
         shutil.copytree(source, destination)
@@ -526,7 +525,12 @@ def _freeze_probes(base_dir: Path, head_dir: Path, frozen_dir: Path, notes: list
 # --- the contract -------------------------------------------------------------
 
 
-def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROBES_DIR,
+def _probes_dir(base_wt: Path, head_wt: Path) -> str:
+    """`.behavior-review/probes`, else the legacy `probes/`: whichever either revision has."""
+    return next((d for d in PROBE_DIRS if (base_wt / d).is_dir() or (head_wt / d).is_dir()), PROBE_DIRS[-1])
+
+
+def compare(pair, bundle=None, python: str | None = None, probes_dir: str | None = None,
             tests_rel: str = TESTS_DIR, impact=None, config: BehaviorConfig | None = None,
             prior_report=None):
     """A's contract: RevisionPair + ProbeBundle -> (suite runs, comparisons, needs_bob_action).
@@ -551,6 +555,7 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
         # come from the same commit. A foreign repo has no sample_project, so detection decides.
         tests_rel = resolve_tests_dir(settings, pair.base_path)
     base_wt, head_wt = Path(pair.base_path), Path(pair.head_path)
+    probes_dir = probes_dir or _probes_dir(base_wt, head_wt)
     notes: list[str] = []
     prior_deltas = _prior_delta_probes(prior_report)
 

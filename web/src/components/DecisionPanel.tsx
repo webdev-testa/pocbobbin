@@ -64,7 +64,7 @@ function SaveStatus({ state }: { state: SaveState }) {
       Downloaded {state.decisions.map((d, i) => <span key={d.id}>{i ? ", " : ""}<code>{d.id}.json</code></span>)} as{" "}
       {many ? "proposed decisions" : "a proposed decision"}
       {!many && only.supersedes ? <> that supersedes <code>{only.supersedes}</code></> : null}. Commit {many ? "them" : "it"} to{" "}
-      <code>behavior_decisions/</code> on this PR's branch; {many ? "they count" : "it counts"} as approved once the PR is merged.
+      <code>.behavior-review/decisions/</code> (or <code>behavior_decisions/</code>) on this PR's branch; {many ? "they count" : "it counts"} as approved once the PR is merged.
     </p>
   );
 }
@@ -214,7 +214,7 @@ export function DecisionPanel({ report }: { report: ReviewReport }) {
           <Info aria-hidden="true" />
           <AlertTitle>This page saves nothing and cannot approve anything</AlertTitle>
           <AlertDescription>
-            Download writes the ledger record <code>behavior_decisions/&lt;id&gt;.json</code>. Commit it on the PR's branch: it is
+            Download writes the ledger record <code>&lt;id&gt;.json</code> for <code>.behavior-review/decisions/</code> (<code>behavior_decisions/</code> in older layouts). Commit it on the PR's branch: it is
             proposed there, and counts as approved once that PR is merged.
           </AlertDescription>
         </Alert>
