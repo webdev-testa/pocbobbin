@@ -48,11 +48,12 @@ def test_cli_writes_report_without_local_paths(make_repo, tmp_path, capsys):
     assert "g → f" in capsys.readouterr().out
 
 
-def _decision(id_: str, path: str, symbol: str, supersedes: str | None = None) -> str:
+def _decision(id_: str, path: str, symbol: str, supersedes: str | None = None,
+              status: DecisionStatus = DecisionStatus.APPROVED) -> str:
     return Decision(
         id=id_, repo="repo", target=SymbolRef(path=path, symbol=symbol), base_sha="b", head_sha="h",
         probe_hash="p", before=1, after=2, intent=Intent.INTENDED, rationale="policy change",
-        status=DecisionStatus.APPROVED, supersedes=supersedes,
+        status=status, supersedes=supersedes,
     ).model_dump_json()
 
 
@@ -74,6 +75,41 @@ def test_prior_decisions_match_path_and_symbol_and_flag_superseded(make_repo, ca
     }
     assert main(["--repo", str(repo), "--base", "base", "--head", "head", "--json", str(repo / "r.json")]) == 0
     assert "prior decision d1 (approved) on pkg/core.py::f: intended — policy change" in capsys.readouterr().out
+
+def test_decision_history_across_three_decisions_on_one_function(make_repo, capsys):
+    """Download → commit → merge → next PR, with the third decision on the same function.
+
+    Every record keeps `status: proposed` in its file, as the web viewer and Bob write it; merging
+    is what approves it. Ids sort newest-first, so ledger order can't be mistaken for age.
+    """
+    proposed = DecisionStatus.PROPOSED
+    merged = {
+        "behavior_decisions/ffff00000000.json": _decision("ffff00000000", "pkg/core.py", "f", status=proposed),
+        "behavior_decisions/888800000000.json": _decision("888800000000", "pkg/core.py", "f", "ffff00000000", proposed),
+    }
+    in_this_pr = {"behavior_decisions/000000000000.json": _decision("000000000000", "pkg/core.py", "f", "888800000000", proposed)}
+    repo = make_repo({**FILES, **merged}, {**CHANGE, **in_this_pr})
+
+    report = pipeline(repo, "base", "head")
+
+    assert {(d.id, d.status) for d in report.prior_decisions} == {
+        ("ffff00000000", DecisionStatus.SUPERSEDED),
+        ("888800000000", DecisionStatus.APPROVED),
+    }
+    assert [(d.id, d.status, d.supersedes) for d in report.decisions] == [("000000000000", proposed, "888800000000")]
+    assert main(["--repo", str(repo), "--base", "base", "--head", "head", "--json", str(repo / "r.json")]) == 0
+    assert "decision in this change 000000000000 (proposed) on pkg/core.py::f" in capsys.readouterr().out
+
+
+def test_unchanged_ledger_records_are_not_decisions_of_this_change(make_repo):
+    ledger = {"behavior_decisions/d1.json": _decision("d1", "pkg/core.py", "f", status=DecisionStatus.PROPOSED)}
+    repo = make_repo({**FILES, **ledger}, CHANGE)
+
+    report = pipeline(repo, "base", "head")
+
+    assert report.decisions == []
+    assert [(d.id, d.status) for d in report.prior_decisions] == [("d1", DecisionStatus.APPROVED)]
+
 
 def test_cli_writes_markdown_report(make_repo, tmp_path, capsys):
     repo = make_repo(FILES, CHANGE)

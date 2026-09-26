@@ -137,10 +137,14 @@ probe, the comment says so (`needs_bob_action`).
 
 ## Decision ledger
 
-Intended behavior changes are stored as JSON in `behavior_decisions/`. A decision written on a PR
-branch is only proposed; it becomes approved when that PR is merged. Every later review lists
-matching decisions (same file path and symbol) under `prior_decisions`, including superseded ones,
-labeled as such. History informs a review; it never approves a new difference.
+Intended behavior changes are stored as JSON in `behavior_decisions/`, one file per decision
+(written by Bob, or by **Download decision** in the web viewer). A decision committed on a PR
+branch is listed in that PR's own report under `decisions` as proposed; it becomes approved when
+that PR is merged, since every review reads the ledger from its base revision. Every later review
+lists matching decisions (same file path and symbol) under `prior_decisions`, including superseded
+ones, labeled as such. A new decision supersedes the current one for its function: the record no
+other record supersedes (file names are hashes, so their order says nothing about age). History
+informs a review; it never approves a new difference.
 
 ## Web evidence viewer
 

@@ -239,7 +239,7 @@ class ReviewReport(Model):
     needs_bob_action: list[SymbolRef] = Field(
         default_factory=list, description="Impacted non-test callers with no committed probe."
     )
-    decisions: list[Decision] = Field(default_factory=list)
+    decisions: list[Decision] = Field(default_factory=list, description="Ledger records this change adds or edits for changed or impacted symbols; proposed until merged.")
     prior_decisions: list[Decision] = Field(default_factory=list, description="Ledger records at the base revision for changed or impacted symbols (same path + symbol).")
     limits: list[str] = Field(default_factory=list)
     links: dict[str, str] = Field(

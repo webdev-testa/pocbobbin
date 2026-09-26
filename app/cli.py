@@ -12,7 +12,7 @@ from pathlib import Path
 
 from app.adapters.registry import TIER_LIMITS, get_adapter
 from app.config import BehaviorConfig, ConfigError, load_revision_config
-from app.decisions import lookup
+from app.decisions import load_branch_decisions_via_git, lookup
 from app.impact import analyze
 from app.repo_map import build as build_repo_map
 from app.report import render_markdown
@@ -64,19 +64,40 @@ def _limits(impact: ImpactResult, analysis: Analysis, executed: bool, unprobed: 
     return limits
 
 
+def _symbol_refs(impact: ImpactResult) -> dict[str, SymbolRef]:
+    return {c.key: c for c in impact.changed_symbols} | {h.key: h for p in impact.paths for h in p.hops}
+
+
 def _prior_decisions(pair: RevisionPair, impact: ImpactResult) -> list[Decision]:
     """Ledger records at the base revision for any changed or impacted symbol.
 
     Matches on path + symbol, not the bare name `lookup` keys on, so a same-named
-    function in another file never borrows a decision. Superseded records stay
-    visible but are relabeled so nobody cites them as current.
+    function in another file never borrows a decision. The status is `lookup`'s,
+    not the file's: a record on the base branch was merged, which is what approves
+    it, though the file still says `proposed`; superseded records stay visible but
+    are relabeled so nobody cites them as current.
     """
-    refs = {c.key: c for c in impact.changed_symbols} | {h.key: h for p in impact.paths for h in p.hops}
+    refs = _symbol_refs(impact)
     matches = lookup(sorted({r.symbol for r in refs.values()}), repo_root=pair.root, branch=pair.revisions.base_sha)
+    status = {"approved": DecisionStatus.APPROVED, "superseded": DecisionStatus.SUPERSEDED}
     return [
-        m.decision.model_copy(update={"status": DecisionStatus.SUPERSEDED}) if m.match_type == "superseded" else m.decision
+        m.decision.model_copy(update={"status": status.get(m.match_type, m.decision.status)})
         for m in matches
         if m.decision.target.key in refs
+    ]
+
+
+def _decisions_in_change(pair: RevisionPair, impact: ImpactResult) -> list[Decision]:
+    """Ledger records this change adds or edits for its changed or impacted symbols.
+
+    They are proposed whatever the file says: only merging them into the base approves them.
+    """
+    refs = _symbol_refs(impact)
+    base = {d.id: d for d in load_branch_decisions_via_git(pair.root, pair.revisions.base_sha)}
+    return [
+        d.model_copy(update={"status": DecisionStatus.PROPOSED})
+        for d in load_branch_decisions_via_git(pair.root, pair.revisions.head_sha)
+        if d.target.key in refs and base.get(d.id) != d
     ]
 
 
@@ -92,6 +113,7 @@ def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None
         effective_hops = config.max_hops if max_hops is None else max_hops
         impact = analyze(pair, effective_hops, config)
         prior = _prior_decisions(pair, impact)
+        decided = _decisions_in_change(pair, impact)
         suites, comparisons, missing, notes = (
             compare(pair, impact=impact, config=config, prior_report=prior_report)
             if run else ([], [], [], [])
@@ -105,6 +127,7 @@ def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None
         tests=suites,
         comparisons=comparisons,
         needs_bob_action=missing,
+        decisions=decided,
         prior_decisions=prior,
         limits=_limits(impact, analysis, bool(suites or comparisons), missing) + config_notes + notes,
     )
@@ -150,9 +173,10 @@ def _summary(report: ReviewReport) -> str:
             "  needs Bob action (no committed probe): "
             + ", ".join(ref.key for ref in report.needs_bob_action)
         )
-    for d in report.prior_decisions:
-        lines.append(f"  prior decision {d.id} ({d.status}) on {d.target.key}: {d.intent}"
-                     + (f" — {d.rationale}" if d.rationale else ""))
+    for label, decisions in (("prior decision", report.prior_decisions), ("decision in this change", report.decisions)):
+        for d in decisions:
+            lines.append(f"  {label} {d.id} ({d.status}) on {d.target.key}: {d.intent}"
+                         + (f" — {d.rationale}" if d.rationale else ""))
     return "\n".join(lines)
 
 
