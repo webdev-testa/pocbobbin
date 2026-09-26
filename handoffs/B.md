@@ -1,39 +1,67 @@
 # Lane B handoff — execution engine
 
-Owner: Wipiii (B). Branches: `base` (frozen base) plus `scenario1-head`, `scenario3-head`, `scenario4-head`.
+Owner: Wipiii (B). Working branch: `feat/execution-engine` (`efa88f4`), based on `origin/main` (`c0d9885`) with A's engine merged.
 Repo: `~/projects/pocbobbin` on wipiii-server. Every number below is real command output, no fixtures.
+
+## Open PR
+
+```bash
+cd ~/projects/pocbobbin
+export GIT_SSH_COMMAND='ssh -i /home/wipiii/.ssh/id_ed25519 -o IdentitiesOnly=yes'
+# into the shared repo (needs collaborator rights, currently denied):
+git push git@github.com:webdev-testa/pocbobbin.git feat/execution-engine:feat/execution-engine
+# or your own fork first (works now):
+git push git@github.com:Khaw100/pocbobbin.git feat/execution-engine:feat/execution-engine
+```
+
+Verified: the server's SSH key authenticates to GitHub as **Khaw100**. Pushing to
+`webdev-testa/pocbobbin` returns `ERROR: Permission to webdev-testa/pocbobbin.git
+denied to Khaw100`: Wipiii is not a collaborator there, and no fork exists yet.
 
 ## What works
 
-`tools/paired_run.py` runs the whole B contract end to end:
+One command runs the whole engine, impact plus paired execution:
 
 ```bash
-.venv/bin/python tools/paired_run.py --repo . --base base --head scenario1-head --out-dir evidence/scenario1
+.venv/bin/python -m app.cli --repo . --base base --head scenario1-head --run
 ```
 
-In order it:
+`app/runner.py` implements A's contract `compare(pair, bundle) -> (tests, comparisons,
+needs_bob_action)` plus `pipeline()`, so the CLI emits one `ReviewReport` with impact
+paths, frozen-suite results, probe comparisons and honest limits. `--run` opts into
+execution; the default CLI path stays impact-only, as A built it.
 
-1. resolves both refs to SHAs and materializes them into throwaway `git worktree`s (working tree untouched, plan P0.1);
-2. copies the **base** test suite to a frozen temp dir and overwrites the test dir in *both* worktrees with those same bytes (plan §5: freeze the base suite);
-3. runs that frozen suite on both revisions;
-4. copies the **base** probe runner and the **base** probe files, runs each probe against both revisions with identical bytes, compares JSON output;
-5. classifies and writes `evidence/<scenario>/report.json` + `report.md`.
+Order of operations (plan P0.1 to P0.5): worktree both revisions, freeze the BASE test
+suite and the probe runner, run those identical bytes on both sides, run identical probe
+bytes on both sides, classify, one report.
 
-Outcome labels: `same_on_tested_cases` | `delta_observed` | `inconclusive`. Import error or timeout = `inconclusive`, never "bug".
+Outcome labels: `same_on_tested_cases` | `delta_observed` | `inconclusive`.
+Import error, timeout or unparsable output is `inconclusive`, never "bug".
 
-## Real results
+`tools/paired_run.py` stays as the standalone harness with the same classification plus a
+Markdown report writer, for regenerating evidence without the CLI.
 
-| Scenario | diff | probe | base to head | outcome |
-|---|---|---|---|---|
-| 1 (rounding change) | 1 file, `pricing/discount.py` | `price_total_boundary` | 100.0 to 99.99 | `delta_observed` |
-| 1 | | `apply_discount_contract` | 100.0 to 99.99 | `delta_observed` |
-| 3 (refactor) | 1 file | `price_total_boundary` | 100.0 to 100.0 | `same_on_tested_cases` |
-| 3 | | `apply_discount_contract` | 100.0 to 100.0 | `same_on_tested_cases` |
-| 4 (broken setup) | 1 file | both probes | value to ModuleNotFoundError | `inconclusive` |
+## Real results (integrated CLI, `--run`)
 
-The existing suite is **6 passed on base and 6 passed on head** for scenarios 1 and 3: green tests with a real behavior delta, which is the demo's whole point.
+| Scenario | diff | frozen suite | probe | base to head | outcome |
+|---|---|---|---|---|---|
+| 1 (rounding change) | 1 file, `pricing/discount.py` | 6 passed base, 6 passed head | `price_total_boundary` | 100.0 to 99.99 | `delta_observed` |
+| 1 | | | `apply_discount_contract` | 100.0 to 99.99 | `delta_observed` |
+| 3 (refactor) | 1 file | 6 passed both | both probes | 100.0 to 100.0 | `same_on_tested_cases` |
+| 4 (broken setup) | 1 file | 6 passed base, 1 error head | both probes | value to runner failure | `inconclusive` |
+
+Scenario 1 is the demo: the suite is green on both revisions while a caller in another file
+returns a different number for the same input. The impact graph names that caller,
+`price_total → apply_discount` at `sample_project/pricing/invoice.py:25`, outside the diff.
+
+`needs_bob_action` fires correctly: with the caller's probe removed, the report lists
+`sample_project/pricing/invoice.py::price_total` and adds the limit "1 impacted non-test
+caller(s) outside the diff have no committed probe".
+
+Tests: **26 passed** (A's 15 plus 9 from `tests/test_runner.py`).
 
 SHAs: base `60d933a2`; s1 head `7b686d8c`; s3 head `f5054caf`; s4 head `f7a09999`.
+Each scenario-head diff is exactly one file.
 
 ## Probe format (contract for D's Bob mode and the Action)
 
@@ -48,22 +76,42 @@ One JSON file per probe in `probes/`:
 }
 ```
 
-`target` is `module:function`, `args` is the positional argument list. The runner prints canonical JSON: `{"outcome": "value", "value": ...}` or `{"outcome": "exception", "error_type": ..., "error": ...}`. Bob writes probes in exactly this shape and `tools/run_probe.py` runs them with no changes.
+`target` is `module:function`, `args` is the positional argument list. The runner prints
+canonical JSON: `{"outcome": "value", "value": ...}` or `{"outcome": "exception",
+"error_type": ..., "error": ...}`. Bob writes probes in exactly this shape and
+`tools/run_probe.py` runs them with no changes.
+
+`contracts/probebundle_scenario1.json` is the same two probes in A's `ProbeBundle` schema
+(`target: {path, symbol}`, `input: {args}`, `hash`), so C and D build against the shared
+contract while the executable copies stay in `probes/`.
 
 ## Demo input that matters
 
-`price_total_boundary` uses subtotal 105.26 at 5% off = 99.997, exactly on the rounding boundary, so base (round half-up on the total) gives 100.00 and head (truncate) gives 99.99. That input pair is what makes the "same input, different answer" moment reproducible.
+`price_total_boundary` uses subtotal 105.26 at 5% off = 99.997, exactly on the rounding
+boundary, so base (round half-up on the total) gives 100.00 and head (truncate) gives
+99.99. That input pair is what makes the "same input, different answer" moment reproducible.
+
+## Review of lane A
+
+See `handoffs/B-a-review.md`. Ran A's engine against B's real scenarios: it finds the caller
+outside the diff correctly and keeps the working tree isolated. One real bug fixed: the CLI
+summary counted impact *paths*, so a refactor that adds private helpers reported "3 non-test
+callers outside the diff" when there is one (the extra paths are the same caller reaching
+the added helpers). Now counted per caller site.
 
 ## Files B owns
 
-`sample_project/**`, `probes/**`, `tools/paired_run.py`, `tools/run_probe.py`, `evidence/**` (gitignored, regenerate).
+`sample_project/**`, `probes/**`, `tools/**`, `app/runner.py`, `tests/test_runner.py`,
+`evidence/**` (gitignored, regenerate).
 
-`sample_project/pricing/invoice.py` deliberately calls the changed helper and stays **out of the diff**; that caller path is what lane A's impact graph must surface.
+`sample_project/pricing/invoice.py` deliberately calls the changed helper and stays **out of
+the diff**; that caller path is what lane A's impact graph must surface.
 
 ## Blockers
 
-- Push access: the sandbox has no GitHub credentials for `webdev-testa/pocbobbin` (`git push --dry-run` fails with "could not read Username", `gh` not logged in, no credential helper). Needs a token, or Wipiii pushes.
-- Scenario 2 (intended policy change + rationale) and Scenario 5 (lookup cites the approved decision) are lane D. B supplies the probes and runner for them.
+- **Push access** (above): needs a token, collaborator rights, or Wipiii pushes.
+- Scenario 2 (intended change plus rationale) and Scenario 5 (lookup cites the approved
+  decision) are lane D. B supplies the probes and runner for both.
 
 ## Not done / limits (say so honestly)
 
