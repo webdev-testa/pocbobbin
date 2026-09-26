@@ -142,6 +142,14 @@ class ReportRenderingTests(unittest.TestCase):
         self.assertLess(markdown.index("Analyzed as"), markdown.index("### Run"))
         self.assertNotIn("Additional report fields", markdown)
 
+    def test_the_triage_profile_comes_first(self) -> None:
+        triage = {"profile": "docs_only", "reasons": ["only documentation changed: README.md"], "skipped_steps": ["tests", "probes"]}
+        markdown = render_markdown({"schema_version": "0.1", "fixture": False, "triage": triage})
+        line = "**Triage:** `docs_only` — only documentation changed: README.md. Skipped: tests, probes."
+        self.assertIn(line, markdown)
+        self.assertLess(markdown.index("Triage"), markdown.index("### Run"))
+        self.assertNotIn("Additional report fields", markdown)
+
     def test_the_interpreter_and_probe_runner_that_ran_are_named(self) -> None:
         runtime = {
             "python": ".venv/bin/python", "version": "3.12.4", "source": "venv",

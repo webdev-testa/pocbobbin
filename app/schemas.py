@@ -246,6 +246,16 @@ class Analysis(LanguageSupport):
     runtime: Runtime | None = None
 
 
+class Triage(Model):
+    """What kind of PR this is (app/triage.py): deterministic rules on the changed files and the impact."""
+
+    profile: str = Field(description="docs_only | tests_only | config_or_deps | no_semantic_change | code_change.")
+    reasons: list[str] = Field(default_factory=list)
+    skipped_steps: list[str] = Field(
+        default_factory=list, description="Steps not run because there was no code to compare (docs_only): 'tests', 'probes'."
+    )
+
+
 class ReviewReport(Model):
     schema_version: str = SCHEMA_VERSION
     fixture: bool = Field(default=False, description="True for hand-written contract examples; never shown in the final demo.")
@@ -253,6 +263,7 @@ class ReviewReport(Model):
     repo: str = Field(description="'owner/name' from the origin remote, else the folder name. Matches Decision.repo.")
     revisions: Revisions
     analysis: Analysis | None = Field(default=None, description="Which language, adapter and support tier produced this report.")
+    triage: Triage | None = Field(default=None, description="What kind of PR this is and which checks it needed.")
     impact: ImpactResult
     tests: list[SuiteRun] = Field(default_factory=list)
     comparisons: list[Comparison] = Field(default_factory=list)

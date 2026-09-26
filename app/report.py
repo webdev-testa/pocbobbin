@@ -1010,6 +1010,16 @@ def _render_links(lines: List[str], data: Mapping[str, Any]) -> None:
     lines.append("")
 
 
+def _render_triage(lines: List[str], triage: Mapping[str, Any]) -> None:
+    """What kind of PR this is: the first thing a reviewer reads."""
+    if not triage:
+        return
+    reasons = "; ".join(_text(reason) for reason in _items(triage.get("reasons")))
+    skipped = _items(triage.get("skipped_steps"))
+    line = f"**Triage:** {_inline(triage.get('profile', 'unknown'))}" + (f" — {reasons}" if reasons else "")
+    lines.extend([line + (f". Skipped: {', '.join(_text(step) for step in skipped)}." if skipped else ""), ""])
+
+
 def _render_analysis(lines: List[str], data: Mapping[str, Any]) -> None:
     """One line naming each analyzed language and its tier; the tier's limits are in Limits."""
 
@@ -1043,6 +1053,7 @@ def _render_extra_fields(lines: List[str], data: Mapping[str, Any]) -> None:
         "schema_version",
         "fixture",
         "analysis",
+        "triage",
         "run",
         "revisions",
         "repo",
@@ -1104,6 +1115,7 @@ def render_markdown(report: Any) -> str:
             "",
         ])
 
+    _render_triage(lines, _mapping(data.get("triage")))
     _render_analysis(lines, data)
 
     schema_version = data.get("schema_version", _MISSING)

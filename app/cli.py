@@ -28,8 +28,10 @@ from app.schemas import (
     RevisionPair,
     Runtime,
     SymbolRef,
+    Triage,
 )
 from app.snapshot import SnapshotError, open_pair
+from app.triage import triage
 
 
 def _analysis(config: BehaviorConfig, runtime: Runtime | None) -> Analysis:
@@ -60,6 +62,30 @@ def _execute(pair: RevisionPair, impact: ImpactResult, config: BehaviorConfig, p
     if interpreter and interpreter.source == "fallback":
         notes = [*notes, FALLBACK_LIMIT]
     return suites, comparisons, missing, notes, runtime
+
+
+TRIAGE_LIMITS = {
+    "docs_only": "Only documentation changed, so no tests or probes ran: there is no code to compare. "
+                 "Pass --full to run them anyway.",
+    "config_or_deps": "Dependency, build or CI configuration changed: static analysis can't see its effects, "
+                      "so review that change itself. Every check ran.",
+}
+
+
+def _triage(pair: RevisionPair, impact: ImpactResult, config: BehaviorConfig, run: bool, full: bool) -> Triage:
+    """The PR's profile; `skipped_steps` lists only what this run actually skipped."""
+    result = triage(pair.revisions.changed_files, impact, config)
+    if not run:
+        return result.model_copy(update={"skipped_steps": []})
+    if full and result.skipped_steps:
+        return result.model_copy(update={"skipped_steps": [], "reasons": [*result.reasons, "--full: every step ran anyway"]})
+    return result
+
+
+def _triage_limits(result: Triage) -> list[str]:
+    if result.profile == "config_or_deps" or result.skipped_steps:
+        return [TRIAGE_LIMITS[result.profile]]
+    return []
 
 
 def _limits(impact: ImpactResult, analysis: Analysis, executed: bool, unprobed: list[SymbolRef]) -> list[str]:
@@ -126,34 +152,38 @@ def _decisions_in_change(pair: RevisionPair, impact: ImpactResult) -> list[Decis
 
 
 def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None, run: bool = False,
-             prior_report: str | Path | None = None, python: str | None = None) -> ReviewReport:
-    """Snapshot → impact → prior decisions → (with `run`) paired execution of the frozen suite and probes.
+             prior_report: str | Path | None = None, python: str | None = None, full: bool = False) -> ReviewReport:
+    """Snapshot → impact → triage → prior decisions → (with `run`) paired execution of the frozen suite and probes.
 
     Pass `prior_report` (a path to an earlier report.json) to link a probe that showed a
     delta and now reports no delta to that earlier delta, via `Comparison.reruns`. `python`
     overrides the project interpreter that runs Python tests and probes (app.interpreter).
+    Triage (app.triage) may skip steps a PR provably doesn't need; `full` runs them anyway.
     """
     with open_pair(repo, base, head) as pair:
         config, config_notes = load_revision_config(pair.base_path, pair.head_path)
         effective_hops = config.max_hops if max_hops is None else max_hops
         impact = analyze(pair, effective_hops, config)
+        profile = _triage(pair, impact, config, run, full)
         prior = _prior_decisions(pair, impact)
         decided = _decisions_in_change(pair, impact)
+        executes = run and not profile.skipped_steps
         suites, comparisons, missing, notes, runtime = (
-            _execute(pair, impact, config, python, prior_report) if run else ([], [], [], [], None)
+            _execute(pair, impact, config, python, prior_report) if executes else ([], [], [], [], None)
         )
     analysis = _analysis(config, runtime)
     return ReviewReport(
         repo=pair.repo,
         revisions=pair.revisions,
         analysis=analysis,
+        triage=profile,
         impact=impact,
         tests=suites,
         comparisons=comparisons,
         needs_bob_action=missing,
         decisions=decided,
         prior_decisions=prior,
-        limits=_limits(impact, analysis, bool(suites or comparisons), missing) + config_notes + notes,
+        limits=_triage_limits(profile) + _limits(impact, analysis, bool(suites or comparisons), missing) + config_notes + notes,
     )
 
 
@@ -176,6 +206,9 @@ def _summary(report: ReviewReport) -> str:
         f"{len(impact.changed_symbols)} changed symbols, {len(impact.paths)} impact paths, "
         f"{len(outside)} non-test callers outside the diff, {len(impact.unknowns)} unknowns"
     ]
+    if report.triage:
+        skipped = f"; skipped: {', '.join(report.triage.skipped_steps)}" if report.triage.skipped_steps else ""
+        lines.append(f"  triage: {report.triage.profile}{skipped}")
     analysis = report.analysis
     if analysis and any(support.tier != "full" for support in analysis.languages):
         tiers = ", ".join(f"{support.language} ({support.tier})" for support in analysis.languages)
@@ -230,6 +263,11 @@ def _parser() -> argparse.ArgumentParser:
         "--run",
         action="store_true",
         help="Also run the frozen test suite and committed probes on both revisions (paired execution).",
+    )
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Run every step even when the PR's triage profile doesn't need it (e.g. tests for a docs-only change)",
     )
     parser.add_argument(
         "--python",
@@ -287,7 +325,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         report = pipeline(args.repo, args.base, args.head, args.max_hops, run=args.run,
-                          prior_report=args.prior_report, python=args.python)
+                          prior_report=args.prior_report, python=args.python, full=args.full)
     except (SnapshotError, ConfigError, RuntimeError) as exc:
         print(f"behavior-review: {exc}", file=sys.stderr)
         return 2
