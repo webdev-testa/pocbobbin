@@ -17,7 +17,8 @@ customModes:
          (e.g. `/behavior-review release/2.0`); if none was given, ask, and suggest `main` only as the
          default. Never assume it silently. (Or inspect `report.json` if already generated.)
 
-      2. State what the evidence can support before anything else. Read `report.analysis`:
+      2. State what the evidence can support before anything else. First say what kind of PR it is:
+         `report.triage.profile` and its reasons (a `docs_only` PR ran no tests or probes). Then read `report.analysis`:
          - Tell the author each analyzed language and its tier (`full`, `static_probe`,
            `static_cross_file`, `experimental`), and repeat the tier warning from `limits` for any
            language below `full`.

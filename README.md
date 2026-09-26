@@ -104,6 +104,7 @@ are listed under `unknowns`. The GitHub Action uploads it next to `report.json`.
 | `--repo` | `.` | Any path inside the git repository |
 | `--max-hops` | `2` | How many caller levels to trace back from each changed symbol |
 | `--run` | off | Also run the frozen base test suite and `probes/*.json` on both revisions |
+| `--full` | off | Run every step even for a docs-only PR (see triage below) |
 | `--python PATH` | detected | Interpreter for the project's Python tests and probes (see below) |
 | `--prior-report PATH` | — | An earlier `report.json`: a probe that showed a delta there and shows none now is linked to it (`reruns`), but only if the probe bytes are unchanged |
 | `--json PATH` | stdout | Where to write the report JSON |
@@ -111,6 +112,13 @@ are listed under `unknowns`. The GitHub Action uploads it next to `report.json`.
 | `--link NAME=URL` | — | Record where this run's evidence lives, e.g. `action_run=<CI run URL>` (repeatable) |
 
 Exit code is `0` on success and `2` if a revision can't be resolved.
+
+Every report starts with a **triage** of the PR from its changed files (`triage` in the JSON, the
+first line of the PR comment): `docs_only`, `tests_only`, `config_or_deps` (dependency, build or CI
+files: static analysis can't see their effect, so the report says to review them), `no_semantic_change`
+(code files changed but no function, class or import did) or `code_change`. A mixed PR takes the most
+thorough profile, and a file no adapter parses counts as code. Only `docs_only` skips anything
+(tests and probes: there is no code to compare); `--full` runs them anyway.
 
 With `--run`, the project's Python tests and probes run with the **project's** interpreter, so the
 tool can live in its own environment (`uv tool` / `pipx`) while the tests still find the project's

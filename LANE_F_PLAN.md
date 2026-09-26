@@ -106,6 +106,8 @@ Notes:
 
 ## 6. F-A — PR triage (change profile)
 
+**Status: done** (#36), `app/triage.py`, tests in `tests/test_triage.py`. Trimmed from the design below: **no review depth** (it restated what the report already shows — callers outside the diff and unknowns) and **`tests_only` doesn't skip probes** (probes are cheap; the skip needed extra plumbing for no reviewer benefit). Only `docs_only` skips anything. Added: a file no adapter parses counts as code, so `no_semantic_change` is only claimed when every code file was parsed. Web badge (`TODO(C)-7`) not done yet; the PR comment and Bob mode show the profile.
+
 **Deterministic rules, no AI.** Runs at the start of **every** review (CLI, Action, Bob mode) — not during `init`, because each PR changes different files.
 
 ### 6.1 Profiles
