@@ -260,6 +260,57 @@ class TestDecisionsModule(unittest.TestCase):
         )
         self.assertEqual(len(matches), 0)
 
+    def test_merged_record_is_approved_even_when_stored_status_is_proposed(self):
+        """Plan section 7: a decision is approved when it is MERGED into the target branch.
+
+        The stored `status` field cannot know that. A decision written on a PR branch keeps
+        `status: proposed`, and merging does not rewrite it, so reading a record off the target
+        branch is approval in itself. Before this fix that normal flow was reported as stale,
+        which broke the plan's Scenario 5 (a later change must be able to cite the decision).
+        """
+        import subprocess
+
+        git_env = {
+            "PATH": "/usr/bin:/bin:/usr/local/bin",
+            "HOME": self.test_dir,
+            "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+            "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t",
+        }
+
+        def git(*args):
+            subprocess.run(["git", "-C", self.test_dir, *args], check=True,
+                           capture_output=True, text=True, env=git_env)
+
+        git("init", "-q", "-b", "main")
+        (self.repo_root / "README.md").write_text("x")
+        git("add", "-A")
+        git("commit", "-qm", "init")
+
+        decision = validate_and_save(
+            delta={"symbol": "apply_discount", "path": "pricing/discount.py",
+                   "probe_hash": "probe_merged", "before": 100.0, "after": 99.99},
+            disposition="intended",
+            rationale="Finance approved truncating discounts; policy ref OPS-441.",
+            repo_root=self.repo_root,
+            repo="acme/repo",
+            base_sha="sha_base",
+            head_sha="sha_head",
+        )
+        # written on a PR branch, so it is only ever proposed in the file itself
+        self.assertEqual(decision.status, DecisionStatus.PROPOSED)
+
+        git("add", "-A")
+        git("commit", "-qm", "merge the PR: the decision is now on main")
+
+        matches = lookup(symbols=["apply_discount"], repo_root=self.repo_root, branch="main")
+        self.assertEqual(len(matches), 1, "the merged decision should be found")
+        self.assertEqual(
+            matches[0].match_type, "approved",
+            "a decision merged into the target branch is approved by the plan's rule, "
+            "regardless of the status stored in the file",
+        )
+        self.assertFalse(matches[0].is_stale)
+
 
 if __name__ == "__main__":
     unittest.main()

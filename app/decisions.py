@@ -275,14 +275,20 @@ def lookup(
     root_path = Path(repo_root) if repo_root else Path.cwd()
 
     records = approved_records
+    # Records read off the target branch are approved *by having been merged there*, which is
+    # the plan's trust rule (FINAL_PLAN.md section 7). A stored status cannot know that, so
+    # approval is derived from where the record came from, not only from its `status` field.
+    read_from_branch = approved_records is None
     if records is None:
-        # Try loading via git from target branch first
         records = load_branch_decisions_via_git(root_path, branch)
         if not records:
-            # Fall back to local directory records that are approved or present
+            # Local ledger only, and only records that are explicitly approved. A record that
+            # is merely present was proposed on a feature branch and never reviewed.
             ledger_dir = root_path / "behavior_decisions"
-            all_local = load_all_decisions(ledger_dir)
-            records = [d for d in all_local if d.status == DecisionStatus.APPROVED] or all_local
+            records = [
+                d for d in load_all_decisions(ledger_dir)
+                if d.status == DecisionStatus.APPROVED
+            ]
 
     superseded_ids = {d.supersedes for d in records if d.supersedes}
 
@@ -304,7 +310,7 @@ def lookup(
                     )
                 )
             else:
-                is_approved = record.status == DecisionStatus.APPROVED
+                is_approved = read_from_branch or record.status == DecisionStatus.APPROVED
                 matches.append(
                     DecisionMatch(
                         symbol=sym_name,
