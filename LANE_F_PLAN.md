@@ -1,0 +1,253 @@
+# Lane F — Usability, install, and PR triage
+
+Companion to `FINAL_PLAN.md` (§20 points here). Written 27 Sept 2026 from reading `main` at `993d8b9` (PR #31) plus a teammate's bug report on the probe runner; checked against the code at `4de377f` (PR #32), which added friction #10 and deferred F-E. **Planning only — nothing here is implemented yet.** Timeline is ignored on purpose: this lane assumes there is time to do all of it.
+
+> Goal: a developer on **any** repository types a few commands, answers a few questions, and gets a behavior review — without cloning our repo, copying our scripts, or learning our folder layout.
+
+---
+
+## 1. Why this lane exists (current friction, from the code)
+
+| # | Friction | Evidence in the code |
+|---|---|---|
+| 1 | Install only works for our own repo | README: `git clone` our repo → `pip install -e .`. The Action runs `pip install -e ".[dev,multilang]"` on the checkout it reviews (FINAL_PLAN §19.3 row 6, still open). |
+| 2 | Other repos must copy our scripts | `app/runner.py` looks for the probe runner (`tools/run_probe.py`) **inside the reviewed repo** via `source_of()`; `pyproject.toml` only packages `app*`, so `tools/` is never installed. |
+| 3 | A PR can supply its own probe runner | `source_of()` is "BASE is authoritative; fall back to HEAD". If the base has no runner and the PR adds one, **the PR's runner is used on both sides** — a PR could make every probe look "same". |
+| 4 | Tests run with the tool's Python, not the project's | `runner.py`: `python = python or sys.executable`. With an isolated install (pipx / `uv tool`), the project's own dependencies are missing → import errors → `inconclusive`. |
+| 5 | Package name `app` collides | Many projects have their own `app/` package; in a shared venv `import app` is ambiguous. The Bob mode even tells Bob to call `app.decisions.validate_and_save`. |
+| 6 | No setup command, no prompts | CLI = flags (`--base`, `--head`, `--run`, …) + `map`. No `init`, `doctor`, or interactive mode; default base is hard-coded `main`. |
+| 7 | Only one test folder | `config.detect_tests_dir()` finds tests by **file name** (good: any folder name works) but returns only the **shallowest** folder; `tests_dir` is a single string. |
+| 8 | Files scattered at repo root | `behavior.json`, `probes/`, `behavior_decisions/`, `tools/`, `.bob/`. |
+| 9 | Every PR runs the same pipeline | No PR-level classification. Only per-symbol tags (`signature_changed`, `body_changed`, …) exist. The early "routing policy" idea (Jev) was dropped with "No Jev in the POC" and never replaced. |
+| 10 | A probe the PR adds is never run | `compare()` copies the **whole** `probes/` folder from `source_of(probes_dir)`, i.e. from the base whenever the base has one (`runner.py`, `source_of` + `copytree`). A probe Bob writes on the PR branch — what the Bob mode tells it to do — runs only after the PR is merged, so its caller stays in `needs_bob_action`. Live today: our base has `probes/`. |
+
+---
+
+## 2. Features
+
+| ID | Feature | Solves | Size |
+|---|---|---|---|
+| **F-E** | Rename package `app` → `behavior_review` | 5 | Small but touches every import — **deferred** (see §3) |
+| **F-B** | Use the project's interpreter (`--python`, auto-detect venv) | 4 | Small |
+| **F-C** | Probe runners shipped in the package (+ teammate's fix, hardened); run the PR's new probes | 2, 3, 10 | Small–medium |
+| **F-A** | PR triage: a deterministic change profile that can route steps | 9 | Small–medium |
+| **F-D** | `init` / `run` / `doctor`, interactive; `.behavior-review/` layout; multi test folders; reusable Action | 1, 6, 7, 8 | Medium–large |
+
+**Order:** F-C → F-B → F-A → F-D, then F-E. F-C first because it also fixes friction #10, a live bug in the Bob loop. F-D after the others because it builds on them. F-E waits (§3).
+
+---
+
+## 3. F-E — Rename `app` → `behavior_review`
+
+**Deferred.** The collision only happens when the tool is installed into the project's own environment, or run as `python -m app.cli` from a repo that has its own `app/`. With the isolated install F-D recommends (`uv tool` / `pipx`), the `behavior-review` command's `sys.path` starts at the tool's own environment, not the repo, so `import app` is ours — the first-time user flow doesn't need the rename. Do it before recommending any install into a project environment (or a PyPI release), at a moment with no open PRs touching `app/`.
+
+- Move `app/` → `behavior_review/`; update every import (83 in 22 files at `4de377f`), `pyproject.toml` (`[tool.setuptools.packages.find] include = ["behavior_review*"]`, `[project.scripts] behavior-review = "behavior_review.cli:main"`), tests, `contracts/` tests, `setup.cfg` (mutmut paths), `.bob/custom_modes.yaml` (`app.decisions.validate_and_save`), the run commands in `handoffs/scenario-refs.json`, `handoffs/B.md` and `handoffs/D.md`, `web/README.md` and the comment in `web/src/lib/decision-file.ts`, README, `AGENTS.md`. The Action needs no change: since #29 it calls the `behavior-review` command, not `python -m app.cli`.
+- One atomic PR, announced in the group; other lanes rebase right after.
+- **Done when:** `pytest -q` green, `behavior-review --help` works from a fresh `uv tool install`, and `grep -rn "from app\|import app\|app\.cli\|app\.decisions"` finds nothing outside history files.
+
+---
+
+## 4. F-B — Run tests and probes with the project's interpreter
+
+**Why:** the tool should live in its own isolated environment (§7.1), but the project's tests need the project's libraries.
+
+Resolution order (first hit wins), for Python test/probe execution:
+
+1. `--python PATH` flag
+2. `python` in `.behavior-review/config.json` (or `behavior.json`)
+3. `$VIRTUAL_ENV` if set
+4. `.venv/` or `venv/` in the repo root (`bin/python` or `Scripts/python.exe`)
+5. Fallback: the tool's own interpreter — **with a limit line**: "Ran with behavior-review's own Python; if the project's dependencies are not installed there, results may be inconclusive. Pass `--python` or create `.venv`."
+
+Notes:
+- The interpreter path is absolute, so it works from the temporary `git worktree` checkouts.
+- Record what was used: optional `analysis.runtime = {"python": "<path>", "version": "3.12.4", "source": "venv"}` (schema change → Lane A, fixtures updated in the same commit).
+- Non-Python languages keep using their configured argv commands.
+
+**Done when:** a repo with `requests` in its `.venv` (and not in the tool's env) runs its tests `ok` via auto-detection; the fallback case prints the limit line; unit tests cover each resolution step on Linux and Windows path shapes.
+
+---
+
+## 5. F-C — Probe runners shipped in the package (teammate's fix, hardened)
+
+### 5.1 The teammate's report (agreed)
+
+`runner.py` searches the reviewed repo for `tools/run_probe.py` and never uses a bundled runner. Proposed: add a packaged generic Python runner and use it when the repo has none; keep custom runners for other languages; add a regression test (Python repo, `probes/multiply_negative.json`, no `tools/run_probe.py`, base `-6`, head `6` → `delta_observed`). Their local run: `probe line_total_boundary: delta_observed -6 -> 6`. Focused tests passed; full suite not yet run; nothing pushed.
+
+### 5.2 Required changes on top of that proposal
+
+1. **Close the head-runner hole (friction #3).** For the probe **runner** (code), resolution is: base copy of the configured runner → packaged runner → **never** a head-only copy. If the PR adds or changes the runner, the report says so ("this PR adds `tools/run_probe.py`; it was not used").
+2. **Run the PR's new probes (friction #10).** **Probes** (data) must include head, because Bob writes new probes on the PR branch — today they are ignored whenever the base has a `probes/` folder. Freeze the base's probes **plus** every probe file that exists only in head; the same frozen bytes run on both sides, which is what matters. A probe the PR **edits** runs with its base bytes, and the report says the edit was not used (the "rerun the unchanged probe" rule).
+3. **Packaged runners are stdlib-only.** They must not import `behavior_review` or Pydantic: with F-B they run under the *project's* interpreter.
+4. **Ship all harnesses as package data:** `behavior_review/harness/run_probe.py`, `run_command_probe.py`, `run_probe.ts`. A configured runner path that doesn't exist in base falls back to the packaged file of the same name.
+5. **One source of truth.** Delete `tools/run_probe.py` etc. from our repo root after the move (our scenario base tag `ref/base` still contains them, so historical runs stay byte-identical), or keep them as copies guarded by a test that asserts identical bytes.
+6. **`src/` layout.** The runner puts the checkout root **and** `src/` (if present) at the front of `sys.path`; an optional `python_path: []` in config adds more.
+7. **Split the `try` block.** Today copying the runner and copying `probes/` share one `try`; a missing runner must not stop probes from being frozen, and vice versa.
+8. **Provenance.** Record the runner used: `analysis.runtime.probe_runner = {"source": "base" | "packaged", "sha256": "…"}`.
+
+### 5.3 Tests
+
+| Test | Expect |
+|---|---|
+| Teammate's regression (no runner in repo, −6 → 6) | `delta_observed`, note says packaged runner used |
+| Base has no runner, **head adds a fake runner** | packaged runner used; note says the head runner was ignored |
+| Base has `probes/`, **head adds a probe** | the new probe runs on both sides; its caller leaves `needs_bob_action` |
+| Head **edits** an existing probe | base bytes run; note says the edit was not used |
+| Probe raises on both sides | `outcome: "exception"` with the same shape as today |
+| `src/` layout package | imports resolve, real values compared |
+| TypeScript / command-probe config | their own runners, no fallback applied |
+| Full suite + Scenarios 1–4 | unchanged results |
+
+---
+
+## 6. F-A — PR triage (change profile)
+
+**Deterministic rules, no AI.** Runs at the start of **every** review (CLI, Action, Bob mode) — not during `init`, because each PR changes different files.
+
+### 6.1 Profiles
+
+| Profile | Detected when **all** changed files are… | Steps |
+|---|---|---|
+| `docs_only` | docs: `*.md`, `*.rst`, `*.txt`, `docs/**`, `LICENSE*`, images | Skip execution. Report: "No code or configuration changed; no behavior check needed." |
+| `tests_only` | test files (configured test folders/patterns) | Run the test suite; skip probes; flag "tests changed — the frozen base suite is what's compared". |
+| `config_or_deps` | *any* file is config/dependency/CI: `pyproject.toml`, `setup.cfg`, `requirements*.txt`, `package.json`, lockfiles, `go.mod`, `pom.xml`, `build.gradle*`, `*.csproj`, `Dockerfile`, `.github/workflows/**`, our own config | Run **everything**; high-attention banner: "Environment/dependency change — static analysis can't see its effects." |
+| `no_semantic_change` | source files whose AST is identical on both sides (formatting/comments only) | Run tests + probes (cheap); label "no structural change detected". |
+| `code_change` | anything else | Full pipeline. |
+
+Mixed PRs take the **most thorough** profile (e.g. docs + code = `code_change`; any config file = `config_or_deps`). Unknown file types count as code.
+
+**Review depth** (for `code_change` / `config_or_deps`): `light` / `standard` / `deep`, from changed symbols, non-test callers outside the diff, and unknowns (thresholds in config, e.g. deep if any caller outside the diff or any unknown). Shown to the author and reviewer; it never skips checks.
+
+### 6.2 Safety rule
+
+Triage may only **skip** execution when it can prove there is nothing executable to compare (`docs_only`). Everywhere else it can only **add** attention. `--full` forces the whole pipeline regardless of profile.
+
+### 6.3 Output
+
+- Optional `ReviewReport.triage = {"profile": "...", "depth": "...", "reasons": ["only docs/*.md changed"], "skipped_steps": ["tests", "probes"]}` (schema change → Lane A).
+- Markdown/PR comment: first line after the title. Web: badge in the summary header. Bob mode: states the profile first.
+
+**Done when:** each profile has a fixture PR (docs-only, tests-only, lockfile bump, formatting-only, real change) with the expected profile and steps; a docs-only PR finishes without running tests; `--full` overrides.
+
+---
+
+## 7. F-D — Easy install, interactive setup, one folder
+
+### 7.1 Install (industry practice)
+
+CLI tools written in Python are normally installed into their **own isolated environment** with **pipx** or **`uv tool`**, so they don't mix with the project's dependencies; `uvx` runs a tool once without installing. Installing straight from GitHub is supported — no PyPI release needed:
+
+```bash
+pip install uv                                   # once
+uv tool install git+https://github.com/webdev-testa/pocbobbin
+# or: pipx install git+https://github.com/webdev-testa/pocbobbin
+```
+
+The repository must be public. A PyPI release later shortens it to `uv tool install behavior-review` (roadmap).
+
+### 7.2 `behavior-review init` (interactive, once per repo)
+
+Detect first, then ask — every question has a default, so Enter-Enter-Enter works:
+
+```
+✔ Repo: my-shop (git)   current branch: feat/discount-rounding
+? Default base branch:                    › main  (from origin/HEAD) / other…
+✔ Languages: Python (full), TypeScript (static_probe)
+? Test folders (space to toggle):         › [x] tests/ (12, pytest)  [x] billing/tests/ (4)  [ ] scripts/ (1)  [ ] skip tests
+? Python for running project tests:       › .venv/bin/python (detected) / other…
+? Create .behavior-review/ (config, probes, decisions)?  › Yes
+? Add GitHub Action (.github/workflows/behavior-review.yml)?  › Yes / No
+? Add Bob custom mode (/behavior-review)?  › Yes / No   (merged into .bob/custom_modes.yaml if it exists)
+✔ Done. Next: behavior-review run
+  No probes yet → in Bob IDE type /behavior-review to create them.
+```
+
+Rules:
+- Never overwrite an existing file without showing what changes and asking.
+- Non-interactive for CI/scripts: `--yes` plus flags (`--base-branch`, `--tests`, `--python`, `--no-action`, `--no-bob`); prompts are disabled automatically when stdin is not a TTY.
+- Prompt library: `questionary` (MIT) — or stdlib `input()` if we want zero extra deps. Decide in F-D kickoff.
+
+What `init` creates in the user's repo (the same pattern as `npm init playwright@latest`, which asks questions then writes a config, a tests folder and an optional CI workflow):
+
+```
+.behavior-review/
+  config.json          # answers above (replaces behavior.json)
+  probes/README.md     # what a probe is; Bob writes probes here
+  decisions/           # ledger (replaces behavior_decisions/)
+.github/workflows/behavior-review.yml   # optional; installs the tool from a pinned git tag
+.bob/custom_modes.yaml                  # optional; merged, not overwritten
+```
+
+Harness scripts are **not** copied — they ship in the package (F-C). Only the repo's own data (config, probes, decisions) lives in the repo.
+
+**Recording decisions from Bob:** the Bob mode today calls `app.decisions.validate_and_save` from Python. With an isolated install the package isn't importable from the project's interpreter, whatever its name, so add a command — e.g. `behavior-review decide --probe <id> --intent intended --rationale "…"` writing `.behavior-review/decisions/<id>.json` — and point the mode at it.
+
+**Backward compatibility:** `behavior.json`, `probes/`, and `behavior_decisions/` keep working (read when `.behavior-review/` is absent), with a one-line note suggesting `init`. Config is still read from the **base** revision (a PR can't pick its own test command).
+
+### 7.3 `behavior-review run` (interactive when run by hand)
+
+- No `--base`? Ask: "You're on `feat/x`. Compare with `main` (default) / another branch?"
+- Uncommitted edits? Warn: "Uncommitted changes are not analyzed — commit or stash first? [continue anyway]".
+- `--run` is the default for `run`; prints the summary and where `report.json` / `report.md` were written, plus the web viewer's **Open report…** hint.
+- All current flags keep working unchanged (the Action and Bob mode use them).
+
+### 7.4 `behavior-review doctor`
+
+Checks and explains, one line each: git repo; Python interpreter + can it import the project; test command runs (`--collect-only` style dry run where possible); number of probes; last report's `needs_bob_action`; Tree-sitter installed; config valid. Exit code ≠ 0 if something blocks a review.
+
+### 7.5 Multiple test folders
+
+- `detect_tests_dir()` returns **all** candidate folders (ranked, with counts) instead of only the shallowest.
+- Config accepts `tests_dirs: [...]` (keep `tests_dir` as a one-item alias). The runner freezes and runs all selected folders from the base revision.
+- Tests stay **optional**: with none, the report says so and still gives impact analysis. Probes stay optional to *run* but are required for any behavior claim — uncovered callers go to `needs_bob_action` for Bob.
+
+### 7.6 Reusable Action for other repos (closes FINAL_PLAN §19.3 row 6, `TODO(D)-3`)
+
+The workflow written by `init` installs the tool from a pinned tag (`uv tool install git+https://github.com/webdev-testa/pocbobbin@v0.2.0`), sets up the project's own environment (`pip install -r requirements.txt` / `npm ci` as detected), then runs `behavior-review run --base origin/<base> --python <venv> --json … --markdown …` and posts the comment. Our own repo's workflow keeps installing from its checkout.
+
+**Done when (whole of F-D):** on a **fresh public dummy repo** we don't own the layout of (Python `src/` package, tests in `tests/`, deps in `requirements.txt`), a newcomer runs `uv tool install git+…` → `behavior-review init` (defaults only) → `behavior-review run` and gets a correct report; `/behavior-review` in Bob writes a probe into `.behavior-review/probes/`; the generated Action posts a comment on a PR in that repo.
+
+---
+
+## 8. Overlaps with other lanes
+
+| ID | Owner | Task | Status |
+|---|---|---|---|
+| `TODO(A)-7` | A | Approve optional schema fields `ReviewReport.triage` and `analysis.runtime`; update `contracts/` fixtures + `tests/test_contracts.py` in the same commit | [ ] |
+| `TODO(B)-5` | B | Review F-C (runner resolution, head-runner rule, stdlib-only harness) and F-B (interpreter) — both live in `runner.py` | [ ] |
+| `TODO(C)-7` | C | Show `triage.profile` / depth badge and `analysis.runtime` (interpreter, runner source) in the web summary; markdown line already from `report.render` | [ ] |
+| `TODO(D)-6` | D | Bob mode: state the triage profile first; write new probes to `.behavior-review/probes/` (fallback `probes/`); record decisions with the `decide` command (§7.2) instead of importing the package | [ ] |
+| `TODO(D)-3` | D | Reusable Action template for other repos (§7.6) | [ ] (was open) |
+| `TODO(ALL)-1` | all | Rebase right after the F-E rename PR merges (when it happens; deferred) | [ ] |
+
+---
+
+## 9. Trying the tool in Claude Code or Codex (local testing only)
+
+The engine is a CLI, so any agent that can run shell commands can use it. To save Bobcoins while experimenting:
+
+- **Claude Code:** a local skill, e.g. `~/.claude/skills/behavior-review/SKILL.md`, whose body is the instructions from `.bob/custom_modes.yaml`.
+- **Codex:** it reads `AGENTS.md` and supports custom prompts in the user's home folder — check Codex's docs for the exact location.
+
+Keep these files **outside the repository** (or git-ignored): the product ships with Bob only (FINAL_PLAN §18). Hackathon evidence (probes and fixes shown in the demo, `bob_sessions/` screenshots) must come from Bob; any other assistant used during development is disclosed in the Bob Usage statement.
+
+---
+
+## 10. Bob prompts (one bounded task each)
+
+Use with the FINAL_PLAN §10 starter prompt. Each ends with: *run the relevant tests and the full suite, report real results, update `handoffs/F.md`; do not claim anything you did not run.*
+
+- **F-E:** "Rename the Python package `app` to `behavior_review` exactly as in LANE_F_PLAN §3. Update every import, pyproject, the Action, `.bob/custom_modes.yaml`, README and AGENTS.md. No behavior changes."
+- **F-B:** "Implement the interpreter resolution order in LANE_F_PLAN §4 for Python test and probe execution, with the fallback limit line and unit tests for each step (Linux and Windows path shapes)."
+- **F-C:** "Ship the probe harnesses as package data and implement runner resolution per LANE_F_PLAN §5.2 (base → packaged, never head-only), and freeze the base's probes plus head-only probe files (an edited probe keeps its base bytes). Keep harnesses stdlib-only, add `src/` to sys.path, split the try block, record provenance. Add every test in §5.3, including the teammate's −6 → 6 regression and the fake head-runner case."
+- **F-A:** "Implement the deterministic triage in LANE_F_PLAN §6 as `behavior_review/triage.py`, wire it into the pipeline with the safety rule and `--full`, and add one fixture PR per profile."
+- **F-D:** "Implement `init`, interactive `run`, and `doctor` per LANE_F_PLAN §7, the `.behavior-review/` layout with backward compatibility, multi-folder tests, and the reusable Action template. Prove it on a fresh public dummy repo as in §7 'Done when'."
+
+---
+
+## 11. Sources
+
+- Playwright installation (`npm init playwright@latest` asks, then writes config, tests folder, optional workflow): https://playwright.dev/docs/intro
+- uvx / `uv tool` for isolated CLI tools: https://pydevtools.com/handbook/reference/uvx/
+- `uv tool` vs pipx: https://pydevtools.com/handbook/explanation/how-do-uv-tool-and-pipx-compare/
+- pipx comparisons: https://pipx.pypa.io/latest/explanation/comparisons.html

@@ -7,6 +7,8 @@ This file supersedes HACKATHON_PLAN.md and BOB_BUILD_PLAN.md as the single team 
 
 **v2 changes (26 Sept, evening):** added **Lane E — Maps** (evidence map per PR + whole-repo module map, §16), documented the **current multi-language adapters** (§17) and the actual web stack (§9), added a Bob-first roadmap line (§18), and an **end-to-end consistency matrix for multi-language repos** (§19) — including a small agreed schema addition, `ReviewReport.analysis`. Everything that touches another lane's files is written as a marked **`TODO(<lane>)`** item so owners can pick it up. Section numbers 1–15 are unchanged.
 
+**v3 changes (27 Sept):** added **Lane F — Usability, install, and PR triage** (§20, details in `LANE_F_PLAN.md`), and restored the PR-selector items `TODO(E)-3` (done in #32) / `TODO(D)-5` in §16.5, plus `TODO(A)-8` for PR titles.
+
 > **AI proposes. Algorithms verify. Humans decide.**
 
 ---
@@ -516,6 +518,9 @@ Lane E creates only new files. Everything below touches another lane's files and
 | `TODO(D)-2` | D | Add the `CHANGE_NOTES.md` instructions (E's template) to `.bob/custom_modes.yaml` | P1.5 | [x] step 7 of the mode, with the §16.4 sections and labels |
 | `TODO(B)-1` | B | Confirm `comparisons[].probe.target` always matches the `SymbolRef` used in `impact` (same path + symbol spelling) — **for every supported language**, e.g. Tree-sitter's `Discount.apply` in Java (§19 row 9) | Map joins outcomes to nodes by that key | [x] adapters emit `Class.method` / bare function names; the object `target` form joins exactly (tested for Python, Java, TSX); the string form guesses the extension, so the README says to use the object form outside Python |
 | `TODO(A)-4…`, `TODO(B)-2`, `TODO(C)-6`, `TODO(D)-3…`, `TODO(E)-1` | various | Multi-language consistency items | See §19 | [ ] all done except the other-repo install in §19.3 row 6 |
+| `TODO(E)-3` | E | Viewer: PR selector (default latest, `?pr=N`), collapsible folders with folder-level last commit/PR, default view that opens only paths to changed/impacted files, four file categories (changed / impacted-calls / imports-changed / unrelated) and weighted edges. Static data layout `web/public/data/reports/index.json` + `pr-<N>/{report.json,repo_map.json}`, index built by `npm run reports:index` | Large repo maps are unreadable; judges need to switch PRs | [x] #32, with the Action runs of PRs #19, #29, #30, #31 published |
+| `TODO(D)-5` | D | Action passes `--link pr_url=${{ github.event.pull_request.html_url }}` and uploads `report.json` + `repo_map.json` as one artifact per PR, droppable into `web/public/data/reports/pr-<N>/`. Not `pr=<N>` or `pr_title=<title>`: `--link` accepts only http(s) URLs (`app/cli.py`), so those would stop the run. The index reads N from the folder name (or the URL) | Feeds `TODO(E)-3` | [ ] |
+| `TODO(A)-8` | A | Accept a PR title for the viewer, e.g. `--pr-title "<title>"` stored as `links.pr_title` (the one non-URL entry; `npm run reports:index` already reads it). Until then the picker shows "PR #N" | PR titles in the picker | [ ] |
 | `TODO(C/pitch)-1` | C | Put the evidence map frame in the video (§13) and the tier table on a slide | Story | [ ] |
 
 ### 16.6 UI rules (for `TODO(C)-5`)
@@ -632,3 +637,19 @@ If the TypeScript run isn't done by feature freeze, the pitch claims **Python en
 3. C: rows 8, 10 once `analysis` exists in a fixture. E: row 11 at the same time.
 4. D: rows 6, 7 (Action + mode) — test on the Python sample first, then the TS sample.
 5. Everyone: the TS stretch run (§19.4) only after the Python chain is green.
+
+---
+
+## 20. Lane F — Usability, install, and PR triage
+
+Full plan: **`LANE_F_PLAN.md`**. Summary:
+
+| ID | Feature | Why |
+|---|---|---|
+| F-E | Rename package `app` → `behavior_review` (deferred, see below) | `app` collides with a user's own `app` package, but only when the tool is installed into the project's environment |
+| F-B | Run tests/probes with the **project's** interpreter (`--python`, `$VIRTUAL_ENV`, `.venv/`, fallback with a limit line) | Isolated installs (pipx / `uv tool`) otherwise lack the project's dependencies |
+| F-C | Probe runners shipped in the package; teammate's fix hardened: runner from base → packaged, **never head-only** (a PR must not supply its own runner); stdlib-only harness; `src/` on `sys.path` | Other repos no longer copy `tools/`; closes a tampering hole |
+| F-A | Deterministic **PR triage** at the start of every review: `docs_only` / `tests_only` / `config_or_deps` / `no_semantic_change` / `code_change` + review depth; may only skip execution for `docs_only`; `--full` overrides | Restores the early "which flow does this PR need" idea without AI |
+| F-D | `uv tool install git+…` → `behavior-review init` (interactive, defaults everywhere) → `run` (interactive) → `doctor`; one `.behavior-review/` folder (config, probes, decisions); multiple test folders; reusable Action for other repos | One command to set up; closes §19.3 row 6 |
+
+Order: F-C → F-B → F-A → F-D, then F-E. F-C first because it also fixes a live bug (probes a PR adds are never run). F-E waits: with the isolated install F-D recommends (`uv tool` / `pipx`), the `behavior-review` command resolves `app` to our package even inside a repo with its own `app/`, so the first-time user flow doesn't need it. New schema fields (`triage`, `analysis.runtime`) are optional and go through Lane A. Overlap TODOs: `LANE_F_PLAN.md` §8.
