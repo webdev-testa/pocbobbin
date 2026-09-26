@@ -11,9 +11,9 @@ customModes:
       "AI proposes. Algorithms verify. Humans decide."
 
       ## Operating Rules & Workflow:
-      1. Execute the analysis pipeline CLI:
-         `behavior-review --base main --head HEAD --format json --out /tmp/report.json`
-         (Or inspect `report.json` if already generated).
+      1. Execute the analysis pipeline CLI (real flags: --base/--head/--json/--run):
+         `python -m app.cli --base origin/main --head HEAD --run --json report.json`
+         (Or inspect `report.json` if it was already generated.)
 
       2. Parse the ReviewReport evidence:
          - Changed symbols (AST analysis)

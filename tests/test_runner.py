@@ -26,7 +26,7 @@ def test_scenario_revisions_are_reachable_from_this_repo():
 
 def test_frozen_suite_runs_on_both_revisions_and_stays_green():
     with open_pair(REPO, BASE, HEAD) as pair:
-        suites, comparisons, _ = compare(pair)
+        suites, comparisons, _, _ = compare(pair)
     assert [s.revision.value for s in suites] == ["base", "head"]
     assert all(s.status == RunStatus.OK for s in suites)
     assert all(s.passed == 6 and s.failed == 0 and s.errors == 0 for s in suites)
@@ -36,7 +36,7 @@ def test_frozen_suite_runs_on_both_revisions_and_stays_green():
 
 def test_caller_outside_the_diff_shows_a_real_delta():
     with open_pair(REPO, BASE, HEAD) as pair:
-        suites, comparisons, _ = compare(pair)
+        suites, comparisons, _, _ = compare(pair)
     by_id = {c.probe.id: c for c in comparisons}
     caller = by_id["price_total_boundary"]
     assert caller.probe.target.symbol == "price_total"
@@ -47,20 +47,20 @@ def test_caller_outside_the_diff_shows_a_real_delta():
 def test_green_tests_do_not_prevent_a_delta_observation():
     """The demo's premise: the suite is green on head while behavior changed."""
     with open_pair(REPO, BASE, HEAD) as pair:
-        suites, comparisons, _ = compare(pair)
+        suites, comparisons, _, _ = compare(pair)
     assert all(s.status == RunStatus.OK for s in suites)
     assert any(c.outcome == Outcome.DELTA_OBSERVED for c in comparisons)
 
 
 def test_refactor_shows_no_delta():
     with open_pair(REPO, BASE, S3) as pair:
-        _, comparisons, _ = compare(pair)
+        _, comparisons, _, _ = compare(pair)
     assert {c.outcome for c in comparisons} == {Outcome.SAME_ON_TESTED_CASES}
 
 
 def test_broken_setup_is_inconclusive_never_a_bug():
     with open_pair(REPO, BASE, S4) as pair:
-        _, comparisons, _ = compare(pair)
+        _, comparisons, _, _ = compare(pair)
     assert {c.outcome for c in comparisons} == {Outcome.INCONCLUSIVE}
     assert not any(c.outcome == Outcome.DELTA_OBSERVED for c in comparisons)
 
@@ -121,6 +121,70 @@ def test_summary_counts_each_caller_site_once():
     assert "3 non-test callers outside the diff" not in summary
 
 
+def test_compare_survives_a_base_without_the_harness(tmp_path):
+    """A PR that ADDS tools/ and probes/ must still produce a report.
+
+    The probe runner and probes come from HEAD in that case, and the report has to
+    say so rather than crash or silently pretend BASE supplied them.
+    """
+    import subprocess
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+           "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t",
+           "PATH": "/usr/bin:/bin:/usr/local/bin", "HOME": str(tmp_path)}
+    run = lambda *args: subprocess.run(["git", "-C", str(repo), *args], check=True, env=env)
+    run("init", "-q")
+    # base: the package, with the tests and the demo caller, but no tools/ and no probes/
+    run("fetch", "-q", str(REPO), "refs/remotes/origin/base:refs/heads/base")
+    run("checkout", "-q", "base")
+    run("rm", "-r", "-q", "tools", "probes")
+    run("commit", "-qm", "base without the harness")
+    # head: the harness added by the PR
+    run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/head")
+    run("checkout", "-q", "head")
+
+    with open_pair(repo, "base", "HEAD") as pair:
+        suites, comparisons, _, notes = compare(pair)
+    assert suites and all(s.status == RunStatus.OK for s in suites)
+    assert comparisons, "probes added by the head revision must still run"
+    assert any("head revision supplied it" in note for note in notes)
+    assert any("tools/run_probe.py" in note for note in notes)
+
+
+def test_workflow_yaml_is_valid():
+    """The GitHub Action is the reviewer-facing door; keep it parseable."""
+    yaml = __import__("pytest").importorskip("yaml")
+    workflow = REPO / ".github" / "workflows" / "behavior-review.yml"
+    doc = yaml.safe_load(workflow.read_text())
+    steps = doc["jobs"]["behavior-review"]["steps"]
+    runs = " ".join(s.get("run", "") for s in steps)
+    # the CLI takes --base/--head/--json/--run and nothing else
+    assert "--format" not in runs
+    assert "--out" not in runs
+    assert "--run" in runs
+    assert "--json report.json" in runs
+    # a fixture must never be presented as a result
+    assert "report_scenario1.json" not in runs
+
+
+def test_action_requests_paired_execution():
+    """Without --run the Action reports the impact graph but no execution evidence.
+
+    That posts a PR comment full of impact paths and no test or probe results, which
+    is the shape this project exists to avoid: claims with nothing behind them.
+    Verified against the previous workflow, which produced tests=EMPTY and
+    comparisons=EMPTY while still exiting 0.
+    """
+    yaml = __import__("pytest").importorskip("yaml")
+    workflow = REPO / ".github" / "workflows" / "behavior-review.yml"
+    doc = yaml.safe_load(workflow.read_text())
+    runs = " ".join(s.get("run", "") for s in doc["jobs"]["behavior-review"]["steps"])
+    assert "--run" in runs, "the Action must run the frozen suite and committed probes"
+    assert "--json report.json" in runs
+
+
 def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
     """Dropping the caller's probe must surface it as needing Bob, not as safe.
 
@@ -143,6 +207,6 @@ def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
     run("commit", "-qam", "drop caller probe")
 
     with open_pair(repo, "noprobe", "head") as pair:
-        _, comparisons, missing = compare(pair)
+        _, comparisons, missing, _ = compare(pair)
     assert [c.probe.id for c in comparisons] == ["apply_discount_contract"]
     assert [m.key for m in missing] == ["sample_project/pricing/invoice.py::price_total"]

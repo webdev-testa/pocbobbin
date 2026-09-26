@@ -15,6 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # both revisions must be resolvable as commits
           fetch-depth: 0
 
       - name: Set up Python
@@ -25,154 +26,120 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f pyproject.toml ]; then
-            pip install -e . || pip install . || true
-          fi
-          pip install pydantic pytest pyyaml
+          pip install -e ".[dev]"
 
-      - name: Run Behavior Review
+      - name: Run behavior review (impact + paired execution + report)
+        # Real CLI flags are --base/--head/--json/--run; there is no --format or --out.
         run: |
-          # Execute behavior review against PR base ref
-          if command -v behavior-review >/dev/null 2>&1; then
-            behavior-review \
-              --base "origin/${{ github.base_ref }}" \
-              --head HEAD \
-              --json report.json
-          else
-            python -m app.cli \
-              --base "origin/${{ github.base_ref }}" \
-              --head HEAD \
-              --json report.json
-          fi
+          python -m app.cli \
+            --repo . \
+            --base "origin/${{ github.base_ref }}" \
+            --head "${{ github.sha }}" \
+            --run \
+            --json report.json > summary.txt
+          cat summary.txt
 
-      - name: Upload Review Artifact
+      - name: Render the PR comment from the real report
+        # Every line comes from the executed run: impact paths, frozen suite results,
+        # probe outputs. A fixture is never presented as a result.
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          report = json.loads(pathlib.Path("report.json").read_text())
+          rev, impact = report["revisions"], report["impact"]
+          lines = [
+              "<!-- behavior-review-comment -->",
+              "## Behavior review",
+              "",
+              f"`{rev['base_sha'][:8]}` -> `{rev['head_sha'][:8]}` · "
+              f"{len(impact['changed_symbols'])} changed symbols · "
+              f"{len(impact['unknowns'])} unknowns",
+              "",
+              f"Diff touches: {', '.join('`%s`' % f for f in rev['changed_files']) or '(nothing)'}",
+              "",
+          ]
+          outside = [p for p in impact["paths"] if p["outside_diff"] and not p["is_test"]]
+          seen, rows = set(), []
+          for p in outside:
+              first = p["hops"][0]
+              key = (first["path"], first["symbol"], first["line"])
+              if key not in seen:
+                  seen.add(key)
+                  rows.append(" → ".join(h["symbol"] for h in p["hops"])
+                              + f" (`{first['path']}:{first['line']}`)")
+          if rows:
+              lines += ["**Callers outside the diff**", ""] + [f"- {r}" for r in rows] + [""]
+
+          if report["tests"]:
+              lines += ["**Frozen test suite (same bytes, both revisions)**", ""]
+              lines += [f"- {t['revision']}: {t['status']} ({t['passed']} passed, "
+                        f"{t['failed']} failed, {t['errors']} errors)" for t in report["tests"]]
+              lines += [""]
+
+          if report["comparisons"]:
+              lines += ["**Probes (same bytes, both revisions)**", "",
+                        "| probe | outcome | base | head |", "|---|---|---|---|"]
+              for c in report["comparisons"]:
+                  b = c["base"]["output"] if c["base"]["exception"] is None else c["base"]["exception"]
+                  h = c["head"]["output"] if c["head"]["exception"] is None else c["head"]["exception"]
+                  lines.append(f"| `{c['probe']['id']}` | **{c['outcome']}** | `{json.dumps(b)}` | `{json.dumps(h)}` |")
+              lines += [""]
+
+          if report["needs_bob_action"]:
+              lines += ["**Needs Bob action** (impacted callers with no committed probe)", ""]
+              lines += [f"- `{r['path']}::{r['symbol']}`" for r in report["needs_bob_action"]]
+              lines += [""]
+
+          if report["limits"]:
+              lines += ["<details><summary>Limits</summary>", ""]
+              lines += [f"- {l}" for l in report["limits"]]
+              lines += ["", "</details>", ""]
+
+          pathlib.Path("comment.md").write_text("\n".join(lines))
+          PY
+
+      - name: Upload review artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: behavior-review-report
-          path: report.json
+          path: |
+            report.json
+            comment.md
           if-no-files-found: ignore
 
-      - name: Post or Update PR Comment
+      - name: Post or update the PR comment
         uses: actions/github-script@v7
         if: always()
         with:
           script: |
             const fs = require('fs');
-            let body = '';
-
-            if (fs.existsSync('report.md')) {
-              body = fs.readFileSync('report.md', 'utf8');
-            } else if (fs.existsSync('report.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('report.json', 'utf8'));
-                const rev = data.revisions || {};
-                const impact = data.impact || {};
-                const outside = (impact.paths || []).filter(p => p.outside_diff && !p.is_test);
-
-                const lines = [
-                  '## 🔍 Behavior Review Report',
-                  '',
-                  `**Revisions:** \`${(rev.base_sha || '').slice(0, 7)}\` (${rev.base_ref || 'base'}) → \`${(rev.head_sha || '').slice(0, 7)}\` (${rev.head_ref || 'head'})`,
-                  '',
-                  '### 📈 Impact Summary',
-                  `- **Changed Symbols:** ${(impact.changed_symbols || []).length}`,
-                  `- **Impact Paths:** ${(impact.paths || []).length}`,
-                  `- **Callers Outside Diff:** ${outside.length}`,
-                  `- **Unknowns:** ${(impact.unknowns || []).length}`,
-                  ''
-                ];
-
-                if (outside.length > 0) {
-                  lines.push('### ⚠️ Callers Outside Diff');
-                  lines.push('| Caller Symbol | File & Line | Rendered Path |');
-                  lines.push('|---|---|---|');
-                  for (const p of outside) {
-                    const h0 = p.hops && p.hops[0] ? p.hops[0] : {};
-                    const renderPath = (p.hops || []).map(h => h.symbol).join(' → ');
-                    lines.push(`| \`${h0.symbol || ''}\` | \`${h0.path || ''}:${h0.line || ''}\` | \`${renderPath}\` |`);
-                  }
-                  lines.push('');
-                } else {
-                  lines.push('✅ **No non-test callers outside the diff impacted.**\n');
-                }
-
-                const comparisons = data.comparisons || [];
-                if (comparisons.length > 0) {
-                  lines.push('### 🧪 Behavior Comparisons');
-                  lines.push('| Probe | Base Output | Head Output | Outcome |');
-                  lines.push('|---|---|---|---|');
-                  for (const c of comparisons) {
-                    const pId = (c.probe && c.probe.id) || 'unknown';
-                    const bOut = JSON.stringify(c.base && c.base.output);
-                    const hOut = JSON.stringify(c.head && c.head.output);
-                    const outcome = c.outcome || 'unknown';
-                    lines.push(`| \`${pId}\` | \`${bOut}\` | \`${hOut}\` | \`${outcome}\` |`);
-                  }
-                  lines.push('');
-                }
-
-                const decisions = data.decisions || [];
-                if (decisions.length > 0) {
-                  lines.push('### 📝 Recorded Decisions');
-                  lines.push('| Symbol | Intent | Rationale | Status |');
-                  lines.push('|---|---|---|---|');
-                  for (const d of decisions) {
-                    const sym = (d.target && d.target.symbol) || 'unknown';
-                    const intent = d.intent || 'unknown';
-                    const rat = d.rationale || '-';
-                    const st = d.status || 'proposed';
-                    lines.push(`| \`${sym}\` | \`${intent}\` | ${rat} | \`${st}\` |`);
-                  }
-                  lines.push('');
-                }
-
-                const limits = data.limits || [];
-                if (limits.length > 0) {
-                  lines.push('<details><summary>Operational Limits</summary>\n');
-                  for (const l of limits) {
-                    lines.push(`- ${l}`);
-                  }
-                  lines.push('\n</details>\n');
-                }
-
-                lines.push('---');
-                lines.push('*AI proposes, algorithms verify, humans decide.*');
-
-                body = lines.join('\n');
-                fs.writeFileSync('report.md', body, 'utf8');
-              } catch (e) {
-                body = `### Behavior Review\nError parsing report.json: ${e.message}`;
-              }
-            } else {
-              body = '### Behavior Review\nReview finished without JSON report.';
-            }
-
             const marker = '<!-- behavior-review-comment -->';
-            const fullBody = marker + '\n' + body;
-
+            let body;
+            if (fs.existsSync('comment.md')) {
+              body = fs.readFileSync('comment.md', 'utf8');
+            } else {
+              body = marker + '\n## Behavior review\n\nThe review step produced no report. '
+                + 'See the job log. This replaces any earlier review comment.';
+            }
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-
             const existing = comments.find(c => c.body.includes(marker));
-
             if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existing.id,
-                body: fullBody,
+                body,
               });
-              console.log(`Updated existing comment ${existing.id}`);
             } else {
-              const created = await github.rest.issues.createComment({
+              await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: fullBody,
+                body,
               });
-              console.log(`Created new comment ${created.data.id}`);
             }
