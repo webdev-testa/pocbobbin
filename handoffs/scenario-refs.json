@@ -1,0 +1,19 @@
+{
+  "why": "The scenario revisions ARE lane B's test fixture: they are the 'before' and 'after' code the app compares. The tests and app.cli resolve them by name, so deleting these branches breaks the suite. Read this before deleting them again.",
+  "branches": {
+    "base": "1cb1511c4eb3f3c1b955cb9b97c24033d8be15d0",
+    "scenario1-head": "13ffdbba777771c706ec46dfaa34ec9147fc451b",
+    "scenario2-head": "91993531872945007438c1b9f026717d9da6910f",
+    "scenario3-head": "665ca80110bebc6db7f1b75071d74316db0ea978",
+    "scenario4-head": "27132d8db9c65b09ab858f62d600094e7ea05de1"
+  },
+  "immutable_backup_tags": {
+    "base": "ref/base",
+    "scenario1-head": "ref/scenario1-head",
+    "scenario2-head": "ref/scenario2-head",
+    "scenario3-head": "ref/scenario3-head",
+    "scenario4-head": "ref/scenario4-head"
+  },
+  "recreate": "git push origin ref/scenario1-head:refs/heads/scenario1-head   # from the tag, for each name",
+  "run": ".venv/bin/python -m app.cli --repo . --base base --head scenario1-head --run"
+}
