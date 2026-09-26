@@ -1,4 +1,10 @@
-"""Lane B: paired execution. Owner: B."""
+"""Lane B: paired execution. Owner: B.
+
+The scenario revisions are resolved as `origin/...` remote-tracking refs, not bare
+local branch names. A fresh clone only creates a local branch for the default
+branch, so `git rev-parse base` fails there while `git rev-parse origin/base`
+works both in this repo and in any clone.
+"""
 
 import json
 from pathlib import Path
@@ -8,7 +14,14 @@ from app.schemas import Outcome, RunStatus
 from app.snapshot import open_pair
 
 REPO = Path(__file__).resolve().parents[1]
-BASE, HEAD = "base", "scenario1-head"
+BASE, HEAD = "origin/base", "origin/scenario1-head"
+S3, S4 = "origin/scenario3-head", "origin/scenario4-head"
+
+
+def test_scenario_revisions_are_reachable_from_this_repo():
+    """Guard: these tests are only meaningful if the scenario refs resolve."""
+    with open_pair(REPO, BASE, HEAD) as pair:
+        assert pair.revisions.changed_files == ["sample_project/pricing/discount.py"]
 
 
 def test_frozen_suite_runs_on_both_revisions_and_stays_green():
@@ -40,13 +53,13 @@ def test_green_tests_do_not_prevent_a_delta_observation():
 
 
 def test_refactor_shows_no_delta():
-    with open_pair(REPO, BASE, "scenario3-head") as pair:
+    with open_pair(REPO, BASE, S3) as pair:
         _, comparisons, _ = compare(pair)
     assert {c.outcome for c in comparisons} == {Outcome.SAME_ON_TESTED_CASES}
 
 
 def test_broken_setup_is_inconclusive_never_a_bug():
-    with open_pair(REPO, BASE, "scenario4-head") as pair:
+    with open_pair(REPO, BASE, S4) as pair:
         _, comparisons, _ = compare(pair)
     assert {c.outcome for c in comparisons} == {Outcome.INCONCLUSIVE}
     assert not any(c.outcome == Outcome.DELTA_OBSERVED for c in comparisons)
@@ -84,7 +97,7 @@ def test_impact_graph_traverses_into_added_helpers():
     from app.cli import _unique_entry_points
     from app.impact import analyze
 
-    with open_pair(REPO, BASE, "scenario3-head") as pair:
+    with open_pair(REPO, BASE, S3) as pair:
         impact = analyze(pair)
     outside = [p for p in impact.paths if p.outside_diff and not p.is_test]
     assert {p.render() for p in outside} == {
@@ -102,7 +115,7 @@ def test_impact_graph_traverses_into_added_helpers():
 def test_summary_counts_each_caller_site_once():
     from app.cli import _summary
 
-    report = pipeline(REPO, BASE, "scenario3-head")
+    report = pipeline(REPO, BASE, S3)
     summary = _summary(report)
     assert "1 non-test callers outside the diff" in summary
     assert "3 non-test callers outside the diff" not in summary
@@ -114,9 +127,9 @@ def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
 
     repo = tmp_path / "repo"
     subprocess.run(["git", "clone", "-q", "--no-local", str(REPO), str(repo)], check=True)
-    # bring over the scenario branches: a plain clone only carries the default branch
+    # a plain clone only carries the default branch, so fetch the scenario branch too
     subprocess.run(["git", "-C", str(repo), "fetch", "-q", str(REPO),
-                    "+refs/heads/*:refs/remotes/origin/*"], check=True)
+                    "+refs/heads/scenario1-head:refs/remotes/origin/scenario1-head"], check=True)
     subprocess.run(["git", "-C", str(repo), "checkout", "-q", "-B", "noprobe", "origin/base"], check=True)
     (repo / "probes" / "price_total_boundary.json").unlink()
     env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
