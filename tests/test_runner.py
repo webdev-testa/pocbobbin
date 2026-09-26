@@ -122,22 +122,27 @@ def test_summary_counts_each_caller_site_once():
 
 
 def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
-    """Dropping the caller's probe must surface it as needing Bob, not as safe."""
+    """Dropping the caller's probe must surface it as needing Bob, not as safe.
+
+    Builds a throwaway repo by fetching this repo's remote-tracking refs, so it
+    works the same in a developer checkout and in a fresh CI clone.
+    """
     import subprocess
 
     repo = tmp_path / "repo"
-    subprocess.run(["git", "clone", "-q", "--no-local", str(REPO), str(repo)], check=True)
-    # a plain clone only carries the default branch, so fetch the scenario branch too
-    subprocess.run(["git", "-C", str(repo), "fetch", "-q", str(REPO),
-                    "+refs/heads/scenario1-head:refs/remotes/origin/scenario1-head"], check=True)
-    subprocess.run(["git", "-C", str(repo), "checkout", "-q", "-B", "noprobe", "origin/base"], check=True)
-    (repo / "probes" / "price_total_boundary.json").unlink()
+    repo.mkdir()
     env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
            "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t",
            "PATH": "/usr/bin:/bin:/usr/local/bin", "HOME": str(tmp_path)}
-    subprocess.run(["git", "-C", str(repo), "commit", "-qam", "drop caller probe"], check=True, env=env)
+    run = lambda *args: subprocess.run(["git", "-C", str(repo), *args], check=True, env=env)
+    run("init", "-q")
+    run("fetch", "-q", str(REPO), "refs/remotes/origin/base:refs/heads/noprobe")
+    run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/head")
+    run("checkout", "-q", "noprobe")
+    (repo / "probes" / "price_total_boundary.json").unlink()
+    run("commit", "-qam", "drop caller probe")
 
-    with open_pair(repo, "noprobe", "origin/scenario1-head") as pair:
+    with open_pair(repo, "noprobe", "head") as pair:
         _, comparisons, missing = compare(pair)
     assert [c.probe.id for c in comparisons] == ["apply_discount_contract"]
     assert [m.key for m in missing] == ["sample_project/pricing/invoice.py::price_total"]
