@@ -70,7 +70,8 @@ def test_pipeline_populates_the_shared_report():
     report = pipeline(REPO, BASE, HEAD, run=True)
     assert report.fixture is False
     assert report.repo.endswith("pocbobbin")
-    assert len(report.tests) == 2 and len(report.comparisons) == 2
+    assert len(report.tests) == 2
+    assert len(report.comparisons) == len(sorted((REPO / "probes").glob("*.json")))
     assert all(c.probe.authored_by for c in report.comparisons)
     assert "not proof of equivalence" in " ".join(report.limits)
     assert not any("No tests or probes were executed" in limit for limit in report.limits)
@@ -154,6 +155,27 @@ def test_compare_survives_a_base_without_the_harness(tmp_path):
     assert any("tools/run_probe.py" in note for note in notes)
 
 
+def test_scenario2_policy_change_produces_a_delta():
+    """Scenario 2 (intended policy change) must yield real evidence.
+
+    The plan's P1.2 depends on it: the author needs a delta to attach an intended
+    rationale to, and a later change must be able to cite the approved record. With
+    only the arithmetic probes a 50% -> 30% cap change produced NO delta at all, so
+    the decision ledger had nothing to record. The policy-cap probe fails on one side
+    only, which is the honest shape for a policy change.
+    """
+    with open_pair(REPO, BASE, "origin/scenario2-head") as pair:
+        _, comparisons, _, _ = compare(pair)
+    by_id = {c.probe.id: c for c in comparisons}
+    cap = by_id["apply_discount_policy_cap"]
+    assert cap.outcome == Outcome.DELTA_OBSERVED
+    assert cap.base.status == RunStatus.OK and cap.base.output == 60.0
+    assert cap.head.status == RunStatus.EXCEPTION
+    assert "out of range" in (cap.head.exception or "")
+    # the arithmetic probes stay quiet: this change is about policy, not rounding
+    assert by_id["price_total_boundary"].outcome == Outcome.SAME_ON_TESTED_CASES
+
+
 def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
     """Dropping the caller's probe must surface it as needing Bob, not as safe.
 
@@ -177,5 +199,7 @@ def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
 
     with open_pair(repo, "noprobe", "head") as pair:
         _, comparisons, missing, _ = compare(pair)
-    assert [c.probe.id for c in comparisons] == ["apply_discount_contract"]
+    # the caller probe is gone; the other committed probes still run
+    assert [c.probe.id for c in comparisons] == [
+        "apply_discount_contract", "apply_discount_policy_cap"]
     assert [m.key for m in missing] == ["sample_project/pricing/invoice.py::price_total"]

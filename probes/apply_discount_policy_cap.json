@@ -1,0 +1,9 @@
+{
+  "id": "apply_discount_policy_cap",
+  "target": "sample_project.pricing.discount:apply_discount",
+  "args": [
+    100.0,
+    40.0
+  ],
+  "note": "Policy boundary: a 40% discount is legal under the old 50% cap and rejected under a tightened 30% cap. Probes a policy change rather than arithmetic, so the delta is an exception, not a value."
+}
