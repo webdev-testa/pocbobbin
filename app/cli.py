@@ -53,12 +53,19 @@ def _prior_decisions(pair: RevisionPair, impact: ImpactResult) -> list[Decision]
     ]
 
 
-def pipeline(repo: str | Path, base: str, head: str, max_hops: int = 2, run: bool = False) -> ReviewReport:
-    """Snapshot → impact → prior decisions → (with `run`) paired execution of the frozen suite and probes."""
+def pipeline(repo: str | Path, base: str, head: str, max_hops: int = 2, run: bool = False,
+             prior_report: str | Path | None = None) -> ReviewReport:
+    """Snapshot → impact → prior decisions → (with `run`) paired execution of the frozen suite and probes.
+
+    Pass `prior_report` (a path to an earlier report.json) to link a probe that showed a
+    delta and now reports no delta to that earlier delta, via `Comparison.reruns`.
+    """
     with open_pair(repo, base, head) as pair:
         impact = analyze(pair, max_hops)
         prior = _prior_decisions(pair, impact)
-        suites, comparisons, missing, notes = compare(pair, impact=impact) if run else ([], [], [], [])
+        suites, comparisons, missing, notes = (
+            compare(pair, impact=impact, prior_report=prior_report) if run else ([], [], [], [])
+        )
     return ReviewReport(
         repo=pair.repo,
         revisions=pair.revisions,
@@ -132,12 +139,20 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Also run the frozen test suite and committed probes on both revisions (paired execution).",
     )
+    parser.add_argument(
+        "--prior-report",
+        type=Path,
+        default=None,
+        help="An earlier report.json. A probe that showed a delta there and shows none now is "
+             "linked to that delta via Comparison.reruns (the plan's fix-and-rerun step).",
+    )
     args = parser.parse_args(argv)
     # Windows pipes default to the ANSI codepage, which can't encode the "→" in impact paths.
     sys.stdout.reconfigure(encoding="utf-8")
 
     try:
-        report = pipeline(args.repo, args.base, args.head, args.max_hops, run=args.run)
+        report = pipeline(args.repo, args.base, args.head, args.max_hops, run=args.run,
+                          prior_report=args.prior_report)
     except SnapshotError as exc:
         print(f"behavior-review: {exc}", file=sys.stderr)
         return 2

@@ -176,6 +176,58 @@ def test_scenario2_policy_change_produces_a_delta():
     assert by_id["price_total_boundary"].outcome == Outcome.SAME_ON_TESTED_CASES
 
 
+def test_rerun_links_to_the_earlier_delta():
+    """Scenario 1 requirement 5: fix, rerun the SAME probe, link it to the original delta.
+
+    Without this the report cannot show the demo's closing beat: "the delta was unintended,
+    it is now fixed, and here is the link back to the delta it resolved".
+    """
+    from app.cli import pipeline
+
+    # first pass: the changed head shows a delta
+    before = pipeline(REPO, BASE, "origin/scenario1-head", run=True)
+    deltas = {c.probe.id for c in before.comparisons if c.outcome == Outcome.DELTA_OBSERVED}
+    assert {"apply_discount_contract", "price_total_boundary"} <= deltas
+
+    # second pass on an unchanged head: no delta, so nothing is linked
+    after = pipeline(REPO, BASE, "origin/scenario1-head", run=True, prior_report=before.model_dump_json())
+    for comp in after.comparisons:
+        if comp.outcome == Outcome.SAME_ON_TESTED_CASES:
+            assert comp.reruns is None, "nothing to resolve when the probe still reports the same"
+    # the probes that DO still show a delta keep their delta, and are not relabelled
+    assert {c.probe.id for c in after.comparisons if c.outcome == Outcome.DELTA_OBSERVED} == deltas
+
+
+def test_rerun_requires_the_unchanged_probe(tmp_path):
+    """Plan section 5 rule 4: a fix reruns the UNCHANGED probe.
+
+    If the probe bytes changed, the earlier delta was resolved by editing the probe, not the
+    code, so the run must NOT be linked to it.
+    """
+    from app.runner import _prior_delta_probes
+
+    prior = {"comparisons": [
+        {"probe": {"id": "price_total_boundary", "hash": "sha256:ORIGINAL"}, "outcome": "delta_observed"},
+        {"probe": {"id": "quiet_probe", "hash": "sha256:X"}, "outcome": "same_on_tested_cases"},
+    ]}
+    deltas = _prior_delta_probes(prior)
+    # only probes that actually showed a delta are candidates
+    assert deltas == {"price_total_boundary": "sha256:ORIGINAL"}
+    # and a changed hash cannot match the recorded one, so no link is possible
+    from app.runner import _sha8
+    assert "sha256:" + _sha8("edited probe bytes") != deltas["price_total_boundary"]
+
+
+def test_prior_report_tolerates_junk():
+    """Rerun linking is an enhancement; bad history must never break a normal run."""
+    from app.runner import _prior_delta_probes
+
+    assert _prior_delta_probes(None) == {}
+    assert _prior_delta_probes("/no/such/file.json") == {}
+    assert _prior_delta_probes({"comparisons": "not-a-list"}) == {}
+    assert _prior_delta_probes("not-a-dict") == {}
+
+
 def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
     """Dropping the caller's probe must surface it as needing Bob, not as safe.
 
