@@ -28,10 +28,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Set up Node.js 20
+      # 22.6+ for `--experimental-strip-types`, which tools/run_probe.ts needs.
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Set up Go 1.22
         uses: actions/setup-go@v5
