@@ -1,0 +1,101 @@
+{
+  "schema_version": "0.1",
+  "fixture": true,
+  "generated_at": "2026-09-26T09:00:00Z",
+  "repo": "webdev-testa/pocbobbin",
+  "revisions": {
+    "base_ref": "main",
+    "head_ref": "scenario1-rounding",
+    "base_sha": "1111111111111111111111111111111111111111",
+    "head_sha": "2222222222222222222222222222222222222222",
+    "changed_files": ["sample_project/pricing/discount.py"]
+  },
+  "impact": {
+    "changed_symbols": [
+      {
+        "path": "sample_project/pricing/discount.py",
+        "symbol": "apply_discount",
+        "tags": ["body_changed"],
+        "base_line": 4,
+        "head_line": 4
+      }
+    ],
+    "edges": [
+      {
+        "caller": {"path": "sample_project/pricing/invoice.py", "symbol": "price_total"},
+        "callee": {"path": "sample_project/pricing/discount.py", "symbol": "apply_discount"},
+        "line": 5,
+        "revisions": ["base", "head"]
+      },
+      {
+        "caller": {"path": "sample_project/tests/test_discount.py", "symbol": "test_apply_discount"},
+        "callee": {"path": "sample_project/pricing/discount.py", "symbol": "apply_discount"},
+        "line": 5,
+        "revisions": ["base", "head"]
+      }
+    ],
+    "paths": [
+      {
+        "hops": [
+          {"path": "sample_project/pricing/invoice.py", "symbol": "price_total", "line": 5},
+          {"path": "sample_project/pricing/discount.py", "symbol": "apply_discount", "line": 4}
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {"path": "sample_project/tests/test_discount.py", "symbol": "test_apply_discount", "line": 5},
+          {"path": "sample_project/pricing/discount.py", "symbol": "apply_discount", "line": 4}
+        ],
+        "outside_diff": true,
+        "is_test": true
+      }
+    ],
+    "unknowns": [],
+    "max_hops": 2
+  },
+  "tests": [
+    {"revision": "base", "sha": "1111111111111111111111111111111111111111", "status": "ok", "passed": 3, "failed": 0, "errors": 0, "suite_hash": "sha256:aaaa"},
+    {"revision": "head", "sha": "2222222222222222222222222222222222222222", "status": "ok", "passed": 3, "failed": 0, "errors": 0, "suite_hash": "sha256:aaaa"}
+  ],
+  "comparisons": [
+    {
+      "probe": {
+        "id": "price_total_thirds",
+        "target": {"path": "sample_project/pricing/invoice.py", "symbol": "price_total"},
+        "input": {"prices": [33.333, 33.333, 33.334], "pct": 0},
+        "hash": "sha256:bbbb",
+        "authored_by": "bob"
+      },
+      "base": {"revision": "base", "sha": "1111111111111111111111111111111111111111", "status": "ok", "output": 100.0, "exception": null, "duration_ms": 41},
+      "head": {"revision": "head", "sha": "2222222222222222222222222222222222222222", "status": "ok", "output": 99.99, "exception": null, "duration_ms": 39},
+      "outcome": "delta_observed",
+      "ran_at": "2026-09-26T09:00:05Z",
+      "reruns": null
+    }
+  ],
+  "needs_bob_action": [],
+  "decisions": [
+    {
+      "id": "dec-0001",
+      "repo": "webdev-testa/pocbobbin",
+      "target": {"path": "sample_project/pricing/invoice.py", "symbol": "price_total"},
+      "base_sha": "1111111111111111111111111111111111111111",
+      "head_sha": "2222222222222222222222222222222222222222",
+      "probe_hash": "sha256:bbbb",
+      "before": 100.0,
+      "after": 99.99,
+      "intent": "unintended",
+      "rationale": null,
+      "requirement_ref": null,
+      "status": "proposed",
+      "supersedes": null
+    }
+  ],
+  "prior_decisions": [],
+  "limits": [
+    "Callers traced up to 2 hops; deeper callers are not shown.",
+    "Impact is static (AST): calls through variables, dynamic dispatch or class hierarchies may be missed. Unresolved references that could reach a changed symbol are listed as unknowns, not as safe."
+  ]
+}
