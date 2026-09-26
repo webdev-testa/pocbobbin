@@ -154,8 +154,23 @@ probe, the comment says so (`needs_bob_action`).
 
 ## Decision ledger
 
-Intended behavior changes are stored as JSON in `behavior_decisions/`, one file per decision
-(written by Bob, or by **Download decision** in the web viewer). A decision committed on a PR
+A repository keeps everything behavior-review needs in one folder:
+
+```
+.behavior-review/config.json   # replaces behavior.json
+.behavior-review/probes/       # replaces probes/
+.behavior-review/decisions/    # replaces behavior_decisions/
+```
+
+The root-level layout keeps working when the folder is absent (decisions are read from both, so
+history survives a move). Record a decision from a review's `report.json` with:
+
+```bash
+behavior-review decide --probe price_total_boundary --intent intended --rationale "Rounding to cents is the billing rule."
+```
+
+Intended behavior changes are stored as JSON in the decisions folder, one file per decision
+(written by `decide`, which the Bob mode uses, or by **Download decision** in the web viewer). A decision committed on a PR
 branch is listed in that PR's own report under `decisions` as proposed; it becomes approved when
 that PR is merged, since every review reads the ledger from its base revision. Every later review
 lists matching decisions (same file path and symbol) under `prior_decisions`, including superseded
