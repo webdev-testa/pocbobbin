@@ -42,6 +42,24 @@ def generate_decision_id(
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]
 
 
+def current_decision(
+    records: List[Decision],
+    path: str,
+    symbol: str,
+    *,
+    exclude: Optional[str] = None,
+) -> Optional[Decision]:
+    """The record for path + symbol that no other record supersedes: the one a new decision replaces.
+
+    Ids are content hashes, so ledger (file) order says nothing about age; only the `supersedes`
+    chain does. `exclude` drops a record being rewritten under the same id, so its predecessor is
+    current again. A ledger with several unreplaced records falls back to the last by id.
+    """
+    same = [d for d in records if d.target.path == path and d.target.symbol == symbol and d.id != exclude]
+    replaced = {d.supersedes for d in same if d.supersedes}
+    return max((d for d in same if d.id not in replaced), key=lambda d: d.id, default=None)
+
+
 def validate_and_save(
     delta: Union[Dict[str, Any], Any],
     disposition: Union[str, Intent],
@@ -159,19 +177,12 @@ def validate_and_save(
     if not path:
         raise ValueError("Cannot record decision without an affected file path.")
 
-    # Check for automatic supersedes if not explicitly provided
+    decision_id = generate_decision_id(repo, symbol, base_sha, head_sha, probe_hash)
     auto_supersedes = supersedes
     if auto_supersedes is None:
-        prior_decisions = load_all_decisions(ledger_dir)
-        matching = [
-            d for d in prior_decisions
-            if d.target.symbol == symbol and d.target.path == path
-        ]
-        if matching:
-            # Most recent decision ID
-            auto_supersedes = matching[-1].id
+        current = current_decision(load_all_decisions(ledger_dir), path, symbol, exclude=decision_id)
+        auto_supersedes = current.id if current else None
 
-    decision_id = generate_decision_id(repo, symbol, base_sha, head_sha, probe_hash)
     target = SymbolRef(path=path, symbol=symbol)
 
     decision = Decision(

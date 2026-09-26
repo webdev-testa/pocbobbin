@@ -8,6 +8,7 @@ from pathlib import Path
 
 from app.decisions import (
     approve_decision,
+    current_decision,
     generate_decision_id,
     load_all_decisions,
     load_decision_from_file,
@@ -173,6 +174,45 @@ class TestDecisionsModule(unittest.TestCase):
         )
 
         self.assertEqual(dec2.supersedes, dec1.id)
+
+    def _ledger_record(self, id_, supersedes=None, symbol="apply_discount"):
+        record = Decision(
+            id=id_, repo="acme/repo", target=SymbolRef(path="pricing/discount.py", symbol=symbol),
+            base_sha="b", head_sha="h", probe_hash="p", before=1, after=2, intent=Intent.INTENDED,
+            rationale="an earlier policy change", status=DecisionStatus.APPROVED, supersedes=supersedes,
+        )
+        (self.repo_root / "behavior_decisions" / f"{id_}.json").write_text(record.model_dump_json(indent=2), encoding="utf-8")
+        return record
+
+    def test_current_decision_follows_the_supersedes_chain_not_the_file_order(self):
+        # Written oldest first, but the newest id sorts first: file order says nothing about age.
+        oldest = self._ledger_record("ffff00000000")
+        newest = self._ledger_record("000000000000", supersedes=oldest.id)
+        other = self._ledger_record("888800000000", symbol="price_total")
+
+        records = load_all_decisions(self.repo_root / "behavior_decisions")
+        self.assertEqual(current_decision(records, "pricing/discount.py", "apply_discount"), newest)
+        self.assertEqual(current_decision(records, "pricing/discount.py", "apply_discount", exclude=newest.id), oldest)
+        self.assertEqual(current_decision(records, "pricing/discount.py", "price_total"), other)
+        self.assertIsNone(current_decision(records, "pricing/invoice.py", "apply_discount"))
+
+    def test_third_decision_supersedes_the_current_one(self):
+        oldest = self._ledger_record("ffff00000000")
+        newest = self._ledger_record("000000000000", supersedes=oldest.id)
+
+        third = validate_and_save(
+            delta={"symbol": "apply_discount", "path": "pricing/discount.py", "probe_hash": "p3", "before": 2, "after": 3},
+            disposition="intended",
+            rationale="A third policy change on the same function",
+            repo_root=self.repo_root,
+            repo="acme/repo",
+            base_sha="sha_C",
+            head_sha="sha_D",
+        )
+
+        self.assertEqual(third.supersedes, newest.id)
+        records = load_all_decisions(self.repo_root / "behavior_decisions")
+        self.assertEqual(current_decision(records, "pricing/discount.py", "apply_discount"), third)
 
     def test_approve_decision(self):
         delta = {
