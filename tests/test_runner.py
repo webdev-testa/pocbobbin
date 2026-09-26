@@ -191,13 +191,13 @@ def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
            "PATH": "/usr/bin:/bin:/usr/local/bin", "HOME": str(tmp_path)}
     run = lambda *args: subprocess.run(["git", "-C", str(repo), *args], check=True, env=env)
     run("init", "-q")
-    run("fetch", "-q", str(REPO), "refs/remotes/origin/base:refs/heads/noprobe")
-    run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/scenario1-head")
+    run("fetch", "-q", str(REPO), "refs/tags/ref/base:refs/heads/noprobe")
+    run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/head")
     run("checkout", "-q", "noprobe")
     (repo / "probes" / "price_total_boundary.json").unlink()
     run("commit", "-qam", "drop caller probe")
 
-    with open_pair(repo, "noprobe", "scenario1-head") as pair:
+    with open_pair(repo, "noprobe", "head") as pair:
         _, comparisons, missing, _ = compare(pair)
     # the caller probe is gone; the other committed probes still run
     assert [c.probe.id for c in comparisons] == [
