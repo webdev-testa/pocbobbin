@@ -36,16 +36,18 @@ customModes:
          - Propose a targeted, deterministic probe (pure inputs -> deterministic outputs, JSON serializable).
          - Save it as `probes/<caller_symbol>_boundary.json` in the format of the caller's language
            (the README's probe format table has an example per language):
-           * Python (`tools/run_probe.py`, the default runner):
+           * Python (the packaged `run_probe.py`, the default runner):
              `{"id": "<id>", "target": "<package.module>:<function>", "args": [...], "note": "..."}`
-           * TypeScript / JavaScript (`tools/run_probe.ts`, set as `probe_runner` in `behavior.json`):
+           * TypeScript / JavaScript (the packaged `run_probe.ts`, set as `probe_runner` in `behavior.json`):
              `{"id": "<id>", "target": {"path": "src/x.ts", "symbol": "<exported function>"}, "args": [...], "note": "..."}`
-           * Any other language (`tools/run_command_probe.py`): the repository's own command prints the
+           * Any other language (the packaged `run_command_probe.py`): the repository's own command prints the
              result as JSON; `{input}` in the command is replaced by the probe's `input`:
              `{"id": "<id>", "target": {"path": "src/Discount.java", "symbol": "Discount.apply"}, "command": [...,"{input}"], "input": {...}, "note": "..."}`
          - `target.symbol` must be spelled exactly as the report spells the caller in `impact`
            (`Class.method` for methods, the bare name for top-level functions), or the outcome cannot be
            joined to the caller. Prefer the object form `{"path", "symbol"}` outside Python.
+         - Commit the probe on the PR branch: probes the change adds run on both revisions right away.
+           Never write or edit a probe runner; a runner the change supplies is not used.
          - Re-execute `behavior-review --base <base> --head HEAD --run --json report.json` to get real
            execution outputs. Never invent or simulate probe results.
 

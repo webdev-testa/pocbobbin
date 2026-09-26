@@ -229,7 +229,17 @@ installed by the reviewed repository.
 
 ### Probe formats
 
-A probe is one JSON file in `probes/`; the same bytes run on both revisions. Its `target` joins
+A probe is one JSON file in `probes/`; the same bytes run on both revisions. The base revision's
+probes run, plus any the change adds, so a probe written on the PR branch covers its caller before
+the merge; a probe the change *edits* runs with its base bytes, and the report says so.
+
+The runners ship with the tool (`app/harness/`); a repository doesn't need to copy them. A
+`probe_runner` path names the runner: a copy committed at that path on the base revision overrides
+the packaged one, but a copy only the change has is never used (the runner decides what "same"
+means, so a change can't supply its own). The Python runner imports from the checkout root and
+from `src/` if present, and uses only the standard library. The report names the runner that ran.
+
+Its `target` joins
 the outcome to a node in the impact graph by `(path, symbol)`, so the symbol must be spelled the way
 the report spells it in `impact`: `Class.method` for a method, the bare name for a top-level
 function. Outside Python, use the object form `{"path", "symbol"}`: the `"module:symbol"` string
@@ -237,9 +247,9 @@ form guesses the file extension from the first configured one.
 
 | Language | Runner (`probe_runner`) | Probe |
 |---|---|---|
-| Python | `tools/run_probe.py` (default) | `{"id": "price_total_boundary", "target": "sample_project.pricing.invoice:price_total", "args": [[...], 5.0]}` |
-| TypeScript, JavaScript | `["npx", "tsx", "tools/run_probe.ts"]` | `{"id": "price_total", "target": {"path": "src/invoice.ts", "symbol": "priceTotal"}, "args": [[...], 5]}` (an exported function) |
-| Java, C#, Go and the rest | `tools/run_command_probe.py` | `{"id": "apply", "target": {"path": "src/Discount.java", "symbol": "Discount.apply"}, "command": ["java", "-cp", "build", "ProbeMain", "{input}"], "input": {"args": [105.26, 5.0]}}` |
+| Python | `run_probe.py` (default) | `{"id": "price_total_boundary", "target": "sample_project.pricing.invoice:price_total", "args": [[...], 5.0]}` |
+| TypeScript, JavaScript | `run_probe.ts`, e.g. `["npx", "tsx", "tools/run_probe.ts"]` | `{"id": "price_total", "target": {"path": "src/invoice.ts", "symbol": "priceTotal"}, "args": [[...], 5]}` (an exported function) |
+| Java, C#, Go and the rest | `run_command_probe.py` | `{"id": "apply", "target": {"path": "src/Discount.java", "symbol": "Discount.apply"}, "command": ["java", "-cp", "build", "ProbeMain", "{input}"], "input": {"args": [105.26, 5.0]}}` |
 
 The command form runs your own entry point with the probe's `input` as JSON in place of `{input}`
 and expects the result as JSON on stdout; no shell is involved. A probe whose code can't be loaded

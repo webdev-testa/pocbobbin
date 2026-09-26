@@ -70,6 +70,8 @@ Notes:
 
 ## 5. F-C — Probe runners shipped in the package (teammate's fix, hardened)
 
+**Status: done**, runners in `app/harness/` (inside the wheel), tests in `tests/test_probe_sources.py`. Two parts left for F-B, which changes the same return path anyway: the runner is named in `limits` ("probes ran with the packaged 'run_probe.py' (sha256:…)") rather than a structured `analysis.runtime.probe_runner`, and the optional `python_path` config is not added (the checkout root and `src/` cover the layouts seen so far).
+
 ### 5.1 The teammate's report (agreed)
 
 `runner.py` searches the reviewed repo for `tools/run_probe.py` and never uses a bundled runner. Proposed: add a packaged generic Python runner and use it when the repo has none; keep custom runners for other languages; add a regression test (Python repo, `probes/multiply_negative.json`, no `tools/run_probe.py`, base `-6`, head `6` → `delta_observed`). Their local run: `probe line_total_boundary: delta_observed -6 -> 6`. Focused tests passed; full suite not yet run; nothing pushed.

@@ -31,7 +31,7 @@ A real report looks like `contracts/report_scenario1.json` (generated from a `--
 
 - A: `app/schemas.py`, `app/snapshot.py`, `app/impact.py`, `app/impact_treesitter.py`, `app/adapters/`,
   `app/config.py`, `app/cli.py`, `pyproject.toml`, `contracts/`
-- B: `app/runner.py`, `probes/`, `sample_project/`, `tools/`, scenario branches (`handoffs/scenario-refs.json`)
+- B: `app/runner.py`, `app/harness/` (the probe runners), `probes/`, `sample_project/`, scenario branches (`handoffs/scenario-refs.json`)
 - C: `app/report.py`, `web/` (except E's map files)
 - D: `app/decisions.py`, `behavior_decisions/`, `.bob/`, `.github/workflows/`
 - E: `app/repo_map.py`, `web/src/components/EvidenceMap.tsx`, `RepoMap.tsx`, `web/src/lib/evidence-map.ts`,
