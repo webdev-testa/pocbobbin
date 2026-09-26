@@ -30,10 +30,10 @@ One command runs the whole engine, impact plus paired execution. In a fresh clon
 scenario branches exist only as remote-tracking refs, so pass `origin/<name>`:
 
 ```bash
-python -m app.cli --repo . --base origin/base --head origin/scenario1-head --run
+python -m app.cli --repo . --base ref/base --head origin/scenario1-head --run
 ```
 
-In this checkout, where the branches also exist locally, `--base base --head scenario1-head`
+In this checkout, where the branches also exist locally, `--base ref/base --head scenario1-head`
 works the same.
 
 `app/runner.py` implements A's contract `compare(pair, bundle) -> (tests, comparisons,

@@ -15,5 +15,11 @@
     "scenario4-head": "ref/scenario4-head"
   },
   "recreate": "git push origin ref/scenario1-head:refs/heads/scenario1-head   # from the tag, for each name",
-  "run": ".venv/bin/python -m app.cli --repo . --base base --head scenario1-head --run"
+  "run": ".venv/bin/python -m app.cli --repo . --base ref/base --head scenario1-head --run",
+  "anchor": {
+    "base_revision": "ref/base (tag, sha 1cb1511c)",
+    "why_a_tag_not_a_branch": "base is a FROZEN snapshot. Anchoring the scenarios on a moving branch (main) would make their diffs start showing reversions of later work, so the 'diff = one file' property would decay. The tag is immutable and keeps that property forever.",
+    "run": "python -m app.cli --repo . --base ref/base --head origin/scenario1-head --run",
+    "note": "scenario1-head..scenario4-head still exist as branches because they are the 'after' revisions the demo compares. The 'before' revision is now the tag."
+  }
 }

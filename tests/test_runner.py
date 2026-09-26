@@ -15,7 +15,7 @@ from app.schemas import Outcome, RunStatus
 from app.snapshot import open_pair
 
 REPO = Path(__file__).resolve().parents[1]
-BASE, HEAD = "origin/base", "origin/scenario1-head"
+BASE, HEAD = "ref/base", "origin/scenario1-head"
 S3, S4 = "origin/scenario3-head", "origin/scenario4-head"
 
 
@@ -139,7 +139,7 @@ def test_compare_survives_a_base_without_the_harness(tmp_path):
     run = lambda *args: subprocess.run(["git", "-C", str(repo), *args], check=True, env=env)
     run("init", "-q")
     # base: the package, with the tests and the demo caller, but no tools/ and no probes/
-    run("fetch", "-q", str(REPO), "refs/remotes/origin/base:refs/heads/base")
+    run("fetch", "-q", str(REPO), "refs/tags/ref/base:refs/heads/base")
     run("checkout", "-q", "base")
     run("rm", "-r", "-q", "tools", "probes")
     run("commit", "-qm", "base without the harness")
