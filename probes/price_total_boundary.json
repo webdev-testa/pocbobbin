@@ -1,0 +1,12 @@
+{
+  "id": "price_total_boundary",
+  "target": "sample_project.pricing.invoice:price_total",
+  "args": [
+    [
+      {"description": "widget", "unit_price": 39.46, "qty": 2},
+      {"description": "gizmo", "unit_price": 8.78, "qty": 3}
+    ],
+    5.0
+  ],
+  "note": "Probe for the caller that is NOT in the diff. Subtotal 105.26 at 5% off is exactly 99.997, so the location of the rounding decides the answer."
+}
