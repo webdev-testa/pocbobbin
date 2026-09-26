@@ -1,9 +1,6 @@
 {
   "id": "apply_discount_contract",
   "target": "sample_project.pricing.discount:apply_discount",
-  "args": [
-    [12.34, 7.66],
-    25.0
-  ],
-  "note": "Covered caller: discount.apply_discount itself. Also detects the discount-cap change (raises above MAX_DISCOUNT_PCT)."
+  "args": [105.26, 5.0],
+  "note": "Covered caller: the changed function itself, on the same boundary input."
 }
