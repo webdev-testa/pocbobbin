@@ -5,26 +5,37 @@ Repo: `~/projects/pocbobbin` on wipiii-server. Every number below is real comman
 
 ## Open PR
 
+Pushed and verified:
+
 ```bash
 cd ~/projects/pocbobbin
 export GIT_SSH_COMMAND='ssh -i /home/wipiii/.ssh/id_ed25519 -o IdentitiesOnly=yes'
-# into the shared repo (needs collaborator rights, currently denied):
 git push git@github.com:webdev-testa/pocbobbin.git feat/execution-engine:feat/execution-engine
-# or your own fork first (works now):
-git push git@github.com:Khaw100/pocbobbin.git feat/execution-engine:feat/execution-engine
+git push git@github.com:webdev-testa/pocbobbin.git base:base scenario1-head:scenario1-head scenario3-head:scenario3-head scenario4-head:scenario4-head
 ```
 
-Verified: the server's SSH key authenticates to GitHub as **Khaw100**. Pushing to
-`webdev-testa/pocbobbin` returns `ERROR: Permission to webdev-testa/pocbobbin.git
-denied to Khaw100`: Wipiii is not a collaborator there, and no fork exists yet.
+Branch `feat/execution-engine` at `7240d4d`; scenario branches `base` `60d933a2`,
+`scenario1-head` `7b686d8c`, `scenario3-head` `f5054caf`, `scenario4-head` `f7a09999`.
+
+**The scenario branches must be public**, otherwise the PR is not runnable: the tests and
+the CLI resolve them as `origin/base`, `origin/scenario1-head` and so on. Verified on a fresh
+clone of the pushed branch: 27 passed, and the scenario 1 delta reproduces.
+
+Opening the PR needs a GitHub session (not available to the agent). One click:
+`https://github.com/webdev-testa/pocbobbin/compare/main...feat/execution-engine?expand=1`
+The prepared body is in `handoffs/pr-lane-b.md`.
 
 ## What works
 
-One command runs the whole engine, impact plus paired execution:
+One command runs the whole engine, impact plus paired execution. In a fresh clone the
+scenario branches exist only as remote-tracking refs, so pass `origin/<name>`:
 
 ```bash
-.venv/bin/python -m app.cli --repo . --base base --head scenario1-head --run
+python -m app.cli --repo . --base origin/base --head origin/scenario1-head --run
 ```
+
+In this checkout, where the branches also exist locally, `--base base --head scenario1-head`
+works the same.
 
 `app/runner.py` implements A's contract `compare(pair, bundle) -> (tests, comparisons,
 needs_bob_action)` plus `pipeline()`, so the CLI emits one `ReviewReport` with impact
@@ -58,7 +69,9 @@ returns a different number for the same input. The impact graph names that calle
 `sample_project/pricing/invoice.py::price_total` and adds the limit "1 impacted non-test
 caller(s) outside the diff have no committed probe".
 
-Tests: **26 passed** (A's 15 plus 9 from `tests/test_runner.py`).
+Tests: **27 passed** (A's 15 plus 12 from `tests/test_runner.py`), verified on a fresh clone
+of the pushed branch, not only in this checkout. Every scenario revision is resolved as
+`origin/<name>` so the suite runs anywhere.
 
 SHAs: base `60d933a2`; s1 head `7b686d8c`; s3 head `f5054caf`; s4 head `f7a09999`.
 Each scenario-head diff is exactly one file.
