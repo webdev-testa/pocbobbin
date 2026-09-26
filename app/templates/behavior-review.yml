@@ -1,0 +1,120 @@
+# Written by `behavior-review init`. Reviews every pull request: impact, the frozen test suite and
+# probes run on both revisions, and one PR comment with the evidence (https://github.com/webdev-testa/pocbobbin).
+name: Behavior Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  behavior-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 22.6+ for `--experimental-strip-types`, which the TypeScript probe runner needs.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Pinned to the commit `init` ran from, so a later change to the tool can't change reviews.
+      - name: Install behavior-review
+        run: python -m pip install "git+https://github.com/webdev-testa/pocbobbin@__BEHAVIOR_REVIEW_REF__"
+
+      # The project's own dependencies, so its tests and probes can import it. Edit to match your setup.
+      - name: Install the project
+        run: |
+          python -m pip install pytest
+          if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+          if [ -f pyproject.toml ] && grep -q '^\[project\]' pyproject.toml; then python -m pip install -e .; fi
+          if [ -f package-lock.json ]; then npm ci; fi
+
+      - name: Run Behavior Review
+        run: |
+          behavior-review \
+            --base "origin/${{ github.base_ref }}" \
+            --head HEAD \
+            --run \
+            --python "$(command -v python)" \
+            --link "action_run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --json report.json \
+            --markdown report.md
+
+      - name: Build Repo Map
+        run: behavior-review map --ref HEAD --out repo_map.json
+
+      - name: Upload Review Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: behavior-review-report
+          path: |
+            report.json
+            report.md
+            repo_map.json
+          if-no-files-found: ignore
+
+      - name: Post or Update PR Comment
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const fs = require('fs');
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            // GitHub rejects comments over 65,536 characters; a large diff can render more than that.
+            const LIMIT = 60000;
+
+            let body;
+            if (fs.existsSync('report.md')) {
+              body = fs.readFileSync('report.md', 'utf8');
+              if (body.length > LIMIT) {
+                body = body.slice(0, body.lastIndexOf('\n', LIMIT));
+                if ((body.match(/^```/gm) || []).length % 2) body += '\n```';
+                body +=
+                  `\n\n> **Truncated.** The full report is \`report.md\` in the \`behavior-review-report\` artifact of [this run](${runUrl}).\n`;
+              }
+            } else {
+              body = `## Behavior Review\n\nThe review did not produce a report, so this comment carries no evidence. See the [run log](${runUrl}).\n`;
+            }
+
+            const marker = '<!-- behavior-review-comment -->';
+            const fullBody = marker + '\n' + body;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: fullBody,
+              });
+              console.log(`Updated existing comment ${existing.id}`);
+            } else {
+              const created = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: fullBody,
+              });
+              console.log(`Created new comment ${created.data.id}`);
+            }

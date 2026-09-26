@@ -10,7 +10,7 @@ from __future__ import annotations
 import fnmatch
 from pathlib import PurePosixPath
 
-from app.config import BehaviorConfig
+from app.config import DECISION_DIRS, PROBE_DIRS, BehaviorConfig
 from app.schemas import ImpactResult, Triage
 
 DOC_PATTERNS = ("*.md", "*.rst", "*.txt", "*.adoc", "LICENSE*", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.svg", "*.webp", "*.ico")
@@ -24,7 +24,10 @@ CONFIG_PATTERNS = (
     "Gemfile", "Gemfile.lock", "composer.json", "composer.lock", "Dockerfile*", "docker-compose*.yml",
     "behavior.json",
 )
-CONFIG_FOLDERS = (".github/workflows/", ".behavior-review/")
+CONFIG_FOLDERS = (".github/workflows/",)
+CONFIG_FILES = (".behavior-review/config.json",)
+# Probes and decisions are review data: a PR adding a probe must still run it, so they count like tests.
+REVIEW_DATA = tuple(f"{folder}/" for folder in (*PROBE_DIRS, *DECISION_DIRS))
 
 DOCS_ONLY_SKIPS = ["tests", "probes"]
 
@@ -42,8 +45,10 @@ def _is_test(path: str, config: BehaviorConfig) -> bool:
 
 def _kind(path: str, config: BehaviorConfig) -> str:
     """'config', 'docs', 'tests', 'code' (an adapter parses it) or 'other' (none does: treated as code)."""
-    if _matches(path, CONFIG_PATTERNS, CONFIG_FOLDERS):
+    if path in CONFIG_FILES or _matches(path, CONFIG_PATTERNS, CONFIG_FOLDERS):
         return "config"
+    if path.startswith(REVIEW_DATA):
+        return "tests"
     if _matches(path, DOC_PATTERNS, DOC_FOLDERS):
         return "docs"
     if _is_test(path, config):

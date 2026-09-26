@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Callable, NamedTuple
 
 from app.adapters.registry import TIER_LIMITS, get_adapter
-from app.config import BehaviorConfig, ConfigError, load_revision_config
+from app.config import BehaviorConfig, ConfigError, load_config, load_revision_config
 from app.decisions import decide_from_report, load_branch_decisions_via_git, lookup
 from app.interpreter import FALLBACK_LIMIT, display_path, python_version, resolve_python
 from app.impact import analyze
@@ -31,7 +31,8 @@ from app.schemas import (
     SymbolRef,
     Triage,
 )
-from app.snapshot import SnapshotError, open_pair, repo_root
+from app.onboarding import WORKFLOW, Setup, detect, doctor, init_repo
+from app.snapshot import SnapshotError, default_base, git, open_pair, repo_root, repo_slug
 from app.triage import triage
 
 
@@ -339,6 +340,123 @@ def decide_main(argv: list[str]) -> int:
     return 0
 
 
+def _interactive(yes: bool) -> bool:
+    """Prompts only for a person at a terminal; `--yes`, CI and scripts take every default."""
+    return not yes and sys.stdin.isatty()
+
+
+def _ask(question: str, default: str, interactive: bool) -> str:
+    return (input(f"? {question} [{default}]: ").strip() or default) if interactive else default
+
+
+def _confirm(question: str, default: bool, interactive: bool) -> bool:
+    if not interactive:
+        return default
+    answer = input(f"? {question} [{'Y/n' if default else 'y/N'}]: ").strip().lower()
+    return answer.startswith("y") if answer else default
+
+
+def _init_setup(args: argparse.Namespace, root: Path, interactive: bool) -> Setup:
+    """Detected defaults, confirmed or changed by the flags and prompts ('none' clears an answer)."""
+    setup = detect(root)
+    none = lambda answer: None if answer == "none" else answer
+    setup.base_branch = args.base_branch or _ask("Default base branch", setup.base_branch, interactive)
+    tests = "." if setup.tests_dir == "" else setup.tests_dir or "none"
+    setup.tests_dir = none(args.tests or _ask("Test folder", tests, interactive))
+    setup.python = none(args.python or _ask("Python for the project's tests (none = find .venv/ each run)", setup.python or "none", interactive))
+    setup.action = not args.no_action and _confirm(f"Add the GitHub Action ({WORKFLOW})?", True, interactive)
+    setup.bob = not args.no_bob and _confirm("Add the Bob mode (/behavior-review)?", True, interactive)
+    return setup
+
+
+def init_main(argv: list[str]) -> int:
+    """Set this repository up: .behavior-review/ (config, probes, decisions), and optionally a GitHub Action and the Bob mode."""
+    parser = argparse.ArgumentParser(prog="behavior-review init", description=init_main.__doc__)
+    parser.add_argument("--repo", default=".", help="Path inside the git repository (default: .)")
+    parser.add_argument("--yes", action="store_true", help="Take every detected default without asking")
+    parser.add_argument("--base-branch", help="The branch reviews compare against")
+    parser.add_argument("--tests", help="The test folder, or 'none'")
+    parser.add_argument("--python", help="The project's interpreter, repository-relative, or 'none' to detect it each run")
+    parser.add_argument("--no-action", action="store_true", help=f"Don't write {WORKFLOW}")
+    parser.add_argument("--no-bob", action="store_true", help="Don't add the Bob mode")
+    args = parser.parse_args(argv)
+    try:
+        root = repo_root(args.repo)
+        print(f"Repository: {repo_slug(root)}, on {git(root, 'rev-parse', '--abbrev-ref', 'HEAD')}")
+        written = init_repo(root, _init_setup(args, root, _interactive(args.yes)))
+    except (SnapshotError, ConfigError) as exc:
+        print(f"behavior-review init: {exc}", file=sys.stderr)
+        return 2
+    print("\n".join(f"  {line}" for line in written))
+    print("Next: commit .behavior-review/ (and the Action), then `behavior-review run` or `behavior-review ui`.")
+    print("No probes yet? In Bob IDE, /behavior-review writes them for the callers a review lists.")
+    return 0
+
+
+def _uncommitted(root: Path) -> bool:
+    return bool(git(root, "status", "--porcelain", "--untracked-files=no"))
+
+
+def run_main(argv: list[str]) -> int:
+    """Review your branch against its base, running the project's tests and probes; kept in the history `ui` shows."""
+    parser = argparse.ArgumentParser(prog="behavior-review run", description=run_main.__doc__)
+    parser.add_argument("--repo", default=".", help="Path inside the git repository (default: .)")
+    parser.add_argument("--base", help="Base revision (default: asked; the config's base_branch, else the remote's default)")
+    parser.add_argument("--head", default="HEAD", help="Head revision (default: HEAD)")
+    parser.add_argument("--full", action="store_true", help="Run every step even for a docs-only change")
+    parser.add_argument("--yes", action="store_true", help="Don't ask; take the defaults")
+    parser.add_argument("--open", action="store_true", help="Open the review in `behavior-review ui` afterwards")
+    parser.add_argument("--port", type=int, default=8765, help="Port for --open (default: 8765)")
+    args = parser.parse_args(argv)
+    try:
+        root = repo_root(args.repo)
+        interactive = _interactive(args.yes)
+        branch = git(root, "rev-parse", "--abbrev-ref", "HEAD")
+        base = args.base or _ask(f"Compare {branch} with", default_base(root, load_config(root).base_branch), interactive)
+        if _uncommitted(root) and not _confirm("Uncommitted changes are not reviewed (the last commit is). Continue?", True, interactive):
+            return 1
+    except (SnapshotError, ConfigError) as exc:
+        print(f"behavior-review run: {exc}", file=sys.stderr)
+        return 2
+    return _run_review(root, base, args)
+
+
+def _run_review(root: Path, base: str, args: argparse.Namespace) -> int:
+    from app.runs import RunStore, review_to_folder
+
+    store = RunStore(root, review_to_folder)
+    run_id = store.run_now(base, args.head, args.full, echo=lambda step, detail: print(f"  {step}: {detail}", flush=True))
+    meta = store.meta(run_id)
+    if meta["status"] == "failed":
+        print(f"behavior-review run: {meta['error']}", file=sys.stderr)
+        return 2
+    report_path = store.file(run_id, "report")
+    print(_summary(ReviewReport.model_validate_json(report_path.read_text(encoding="utf-8"))))
+    print(f"Saved in {report_path.parent.relative_to(root).as_posix()}/ (report.json, report.md, repo_map.json).")
+    if args.open:
+        from app.server import serve
+
+        return serve(root, args.port, True, run_id)
+    print("See it in the browser: behavior-review ui")
+    return 0
+
+
+def doctor_main(argv: list[str]) -> int:
+    """Check this repository's setup, one line each; exits 1 when something blocks a review."""
+    parser = argparse.ArgumentParser(prog="behavior-review doctor", description=doctor_main.__doc__)
+    parser.add_argument("--repo", default=".", help="Path inside the git repository (default: .)")
+    args = parser.parse_args(argv)
+    try:
+        root = repo_root(args.repo)
+    except SnapshotError:
+        print("✖ not a git repository")
+        return 1
+    checks = doctor(root)
+    marks = {"ok": "✔", "warn": "!", "fail": "✖"}
+    print("\n".join(f"{marks[check.status]} {check.text}" for check in checks))
+    return 1 if any(check.status == "fail" for check in checks) else 0
+
+
 def ui_main(argv: list[str]) -> int:
     """Open the viewer on localhost, wired to this repository: run reviews, browse them, save decisions."""
     parser = argparse.ArgumentParser(prog="behavior-review ui", description=ui_main.__doc__)
@@ -384,8 +502,9 @@ def main(argv: list[str] | None = None) -> int:
         return map_main(argv[1:])
     if argv[:1] == ["decide"]:
         return decide_main(argv[1:])
-    if argv[:1] == ["ui"]:
-        return ui_main(argv[1:])
+    subcommands = {"ui": ui_main, "init": init_main, "run": run_main, "doctor": doctor_main}
+    if argv[:1] and argv[0] in subcommands:
+        return subcommands[argv[0]](argv[1:])
     args = _parser().parse_args(argv)
 
     try:

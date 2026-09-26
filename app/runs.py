@@ -25,6 +25,24 @@ Review = Callable[[Path, str, str, bool, Path, Callable[[str, str], None]], dict
 """`review(root, base, head, full, folder, emit)` writes the run's files and returns meta to add."""
 
 
+def review_to_folder(root: Path, base: str, head: str, full: bool, folder: Path, emit) -> dict:
+    """One review, the same as `behavior-review --run`, written into a run folder with its repo map."""
+    from app.cli import pipeline  # the CLI imports this module
+    from app.repo_map import build as build_repo_map
+    from app.report import render_markdown
+    from app.snapshot import open_pair
+
+    report = pipeline(root, base, head, run=True, full=full, on_progress=emit)
+    (folder / "report.json").write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    (folder / "report.md").write_text(render_markdown(report), encoding="utf-8")
+    emit("repo map", f"mapping {head}")
+    with open_pair(root, head, head) as pair:
+        repo_map = build_repo_map(Path(pair.head_path), Path(pair.root), pair.repo, pair.revisions.head_sha)
+    (folder / "repo_map.json").write_text(repo_map.model_dump_json(indent=2, by_alias=True) + "\n", encoding="utf-8")
+    return {"base_sha": report.revisions.base_sha, "head_sha": report.revisions.head_sha,
+            "triage": report.triage.profile if report.triage else None}
+
+
 class RunBusy(Exception):
     """A review is already running; the UI runs one at a time."""
 
@@ -69,7 +87,7 @@ class RunStore:
         metas = [json.loads(p.read_text(encoding="utf-8")) for p in self.folder.glob("*/meta.json")]
         return sorted(metas, key=lambda meta: meta["id"], reverse=True)
 
-    def start(self, base: str, head: str, full: bool = False) -> str:
+    def _create(self, base: str, head: str, full: bool) -> str:
         with self._lock:
             if self._active:
                 raise RunBusy(self._active)
@@ -81,20 +99,33 @@ class RunStore:
                 "started_at": _now(), "finished_at": None, "steps": [], "error": None,
             })
             self._active = run_id
+        return run_id
+
+    def start(self, base: str, head: str, full: bool = False) -> str:
+        """A review in the background (the UI); its steps land in the run's meta.json."""
+        run_id = self._create(base, head, full)
         threading.Thread(target=self._execute, args=(run_id,), daemon=True).start()
+        return run_id
+
+    def run_now(self, base: str, head: str, full: bool = False, echo: Callable[[str, str], None] | None = None) -> str:
+        """A review in this thread (`behavior-review run`), into the same history the UI shows."""
+        run_id = self._create(base, head, full)
+        self._execute(run_id, echo)
         return run_id
 
     def _update(self, run_id: str, **changes) -> None:
         path = self.folder / run_id / "meta.json"
         _write_json(path, {**json.loads(path.read_text(encoding="utf-8")), **changes})
 
-    def _execute(self, run_id: str) -> None:
+    def _execute(self, run_id: str, echo: Callable[[str, str], None] | None = None) -> None:
         folder, meta = self.folder / run_id, self.meta(run_id)
         steps: list[dict] = []
 
         def emit(step: str, detail: str) -> None:
             steps.append({"step": step, "detail": detail, "at": _now()})
             self._update(run_id, steps=steps)
+            if echo:
+                echo(step, detail)
 
         try:
             extra = self._review(self.root, meta["base"], meta["head"], meta["full"], folder, emit)

@@ -70,6 +70,28 @@ def repo_root(repo: str | Path) -> Path:
     return Path(_git(Path(repo), "rev-parse", "--show-toplevel"))
 
 
+def default_base(root: str | Path, configured: str | None = None) -> str:
+    """The base a review compares against: the configured `base_branch` if it exists, else the remote's
+    default branch (e.g. 'origin/main'), else a local main/master, else the current branch."""
+    if configured:
+        try:
+            resolve_commit(root, configured)
+            return configured
+        except SnapshotError:
+            pass
+    try:
+        return git(root, "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+    except SnapshotError:
+        pass
+    for candidate in ("main", "master"):
+        try:
+            resolve_commit(root, candidate)
+            return candidate
+        except SnapshotError:
+            continue
+    return git(root, "rev-parse", "--abbrev-ref", "HEAD")
+
+
 def resolve_pair(repo: str | Path, base: str, head: str, dest: str | Path) -> RevisionPair:
     root = repo_root(repo)
     base_sha = _rev_parse(root, base)

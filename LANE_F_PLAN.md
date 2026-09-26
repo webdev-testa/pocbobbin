@@ -44,7 +44,7 @@ Companion to `FINAL_PLAN.md` (§20 points here). Written 27 Sept 2026 from readi
 | F-C | ✅ merged (#34; provenance #35) |
 | F-B | ✅ merged (#35) |
 | F-A | ✅ merged (#36), web badge `TODO(C)-7` open |
-| F-D | 🟨 in progress: `.behavior-review/` folder + `decide` (#37); `init` / `run` / `doctor` / Action next |
+| F-D | ✅ merged: `.behavior-review/` folder + `decide` (#37), `init` / `run` / `doctor` + the Action template (#41); multiple test folders (§7.5) not done; the Action's proof on a real public repo pending |
 | F-F | ✅ merged: server and API (#38), web local mode (#39), packaged web (#40) |
 | F-E | ⏸ deferred (§3) |
 

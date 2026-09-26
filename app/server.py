@@ -23,29 +23,12 @@ from pydantic import BaseModel
 from app.adapters.registry import get_adapter
 from app.config import ConfigError, load_config
 from app.decisions import decide_from_report, ledger_dir, load_branch_decisions_via_git, load_ledger
-from app.repo_map import build as build_repo_map
-from app.report import render_markdown
-from app.runs import RunBusy, RunStore
+from app.runs import RunBusy, RunStore, review_to_folder
 from app.schemas import ReviewReport
-from app.snapshot import SnapshotError, git, open_pair, repo_slug, resolve_commit
+from app.snapshot import SnapshotError, default_base, git, repo_slug, resolve_commit
 
 WEB_DIST = Path(__file__).parent / "web_dist"
 ALLOWED_HOSTS = {"127.0.0.1", "localhost"}
-
-
-def review_to_folder(root: Path, base: str, head: str, full: bool, folder: Path, emit) -> dict:
-    """One review, the same as `behavior-review --run`, written into a run folder with its repo map."""
-    from app.cli import pipeline  # the CLI imports this module for `ui`
-
-    report = pipeline(root, base, head, run=True, full=full, on_progress=emit)
-    (folder / "report.json").write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8")
-    (folder / "report.md").write_text(render_markdown(report), encoding="utf-8")
-    emit("repo map", f"mapping {head}")
-    with open_pair(root, head, head) as pair:
-        repo_map = build_repo_map(Path(pair.head_path), Path(pair.root), pair.repo, pair.revisions.head_sha)
-    (folder / "repo_map.json").write_text(repo_map.model_dump_json(indent=2, by_alias=True) + "\n", encoding="utf-8")
-    return {"base_sha": report.revisions.base_sha, "head_sha": report.revisions.head_sha,
-            "triage": report.triage.profile if report.triage else None}
 
 
 class RunRequest(BaseModel):
@@ -73,19 +56,13 @@ def _commit_ref(root: Path, ref: str) -> str:
     return ref
 
 
-def default_base(root: Path) -> str:
-    """The remote's default branch (e.g. 'origin/main'), else a local main/master, else the current branch."""
+def _base(root: Path) -> str:
+    """The configured base branch if valid, else the detected default (a broken config never blocks this)."""
     try:
-        return git(root, "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
-    except SnapshotError:
-        pass
-    for candidate in ("main", "master"):
-        try:
-            resolve_commit(root, candidate)
-            return candidate
-        except SnapshotError:
-            continue
-    return git(root, "rev-parse", "--abbrev-ref", "HEAD")
+        configured = load_config(root).base_branch
+    except ConfigError:
+        configured = None
+    return default_base(root, configured)
 
 
 def _repo_info(root: Path) -> dict:
@@ -97,7 +74,7 @@ def _repo_info(root: Path) -> dict:
         config_error = None
     return {
         "repo": repo_slug(root), "branch": git(root, "rev-parse", "--abbrev-ref", "HEAD"),
-        "default_base": default_base(root), "languages": languages, "config_error": config_error,
+        "default_base": _base(root), "languages": languages, "config_error": config_error,
     }
 
 
@@ -110,7 +87,7 @@ def _branches(root: Path) -> list[dict]:
 
 def _decisions(root: Path) -> dict:
     """Approved: merged on the default base branch. Proposed: in the working tree, not merged yet."""
-    approved = load_branch_decisions_via_git(root, default_base(root))
+    approved = load_branch_decisions_via_git(root, _base(root))
     merged = {d.id for d in approved}
     proposed = [d for d in load_ledger(root) if d.id not in merged]
     return {"approved": [d.model_dump(mode="json") for d in approved],
@@ -198,11 +175,11 @@ def create_app(root: Path, token: str, store: RunStore | None = None) -> FastAPI
     return app
 
 
-def serve(root: Path, port: int, open_browser: bool) -> int:
+def serve(root: Path, port: int, open_browser: bool, run_id: str | None = None) -> int:
     import uvicorn
 
     token = secrets.token_urlsafe(16)
-    url = f"http://127.0.0.1:{port}/?token={token}"
+    url = f"http://127.0.0.1:{port}/?token={token}" + (f"&run={run_id}" if run_id else "")
     # Flushed: when output is piped (an IDE task, a script), the URL must show before the server blocks.
     print(f"behavior-review ui for {repo_slug(root)}: {url}", flush=True)
     if not (WEB_DIST / "index.html").is_file():
@@ -213,4 +190,4 @@ def serve(root: Path, port: int, open_browser: bool) -> int:
     return 0
 
 
-__all__ = ["create_app", "review_to_folder", "serve"]
+__all__ = ["create_app", "serve"]

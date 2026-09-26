@@ -40,6 +40,9 @@ def _impact(changed: int = 0) -> ImpactResult:
         (["data/schema.graphql"], 0, "code_change"),
         (["data/schema.graphql", "calc.py"], 0, "code_change"),
         ([], 0, "no_semantic_change"),
+        ([".behavior-review/probes/checkout.json", ".behavior-review/decisions/d1.json"], 0, "tests_only"),
+        (["src/app.py", ".behavior-review/probes/checkout.json"], 1, "code_change"),
+        ([".behavior-review/config.json"], 0, "config_or_deps"),
     ],
 )
 def test_a_mixed_pr_takes_its_most_thorough_profile(files, changed, profile):

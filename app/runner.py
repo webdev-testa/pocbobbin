@@ -619,14 +619,14 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str | None
                 comparisons.append(
                     _comparison(probe_file, spec, pair, b, h, outcome, settings, reruns=reruns)
                 )
-                target_path, target_symbol = _target_ref(spec, settings)
+                target_path, target_symbol = _target_ref(spec, settings, (base_wt, head_wt))
                 probed.add((target_path, target_symbol))
 
     resolved_impact = impact or analyze(pair, settings.max_hops, settings)
     return suites, comparisons, needs_bob_action(resolved_impact, probed), notes
 
 
-def _target_ref(spec: dict, config: BehaviorConfig) -> tuple[str, str]:
+def _target_ref(spec: dict, config: BehaviorConfig, checkouts: tuple[Path, ...] = ()) -> tuple[str, str]:
     target = spec["target"]
     if isinstance(target, dict):
         return str(target["path"]).replace("\\", "/"), str(target["symbol"])
@@ -652,7 +652,15 @@ def _target_ref(spec: dict, config: BehaviorConfig) -> tuple[str, str]:
         "dart": ".dart",
         "bash": ".sh",
     }.get(config.language, config.extensions[0])
-    return path.replace(".", "/") + language_extension, symbol
+    return _in_src_layout(path.replace(".", "/") + language_extension, checkouts), symbol
+
+
+def _in_src_layout(path: str, checkouts: tuple[Path, ...]) -> str:
+    """`shop.cart` is `src/shop/cart.py` in a src/ layout; the report's paths are repository-relative,
+    so the probe's outcome only joins its caller with the `src/` prefix."""
+    if not checkouts or any((checkout / path).is_file() for checkout in checkouts):
+        return path
+    return f"src/{path}" if any((checkout / "src" / path).is_file() for checkout in checkouts) else path
 
 
 def _prior_delta_probes(prior_report) -> dict[str, str]:
@@ -691,7 +699,7 @@ def _comparison(probe_file: Path, spec: dict, pair, b, h, outcome,
     if not HAS_SCHEMA:
         return dict(probe=spec["id"], outcome=str(outcome), base=b_out, head=h_out, reruns=reruns)
     settings = config or BehaviorConfig()
-    target_path, target_symbol = _target_ref(spec, settings)
+    target_path, target_symbol = _target_ref(spec, settings, (Path(pair.base_path), Path(pair.head_path)))
     return Comparison(
         probe=Probe(
             id=spec["id"],

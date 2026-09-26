@@ -17,5 +17,6 @@ def test_the_wheel_ships_the_runners_and_the_web_page(tmp_path):
 
     assert {"app/harness/run_probe.py", "app/harness/run_command_probe.py", "app/harness/run_probe.ts"} <= names
     assert "app/web_dist/index.html" in names
+    assert {"app/templates/behavior-review.yml", "app/templates/custom_modes.yaml"} <= names, "init writes these"
     assert any(name.startswith("app/web_dist/assets/") for name in names)
     assert not any(name.startswith("app/web_dist/data/") for name in names), "the demo data stays on the static site"

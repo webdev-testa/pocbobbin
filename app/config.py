@@ -338,6 +338,16 @@ def _auto_detect_config(root: Path) -> "BehaviorConfig":
     return replace(BehaviorConfig.from_mapping({"languages": list(languages)}), source="detected")
 
 
+def _optional_string(value: dict[str, Any], name: str) -> str | None:
+    """A config field that may be absent, but is a non-empty string when present."""
+    raw = value.get(name)
+    if raw is None:
+        return None
+    if not isinstance(raw, str) or not raw.strip():
+        raise ConfigError(f"behavior.json field '{name}' must be a non-empty string")
+    return raw.strip()
+
+
 @dataclass(frozen=True)
 class BehaviorConfig:
     language: str = "python"
@@ -353,6 +363,8 @@ class BehaviorConfig:
     append_tests: bool = True
     # Interpreter for the project's Python tests and probes (app.interpreter); None = detect.
     python: str | None = None
+    # The branch reviews compare against by default (`behavior-review run`, the local UI); None = detect.
+    base_branch: str | None = None
     source: str = "defaults"  # "defaults", "detected" (no config file), or the config file name
     extra: dict[str, Any] = field(default_factory=dict, compare=False, repr=False)
 
@@ -416,13 +428,11 @@ class BehaviorConfig:
         if not isinstance(max_hops, int) or isinstance(max_hops, bool) or max_hops < 1:
             raise ConfigError("behavior.json field 'max_hops' must be a positive integer")
 
-        python = value.get("python")
-        if python is not None and (not isinstance(python, str) or not python.strip()):
-            raise ConfigError("behavior.json field 'python' must be a non-empty string")
+        python = _optional_string(value, "python")
 
         known = {
             "language", "languages", "extensions", "changed_file_filter", "tests_dir", "test_command",
-            "test_report", "probe_runner", "test_file_patterns", "max_hops", "append_tests", "python",
+            "test_report", "probe_runner", "test_file_patterns", "max_hops", "append_tests", "python", "base_branch",
         }
         test_command = strings("test_command", defaults["test_command"])
         probe_runner = strings("probe_runner", defaults["probe_runner"])
@@ -448,7 +458,8 @@ class BehaviorConfig:
             test_file_patterns=test_file_patterns,
             max_hops=max_hops,
             append_tests=append_tests,
-            python=python.strip() if python else None,
+            python=python,
+            base_branch=_optional_string(value, "base_branch"),
             extra={key: item for key, item in value.items() if key not in known},
         )
 

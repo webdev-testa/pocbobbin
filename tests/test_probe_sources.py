@@ -76,7 +76,7 @@ def test_a_probe_that_raises_on_both_sides_is_the_same_exception(make_repo):
     assert comparison.outcome == Outcome.SAME_ON_TESTED_CASES
 
 
-def test_a_src_layout_package_is_importable(make_repo):
+def test_a_src_layout_package_is_importable_and_joins_its_caller(make_repo):
     src = {"src/shop/__init__.py": "", "src/shop/calc.py": CALC["calc.py"]}
     probe = _probe("multiply_negative", "shop.calc:multiply", [2, -3])
     repo = make_repo({**src, "probes/multiply_negative.json": probe}, {"src/shop/calc.py": CHANGED["calc.py"]})
@@ -84,6 +84,7 @@ def test_a_src_layout_package_is_importable(make_repo):
     _, [comparison], _, _ = _compare(repo)
 
     assert (comparison.base.output, comparison.head.output) == (-6, 6)
+    assert comparison.probe.target.path == "src/shop/calc.py", "the report's paths are repository-relative"
 
 
 def test_a_command_probe_config_uses_the_packaged_command_runner(make_repo):

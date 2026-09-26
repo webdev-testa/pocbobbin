@@ -31,7 +31,7 @@ include = ["app*"]
 # The probe runners and the built web page ship with the tool, so a reviewed repository copies nothing
 # and users need no Node (web/scripts/copy-to-package.mjs builds app/web_dist).
 [tool.setuptools.package-data]
-app = ["harness/*", "web_dist/**/*"]
+app = ["harness/*", "web_dist/**/*", "templates/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

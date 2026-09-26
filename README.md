@@ -14,9 +14,28 @@ commits and answers, with real execution evidence rather than AI opinion:
 
 See `FINAL_PLAN.md` for the full design.
 
-## Install
+## Use it on your repository
 
-Requires Python 3.11+ and git.
+Requires Python 3.11+ and git. Install the tool once, in its own environment:
+
+```bash
+uv tool install git+https://github.com/webdev-testa/pocbobbin   # or: pipx install git+https://…
+```
+
+Then, inside your repository:
+
+```bash
+behavior-review init      # asks a few questions (Enter takes the detected default); --yes takes them all
+behavior-review doctor    # one line per check: config, tests, your Python, probes…
+behavior-review run       # review your branch against its base; runs your tests and probes
+behavior-review ui        # the same reviews in your browser: new review, maps, save decisions
+```
+
+`init` writes `.behavior-review/` (config, probes, decisions), and optionally a GitHub Action that
+reviews every PR and the Bob mode (`/behavior-review`, which writes probes). Commit them. Your tests
+run with your project's own Python: its `.venv/` is found automatically.
+
+## Develop behavior-review itself
 
 ```bash
 git clone https://github.com/webdev-testa/pocbobbin.git
