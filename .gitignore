@@ -17,3 +17,7 @@ Thumbs.db
 report.json
 report.md
 evidence/
+# mutation testing (mutmut): its working copy and cache must never be committed
+mutants/
+.mutmut-cache
+.mutmut-cache-journal

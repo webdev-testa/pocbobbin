@@ -7,14 +7,38 @@ works both in this repo and in any clone.
 """
 
 import json
+import subprocess
 from pathlib import Path
 
+import pytest
+
 from app.cli import pipeline
-from app.runner import compare
+from app.runner import _prior_delta_probes, _suite_run, compare, run_suite
 from app.schemas import Outcome, RunStatus
 from app.snapshot import open_pair
 
-REPO = Path(__file__).resolve().parents[1]
+
+def _repo_root() -> Path:
+    """The git repo these fixture tests run against.
+
+    Not simply `__file__`'s parent: mutation tools such as mutmut copy the sources into a
+    sandbox (`mutants/`) that is not a git repository, and these tests fetch revisions from
+    the real repo to build their throwaway fixtures.
+    """
+    candidate = Path(__file__).resolve().parents[1]
+    if (candidate / ".git").exists():
+        return candidate
+    found = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"], cwd=candidate, capture_output=True, text=True
+    )
+    if found.returncode == 0 and found.stdout.strip():
+        return Path(found.stdout.strip())
+    # fall back to the original checkout the sandbox was copied from
+    original = candidate.parent
+    return original if (original / ".git").exists() else candidate
+
+
+REPO = _repo_root()
 BASE, HEAD = "ref/base", "origin/scenario1-head"
 S3, S4 = "origin/scenario3-head", "origin/scenario4-head"
 
@@ -233,6 +257,144 @@ def test_prior_report_tolerates_junk():
     assert _prior_delta_probes("/no/such/file.json") == {}
     assert _prior_delta_probes({"comparisons": "not-a-list"}) == {}
     assert _prior_delta_probes("not-a-dict") == {}
+
+
+def _git_repo_with(tmp_path, files: dict, name: str = "repo") -> Path:
+    """A throwaway git repo, so suite runs are fast and independent of the real project."""
+    repo = tmp_path / name
+    repo.mkdir()
+    env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+           "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t",
+           "PATH": "/usr/bin:/bin:/usr/local/bin", "HOME": str(tmp_path)}
+    for rel, content in files.items():
+        p = repo / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content)
+    subprocess.run(["git", "-C", str(repo), "init", "-q"], check=True, env=env)
+    subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True, env=env)
+    subprocess.run(["git", "-C", str(repo), "commit", "-qm", "init"], check=True, env=env)
+    return repo
+
+
+# --- run_suite: the pytest-text parsing that decides the counts a reviewer reads -----
+
+
+def test_run_suite_counts_a_green_suite(tmp_path):
+    repo = _git_repo_with(tmp_path, {"tests/test_ok.py": "def test_a():\n    pass\n\ndef test_b():\n    pass\n"})
+    suite = run_suite(repo, "tests", "hash123", str(Path(__import__("sys").executable)), "base", "sha")
+    assert suite.status == RunStatus.OK
+    assert (suite.passed, suite.failed, suite.errors) == (2, 0, 0)
+
+
+def test_run_suite_counts_failures_and_distinguishes_them_from_errors(tmp_path):
+    """A failing assertion and a collection error are different things.
+
+    If this parser muddles them, a PR comment reports the wrong picture while looking
+    authoritative, which is the failure mode this whole tool exists to prevent.
+    """
+    tests = (
+        "def test_ok():\n    pass\n\n"
+        "def test_bad():\n    assert False\n"
+    )
+    repo = _git_repo_with(tmp_path, {"tests/test_mixed.py": tests})
+    suite = run_suite(repo, "tests", "hash123", str(Path(__import__("sys").executable)), "head", "sha")
+    assert suite.status == RunStatus.ERROR
+    assert suite.passed == 1
+    assert suite.failed == 1
+    assert suite.errors == 0
+
+
+def test_run_suite_reports_a_collection_error_as_an_error(tmp_path):
+    repo = _git_repo_with(tmp_path, {"tests/test_broken.py": "import does_not_exist\n"})
+    suite = run_suite(repo, "tests", "hash123", str(Path(__import__("sys").executable)), "head", "sha")
+    assert suite.status == RunStatus.ERROR
+    assert suite.passed == 0
+    assert suite.errors >= 1
+
+
+def test_run_suite_timeout_is_inconclusive_not_a_failure(tmp_path, monkeypatch):
+    """A timeout is an environment fact, not a verdict about the code."""
+    import app.runner as runner
+
+    def boom(*a, **k):
+        raise subprocess.TimeoutExpired(cmd="pytest", timeout=1)
+
+    monkeypatch.setattr(runner, "_run", boom)
+    suite = run_suite(tmp_path, "tests", "hash123", "python", "base", "sha")
+    assert suite.status == RunStatus.TIMEOUT
+    assert (suite.passed, suite.failed, suite.errors) == (0, 0, 0)
+
+
+def test_run_suite_survives_a_silent_failing_run(tmp_path):
+    """A run with nothing to execute must still yield a valid SuiteRun, not a crash.
+
+    A nonexistent selection makes pytest exit non-zero; the point is that the parser copes
+    with output it cannot read counts from, and the result is a well-formed record rather
+    than an exception.
+    """
+    repo = _git_repo_with(tmp_path, {"tests/test_ok.py": "def test_a():\n    pass\n"})
+    suite = run_suite(repo, "tests/nope", "hash123", str(Path(__import__("sys").executable)), "head", "sha")
+    assert suite.status == RunStatus.ERROR
+    # no tests were collected, so nothing may be reported as passing
+    assert suite.passed == 0
+    assert suite.failed == 0
+    # the unusable path is reported as an error rather than silently ignored
+    assert suite.errors >= 1
+
+
+def test_run_suite_records_the_frozen_suite_hash(tmp_path):
+    repo = _git_repo_with(tmp_path, {"tests/test_ok.py": "def test_a():\n    pass\n"})
+    suite = run_suite(repo, "tests", "deadbeef", str(Path(__import__("sys").executable)), "base", "sha1")
+    assert suite.suite_hash == "deadbeef"
+    assert suite.sha == "sha1"
+    assert suite.revision.value == "base"
+
+
+# --- _suite_run: the schema mapping -------------------------------------------------
+
+
+def test_suite_run_builds_the_shared_model():
+    suite = _suite_run("head", "abc123", "h", RunStatus.OK, passed=3, failed=1, errors=2)
+    assert suite.revision.value == "head"
+    assert suite.sha == "abc123"
+    assert suite.suite_hash == "h"
+    assert (suite.passed, suite.failed, suite.errors) == (3, 1, 2)
+
+
+def test_suite_run_carries_status_exactly():
+    for status in (RunStatus.OK, RunStatus.ERROR, RunStatus.TIMEOUT, RunStatus.EXCEPTION):
+        assert _suite_run("base", "s", "h", status, 0, 0, 0).status == status
+
+
+# --- _prior_delta_probes: the rerun-link input --------------------------------------
+
+
+def test_prior_delta_probes_reads_a_report_file(tmp_path):
+    """Accepting a path matters: the CLI passes --prior-report as a Path."""
+    report = tmp_path / "report.json"
+    report.write_text(json.dumps({"comparisons": [
+        {"probe": {"id": "p1", "hash": "sha256:A"}, "outcome": "delta_observed"},
+        {"probe": {"id": "p2", "hash": "sha256:B"}, "outcome": "inconclusive"},
+    ]}))
+    assert _prior_delta_probes(report) == {"p1": "sha256:A"}
+
+
+def test_prior_delta_probes_ignores_entries_without_a_probe_id():
+    prior = {"comparisons": [
+        {"probe": {}, "outcome": "delta_observed"},
+        {"outcome": "delta_observed"},
+        "not-a-dict",
+        {"probe": {"id": "p9", "hash": "sha256:Z"}, "outcome": "delta_observed"},
+    ]}
+    assert _prior_delta_probes(prior) == {"p9": "sha256:Z"}
+
+
+def test_prior_delta_probes_accepts_a_real_report_object():
+    report = pipeline(REPO, BASE, HEAD, run=True)
+    deltas = _prior_delta_probes(report)
+    assert set(deltas) == {"apply_discount_contract", "price_total_boundary"}
+    for probe_id, digest in deltas.items():
+        assert digest.startswith("sha256:")
 
 
 def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
