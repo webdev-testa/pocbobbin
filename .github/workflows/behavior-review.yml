@@ -22,35 +22,25 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      # Fails the job on a broken install instead of reviewing with a half-installed tool.
+      # Tree-sitter is a core dependency; the runner image already has Node, Go, Java and .NET.
+      - name: Install Behavior Review
         run: |
           python -m pip install --upgrade pip
-          if [ -f pyproject.toml ]; then
-            pip install -e . || pip install . || true
-          fi
-          pip install pydantic pytest pyyaml
+          pip install -e ".[dev]"
 
       - name: Run Behavior Review
         run: |
-          # Execute behavior review with paired execution against PR base ref
-          if command -v behavior-review >/dev/null 2>&1; then
-            behavior-review \
-              --base "origin/${{ github.base_ref }}" \
-              --head HEAD \
-              --run \
-              --link "action_run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-              --json report.json
-          else
-            python -m app.cli \
-              --base "origin/${{ github.base_ref }}" \
-              --head HEAD \
-              --run \
-              --link "action_run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-              --json report.json
-          fi
+          behavior-review \
+            --base "origin/${{ github.base_ref }}" \
+            --head HEAD \
+            --run \
+            --link "action_run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --json report.json \
+            --markdown report.md
 
       - name: Build Repo Map
-        run: python -m app.cli map --ref HEAD --out repo_map.json
+        run: behavior-review map --ref HEAD --out repo_map.json
 
       - name: Upload Review Artifact
         uses: actions/upload-artifact@v4
@@ -59,6 +49,7 @@ jobs:
           name: behavior-review-report
           path: |
             report.json
+            report.md
             repo_map.json
           if-no-files-found: ignore
 
@@ -68,143 +59,21 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            let body = '';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            // GitHub rejects comments over 65,536 characters; a large diff can render more than that.
+            const LIMIT = 60000;
 
+            let body;
             if (fs.existsSync('report.md')) {
               body = fs.readFileSync('report.md', 'utf8');
-            } else if (fs.existsSync('report.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('report.json', 'utf8'));
-                const rev = data.revisions || {};
-                const impact = data.impact || {};
-                const outside = (impact.paths || []).filter(p => p.outside_diff && !p.is_test);
-
-                const lines = [
-                  '## 🔍 Behavior Review Report',
-                  '',
-                  `**Revisions:** \`${(rev.base_sha || '').slice(0, 7)}\` (${rev.base_ref || 'base'}) → \`${(rev.head_sha || '').slice(0, 7)}\` (${rev.head_ref || 'head'})`,
-                  '',
-                  '### 📈 Impact Summary',
-                  `- **Changed Symbols:** ${(impact.changed_symbols || []).length}`,
-                  `- **Impact Paths:** ${(impact.paths || []).length}`,
-                  `- **Callers Outside Diff:** ${outside.length}`,
-                  `- **Unknowns:** ${(impact.unknowns || []).length}`,
-                  ''
-                ];
-
-                const unknowns = impact.unknowns || [];
-
-                if (outside.length > 0) {
-                  lines.push('### ⚠️ Callers Outside Diff');
-                  lines.push('| Caller Symbol | File & Line | Rendered Path |');
-                  lines.push('|---|---|---|');
-                  for (const p of outside) {
-                    const h0 = p.hops && p.hops[0] ? p.hops[0] : {};
-                    const renderPath = (p.hops || []).map(h => h.symbol).join(' → ');
-                    lines.push(`| \`${h0.symbol || ''}\` | \`${h0.path || ''}:${h0.line || ''}\` | \`${renderPath}\` |`);
-                  }
-                  lines.push('');
-                } else if (unknowns.length > 0) {
-                  lines.push(`⚠️ **No resolved callers outside the diff**, but **${unknowns.length} unresolved reference(s)** exist that could reach changed symbols.\n`);
-                } else {
-                  lines.push('✅ **No non-test callers outside the diff impacted (0 unknowns).**\n');
-                }
-
-                if (unknowns.length > 0) {
-                  lines.push('### ❓ Unresolved References (Unknowns)');
-                  lines.push('| File & Line | Enclosing Symbol | Expression | Reason |');
-                  lines.push('|---|---|---|---|');
-                  for (const u of unknowns) {
-                    lines.push(`| \`${u.path || ''}:${u.line || ''}\` | \`${u.symbol || ''}\` | \`${u.expression || ''}\` | ${u.reason || ''} |`);
-                  }
-                  lines.push('\n*Unknown edges are never claimed as safe.*\n');
-                }
-
-                const tests = data.tests || [];
-                if (tests.length > 0) {
-                  lines.push('### 🧪 Frozen Test Suites');
-                  lines.push('| Revision | Status | Passed | Failed | Errors |');
-                  lines.push('|---|---|---|---|---|');
-                  for (const t of tests) {
-                    lines.push(`| \`${t.revision}\` | \`${t.status}\` | ${t.passed} | ${t.failed} | ${t.errors} |`);
-                  }
-                  lines.push('');
-                }
-
-                const comparisons = data.comparisons || [];
-                if (comparisons.length > 0) {
-                  lines.push('### 🔬 Paired Probe Comparisons');
-                  lines.push('| Probe | Base Output | Head Output | Outcome |');
-                  lines.push('|---|---|---|---|');
-                  for (const c of comparisons) {
-                    const pId = (c.probe && c.probe.id) || 'unknown';
-                    const bOut = JSON.stringify(c.base && c.base.output);
-                    const hOut = JSON.stringify(c.head && c.head.output);
-                    const outcome = c.outcome || 'unknown';
-                    lines.push(`| \`${pId}\` | \`${bOut}\` | \`${hOut}\` | \`${outcome}\` |`);
-                  }
-                  lines.push('');
-                }
-
-                const needsBob = data.needs_bob_action || [];
-                if (needsBob.length > 0) {
-                  lines.push('### 🤖 Needs Bob Action (Unprobed Callers)');
-                  lines.push('The following impacted callers outside the diff lack a committed probe:');
-                  for (const sym of needsBob) {
-                    lines.push(`- \`${sym.path}::${sym.symbol}\``);
-                  }
-                  lines.push('\n*Run `/behavior-review` in Bob IDE to author missing probes.*\n');
-                }
-
-                const priorDecisions = data.prior_decisions || [];
-                if (priorDecisions.length > 0) {
-                  lines.push('### 📜 Prior Approved Decisions');
-                  lines.push('| Symbol | Intent | Rationale | Status |');
-                  lines.push('|---|---|---|---|');
-                  for (const d of priorDecisions) {
-                    const sym = (d.target && d.target.symbol) || 'unknown';
-                    const intent = d.intent || 'unknown';
-                    const rat = d.rationale || '-';
-                    const st = d.status || 'approved';
-                    lines.push(`| \`${sym}\` | \`${intent}\` | ${rat} | \`${st}\` |`);
-                  }
-                  lines.push('');
-                }
-
-                const decisions = data.decisions || [];
-                if (decisions.length > 0) {
-                  lines.push('### 📝 Recorded Decisions');
-                  lines.push('| Symbol | Intent | Rationale | Status |');
-                  lines.push('|---|---|---|---|');
-                  for (const d of decisions) {
-                    const sym = (d.target && d.target.symbol) || 'unknown';
-                    const intent = d.intent || 'unknown';
-                    const rat = d.rationale || '-';
-                    const st = d.status || 'proposed';
-                    lines.push(`| \`${sym}\` | \`${intent}\` | ${rat} | \`${st}\` |`);
-                  }
-                  lines.push('');
-                }
-
-                const limits = data.limits || [];
-                if (limits.length > 0) {
-                  lines.push('<details><summary>Operational Limits</summary>\n');
-                  for (const l of limits) {
-                    lines.push(`- ${l}`);
-                  }
-                  lines.push('\n</details>\n');
-                }
-
-                lines.push('---');
-                lines.push('*AI proposes, algorithms verify, humans decide.*');
-
-                body = lines.join('\n');
-                fs.writeFileSync('report.md', body, 'utf8');
-              } catch (e) {
-                body = `### Behavior Review\nError parsing report.json: ${e.message}`;
+              if (body.length > LIMIT) {
+                body = body.slice(0, body.lastIndexOf('\n', LIMIT));
+                if ((body.match(/^```/gm) || []).length % 2) body += '\n```';
+                body +=
+                  `\n\n> **Truncated.** The full report is \`report.md\` in the \`behavior-review-report\` artifact of [this run](${runUrl}).\n`;
               }
             } else {
-              body = '### Behavior Review\nReview finished without JSON report.';
+              body = `## Behavior Review\n\nThe review did not produce a report, so this comment carries no evidence. See the [run log](${runUrl}).\n`;
             }
 
             const marker = '<!-- behavior-review-comment -->';
