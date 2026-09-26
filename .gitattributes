@@ -1,0 +1,3 @@
+# The packaged web page is a build output compared byte for byte in CI (web/scripts/copy-to-package.mjs
+# writes LF); git must never convert its line endings on checkout or commit.
+app/web_dist/** binary
