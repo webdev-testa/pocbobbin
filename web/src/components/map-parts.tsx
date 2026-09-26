@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState, type DependencyList } from "react";
+import { useCallback, useEffect, useState, type CSSProperties, type DependencyList } from "react";
 import {
   BaseEdge, EdgeLabelRenderer, getBezierPath, Handle, Position, useEdgesState, useNodesState, useReactFlow,
   type Edge, type EdgeProps, type Node, type NodeProps,
 } from "@xyflow/react";
 import { Folder } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { FolderFlowNode, PortPlacement, TooltipFlowEdge } from "@/lib/nested-layout";
 
@@ -13,7 +14,7 @@ import type { FolderFlowNode, PortPlacement, TooltipFlowEdge } from "@/lib/neste
 export const UNKNOWN_EDGE_DASH = "6 4";
 export const MINIMAP_FROM_NODES = 8;
 
-const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+export const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /** One handle per ELK port, so each edge enters or leaves at its own point instead of one trunk. */
 export function PortHandles({ ports }: { ports: PortPlacement[] }) {
@@ -41,14 +42,23 @@ export function FolderGroup({ data }: NodeProps<FolderFlowNode>) {
 }
 
 /** Bezier edge whose text (e.g. the call site) shows in a tooltip on hover, or when the edge is focused and selected. */
-export function TooltipEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, markerEnd, selected, data }: EdgeProps<TooltipFlowEdge>) {
+export function TooltipEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, markerEnd, selected, data, style }: EdgeProps<TooltipFlowEdge>) {
   const [path, labelX, labelY] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
   const [hovered, setHovered] = useState(false);
   return (
     <>
-      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={data?.unknown ? { strokeDasharray: UNKNOWN_EDGE_DASH } : undefined} />
+      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={data?.unknown ? { ...style, strokeDasharray: UNKNOWN_EDGE_DASH } : style} />
       <path d={path} fill="none" stroke="transparent" strokeWidth={16} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} />
       <EdgeLabelRenderer>
+        {data?.badge ? (
+          <Badge
+            variant="secondary"
+            className="pointer-events-none absolute -translate-1/2"
+            style={{ left: labelX, top: labelY, opacity: style?.opacity }}
+          >
+            {data.badge}
+          </Badge>
+        ) : null}
         <Tooltip open={hovered || selected}>
           <TooltipTrigger asChild>
             <span aria-hidden="true" className="pointer-events-none absolute size-px" style={{ transform: `translate(${labelX}px, ${labelY}px)` }} />
@@ -60,11 +70,12 @@ export function TooltipEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosi
   );
 }
 
-export function LineSwatch({ label, dash }: { label: string; dash?: string }) {
+/** A legend sample of an edge; `lineStyle` takes the same style object as the edge it explains. */
+export function LineSwatch({ label, dash, lineStyle }: { label: string; dash?: string; lineStyle?: CSSProperties }) {
   return (
     <li className="flex items-center gap-2 text-xs text-muted-foreground">
       <svg aria-hidden="true" className="h-2 w-8" viewBox="0 0 32 8">
-        <line x1="0" y1="4" x2="32" y2="4" stroke="currentColor" strokeWidth="2" strokeDasharray={dash} />
+        <line x1="0" y1="4" x2="32" y2="4" stroke="currentColor" strokeWidth="2" strokeDasharray={dash} style={lineStyle} />
       </svg>
       {label}
     </li>

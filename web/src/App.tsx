@@ -71,7 +71,7 @@ function ReportViews({ report, map, view }: ReportViewsProps) {
       <TabsContent value="pr"><PrReview key={report.generated_at} report={report} /></TabsContent>
       <TabsContent value="repo">
         <Suspense fallback={<Skeleton className="h-128 w-full" />}>
-          <RepoMapTab changedFiles={report.revisions.changed_files} map={map} onShowEvidence={view.showEvidence} />
+          <RepoMapTab report={report} map={map} onShowEvidence={view.showEvidence} />
         </Suspense>
       </TabsContent>
     </Tabs>

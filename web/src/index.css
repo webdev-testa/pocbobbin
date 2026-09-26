@@ -141,6 +141,12 @@
   }
 }
 
+/* Repo map: boxes glide into a new layout right after an expand or collapse (the class is set only
+   then, so dragging is never delayed). The rule below turns it off for reduced motion. */
+.flow-animate .react-flow__node {
+  transition: transform 300ms ease, width 300ms ease, height 300ms ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

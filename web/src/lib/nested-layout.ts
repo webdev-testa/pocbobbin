@@ -6,8 +6,11 @@ import type { Edge, Node } from "@xyflow/react";
 // file boxes) and the repo map (leaves are the files themselves). Dagre is not used because it
 // mis-lays sub-flows whose nodes connect outside their group, which is the cross-folder story here.
 
-/** An edge whose text (call site, import line) is shown in a tooltip; `unknown` draws it dashed. */
-export type TooltipFlowEdge = Edge<{ tooltip: string; unknown?: boolean }, "call">;
+/**
+ * An edge whose text (call site, import line) is shown in a tooltip; `unknown` draws it dashed,
+ * and `badge` stays visible on it (e.g. "7 imports" merged into a collapsed folder).
+ */
+export type TooltipFlowEdge = Edge<{ tooltip: string; unknown?: boolean; badge?: string }, "call">;
 export type FolderFlowNode = Node<{ label: string; path: string }, "folder">;
 
 export interface LayoutLeaf {
@@ -109,25 +112,41 @@ function compress(folder: FolderTree): FolderTree {
   return folder;
 }
 
-function leafNode(leaf: LayoutLeaf, edges: LayoutEdge[]): ElkNode {
+export interface NestedLayoutOptions {
+  /**
+   * Split each folder's layers over this many columns. Layered layout puts every unconnected
+   * sibling in one layer, so a folder of unrelated files would otherwise be one very tall column.
+   */
+  layerSplit?: number;
+  /** Gap between columns; room for a badge on the edges that cross it. */
+  layerSpacing?: number;
+}
+
+// ELK's layer unzipping: the strategy is read from the folder, the split from each leaf.
+const unzipFolder = (options: NestedLayoutOptions): Record<string, string> =>
+  options.layerSplit ? { "elk.layered.layerUnzipping.strategy": "ALTERNATING" } : {};
+const unzipLeaf = (options: NestedLayoutOptions): Record<string, string> =>
+  options.layerSplit ? { "elk.layered.layerUnzipping.layerSplit": String(options.layerSplit) } : {};
+
+function leafNode(leaf: LayoutLeaf, edges: LayoutEdge[], options: NestedLayoutOptions): ElkNode {
   const ports = [
     ...edges.filter((e) => e.target === leaf.id).map((e) => ({ id: `${e.id}:in`, width: 1, height: 1, layoutOptions: { "elk.port.side": "WEST" } })),
     ...edges.filter((e) => e.source === leaf.id).map((e) => ({ id: `${e.id}:out`, width: 1, height: 1, layoutOptions: { "elk.port.side": "EAST" } })),
   ];
-  return { id: leaf.id, width: leaf.width, height: leaf.height, ports, layoutOptions: { "elk.portConstraints": "FIXED_SIDE" } };
+  return { id: leaf.id, width: leaf.width, height: leaf.height, ports, layoutOptions: { "elk.portConstraints": "FIXED_SIDE", ...unzipLeaf(options) } };
 }
 
-function folderNode(folder: FolderTree, edges: LayoutEdge[]): ElkNode[] {
-  const children = [
+function folderNode(folder: FolderTree, edges: LayoutEdge[], options: NestedLayoutOptions): ElkNode[] {
+  const group = { "elk.padding": GROUP_PADDING, ...unzipFolder(options) };
+  return [
     ...[...folder.folders.values()].map((child) => ({
-      id: `folder:${child.path}`, layoutOptions: { "elk.padding": GROUP_PADDING }, children: folderNode(child, edges),
+      id: `folder:${child.path}`, layoutOptions: group, children: folderNode(child, edges, options),
     })),
     ...[...folder.files].map(([file, leaves]) => ({
-      id: `file:${file}`, layoutOptions: { "elk.padding": GROUP_PADDING }, children: leaves.map((leaf) => leafNode(leaf, edges)),
+      id: `file:${file}`, layoutOptions: group, children: leaves.map((leaf) => leafNode(leaf, edges, options)),
     })),
-    ...folder.leaves.map((leaf) => leafNode(leaf, edges)),
+    ...folder.leaves.map((leaf) => leafNode(leaf, edges, options)),
   ];
-  return children;
 }
 
 function collect(node: ElkNode, labels: Map<string, string>, parentId: string | undefined, out: NestedLayout) {
@@ -155,7 +174,7 @@ function folderLabels(folder: FolderTree, labels: Map<string, string>) {
   return labels;
 }
 
-export async function layoutNested(leaves: LayoutLeaf[], edges: LayoutEdge[]): Promise<NestedLayout> {
+export async function layoutNested(leaves: LayoutLeaf[], edges: LayoutEdge[], options: NestedLayoutOptions = {}): Promise<NestedLayout> {
   const tree = compress(buildTree(leaves));
   const graph: ElkNode = {
     id: "root",
@@ -163,10 +182,11 @@ export async function layoutNested(leaves: LayoutLeaf[], edges: LayoutEdge[]): P
       "elk.algorithm": "layered",
       "elk.direction": "RIGHT",
       "elk.hierarchyHandling": "INCLUDE_CHILDREN",
-      "elk.layered.spacing.nodeNodeBetweenLayers": "96",
+      "elk.layered.spacing.nodeNodeBetweenLayers": String(options.layerSpacing ?? 96),
       "elk.spacing.nodeNode": "32",
+      ...unzipFolder(options),
     },
-    children: folderNode(tree, edges),
+    children: folderNode(tree, edges, options),
     edges: edges.map((e): ElkExtendedEdge => ({ id: e.id, sources: [`${e.id}:out`], targets: [`${e.id}:in`] })),
   };
   const result = await elk.layout(graph);
