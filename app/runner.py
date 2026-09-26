@@ -143,9 +143,14 @@ def _canon(value) -> str:
 # --- the contract -------------------------------------------------------------
 
 
-def compare(pair, bundle, python: str | None = None, probes_dir: str = PROBES_DIR,
+def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROBES_DIR,
             tests_rel: str = TESTS_DIR):
-    """A's contract: RevisionPair + ProbeBundle -> (suite runs, comparisons, needs_bob_action)."""
+    """A's contract: RevisionPair + ProbeBundle -> (suite runs, comparisons, needs_bob_action).
+
+    `bundle` is accepted for A's signature; the probes actually executed are the
+    committed files from the BASE checkout, so the Action and the IDE cannot
+    diverge on which bytes ran.
+    """
     python = python or sys.executable
     base_wt, head_wt = Path(pair.base_path), Path(pair.head_path)
 
@@ -232,7 +237,7 @@ def pipeline(repo, base: str, head: str, max_hops: int = 2, python: str | None =
 
     with open_pair(repo, base, head) as pair:
         impact = analyze(pair, max_hops)
-        suites, comparisons, missing = compare(pair, None, python=python)
+        suites, comparisons, missing = compare(pair, python=python)
         probed = {c.probe.target.key for c in comparisons if HAS_SCHEMA}
         return ReviewReport(
             repo=pair.repo,

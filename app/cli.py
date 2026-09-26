@@ -43,9 +43,20 @@ def pipeline(repo: str | Path, base: str, head: str, max_hops: int = 2) -> Revie
     return ReviewReport(repo=pair.repo, revisions=pair.revisions, impact=impact, limits=_limits(impact))
 
 
+def _unique_entry_points(paths: list) -> list:
+    """One row per distinct caller site: a caller that reaches several added
+    symbols in the same changed file is still a single caller to review.
+    """
+    seen: dict[tuple[str, str, int], object] = {}
+    for path in paths:
+        first = path.hops[0]
+        seen.setdefault((first.path, first.symbol, first.line), path)
+    return list(seen.values())
+
+
 def _summary(report: ReviewReport) -> str:
     impact = report.impact
-    outside = [p for p in impact.paths if p.outside_diff and not p.is_test]
+    outside = _unique_entry_points([p for p in impact.paths if p.outside_diff and not p.is_test])
     lines = [
         f"{report.revisions.base_sha[:7]}..{report.revisions.head_sha[:7]}: "
         f"{len(impact.changed_symbols)} changed symbols, {len(impact.paths)} impact paths, "
