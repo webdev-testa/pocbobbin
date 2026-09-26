@@ -1,82 +1,18 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
-import { BehaviorDifferences } from "@/components/BehaviorDifferences";
-import { DecisionPanel } from "@/components/DecisionPanel";
-import { LimitsCard, TestsCard } from "@/components/TestsAndLimits";
-import { NeedsAttention } from "@/components/NeedsAttention";
-import { NodeDetailsSheet } from "@/components/NodeDetailsSheet";
+import { LocalBanner, LocalRunView, NewReviewDialog, RunPicker } from "@/components/LocalReviews";
 import { OpenReportDialog } from "@/components/OpenReportDialog";
 import { PrPicker, prLabel } from "@/components/PrPicker";
 import { ErrorState, LoadingState, OpenedNotice, UnknownPrState } from "@/components/ReportStates";
-import { SummaryHeader } from "@/components/SummaryHeader";
-import { Skeleton } from "@/components/ui/skeleton";
-import { evidenceNodes } from "@/lib/evidence";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ReportViews, useViewTab } from "@/components/ReportViews";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import type { LocalApi, LocalRepo } from "@/lib/local-api";
 import type { OpenedReport } from "@/lib/open-report";
-import type { RepoMap } from "@/lib/repo-map";
 import { useReportSource, type ReportSource } from "@/lib/report-source";
-import type { ReviewReport } from "@/lib/review-report";
+import { useLocalMode, useLocalRuns } from "@/lib/use-local-runs";
 import { useTheme } from "@/lib/use-theme";
 
-const EvidenceMap = lazy(() => import("@/components/EvidenceMap"));
-const RepoMapTab = lazy(() => import("@/components/RepoMapTab"));
-
-function PrReview({ report }: { report: ReviewReport }) {
-  const nodes = useMemo(() => evidenceNodes(report), [report]);
-  const [selected, setSelected] = useState<string | undefined>();
-  const select = useCallback((key: string) => setSelected(key), []);
-  return (
-    <div className="space-y-8">
-      <SummaryHeader report={report} />
-      <section aria-labelledby="map-heading">
-        <Suspense fallback={<Skeleton className="h-112 w-full" />}>
-          <EvidenceMap report={report} onSelect={select} />
-        </Suspense>
-      </section>
-      <BehaviorDifferences report={report} onSelect={select} />
-      <NeedsAttention report={report} />
-      <DecisionPanel report={report} />
-      <TestsCard report={report} />
-      <LimitsCard report={report} />
-      <NodeDetailsSheet node={selected ? nodes.get(selected) : undefined} onOpenChange={(open) => !open && setSelected(undefined)} />
-    </div>
-  );
-}
-
-/** The chosen tab outlives a PR switch, so both maps change together without jumping tabs. */
-function useViewTab() {
-  const [tab, setTab] = useState("pr");
-  const showEvidence = useCallback(() => {
-    setTab("pr");
-    requestAnimationFrame(() => document.getElementById("map-heading")?.scrollIntoView({ block: "start" }));
-  }, []);
-  return { tab, setTab, showEvidence };
-}
-
-interface ReportViewsProps {
-  report: ReviewReport;
-  map: RepoMap | null;
-  view: ReturnType<typeof useViewTab>;
-}
-
-function ReportViews({ report, map, view }: ReportViewsProps) {
-  return (
-    <Tabs value={view.tab} onValueChange={view.setTab} className="gap-6">
-      <TabsList aria-label="Views">
-        <TabsTrigger value="pr">PR review</TabsTrigger>
-        <TabsTrigger value="repo">Repo map</TabsTrigger>
-      </TabsList>
-      {/* Keyed by run, so a node selected in one PR's review never carries over to another. */}
-      <TabsContent value="pr"><PrReview key={report.generated_at} report={report} /></TabsContent>
-      <TabsContent value="repo">
-        <Suspense fallback={<Skeleton className="h-128 w-full" />}>
-          <RepoMapTab report={report} map={map} onShowEvidence={view.showEvidence} />
-        </Suspense>
-      </TabsContent>
-    </Tabs>
-  );
-}
+type ThemeControl = ReturnType<typeof useTheme>;
 
 function PublishedReports({ source }: { source: ReportSource & { select: (pr: number | null) => void } }) {
   const view = useViewTab();
@@ -98,25 +34,60 @@ function OpenedReportViews({ opened, onClose }: { opened: OpenedReport; onClose:
   );
 }
 
-export default function App() {
-  const themeControl = useTheme();
+const Main = ({ children }: { children: React.ReactNode }) => (
+  <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+);
+
+/** The static site: published PR runs, or files opened from this computer. */
+function StaticApp({ themeControl }: { themeControl: ThemeControl }) {
   const source = useReportSource();
   const [opened, setOpened] = useState<OpenedReport | null>(null);
   const selected = source.status === "ready" ? source.pr : null;
   const picker = !opened && source.entries ? <PrPicker entries={source.entries} selected={selected} onSelect={source.select} /> : null;
-
   return (
-    <TooltipProvider>
+    <>
       <AppHeader themeControl={themeControl} picker={picker}>
         <OpenReportDialog onOpen={setOpened} />
       </AppHeader>
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+      <Main>
         {opened ? (
           <OpenedReportViews key={`${opened.names.join()}:${opened.report.generated_at}`} opened={opened} onClose={() => setOpened(null)} />
         ) : (
           <PublishedReports source={source} />
         )}
-      </main>
+      </Main>
+    </>
+  );
+}
+
+/** `behavior-review ui`: this repository's review history, new reviews, and decisions saved into it. */
+function LocalApp({ themeControl, api, repo }: { themeControl: ThemeControl; api: LocalApi; repo: LocalRepo }) {
+  const { runs, current, view, select, refresh } = useLocalRuns(api);
+  const show = (id: string) => {
+    void refresh();
+    select(id);
+  };
+  return (
+    <>
+      <AppHeader themeControl={themeControl} picker={<RunPicker runs={runs} current={current} onSelect={select} />}>
+        <NewReviewDialog api={api} repo={repo} onStarted={show} />
+      </AppHeader>
+      <Main>
+        <LocalBanner repo={repo} />
+        <LocalRunView api={api} view={view} onRefresh={() => void refresh()} />
+      </Main>
+    </>
+  );
+}
+
+export default function App() {
+  const themeControl = useTheme();
+  const mode = useLocalMode();
+  return (
+    <TooltipProvider>
+      {mode.status === "checking" ? <Main><LoadingState /></Main> : null}
+      {mode.status === "static" ? <StaticApp themeControl={themeControl} /> : null}
+      {mode.status === "local" ? <LocalApp themeControl={themeControl} api={mode.api} repo={mode.repo} /> : null}
     </TooltipProvider>
   );
 }

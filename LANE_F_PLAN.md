@@ -45,7 +45,7 @@ Companion to `FINAL_PLAN.md` (§20 points here). Written 27 Sept 2026 from readi
 | F-B | ✅ merged (#35) |
 | F-A | ✅ merged (#36), web badge `TODO(C)-7` open |
 | F-D | 🟨 in progress: `.behavior-review/` folder + `decide` (#37); `init` / `run` / `doctor` / Action next |
-| F-F | 🟨 in progress: server and API (#38); web local mode and packaging next |
+| F-F | 🟨 in progress: server and API (#38), web local mode (#39); packaged web next |
 | F-E | ⏸ deferred (§3) |
 
 ---
@@ -230,7 +230,7 @@ The workflow written by `init` installs the tool from a pinned tag (`uv tool ins
 
 ## 8. F-F — Local web UI: the whole loop from one terminal command
 
-**Status: in progress.** Friction #11. Done in #38: `behavior-review ui`, `app/server.py` (API and safeguards, §8.4), `app/runs.py` (history, one run at a time, steps in `meta.json`), `pipeline(on_progress=…)` (`TODO(A)-9`), and `decide_from_report`, shared by `decide` and `POST /api/decisions`. Next: web local mode (§8.5), then the packaged web (§8.2).
+**Status: in progress.** Friction #11. Done in #38: `behavior-review ui`, `app/server.py` (API and safeguards, §8.4), `app/runs.py` (history, one run at a time, steps in `meta.json`), `pipeline(on_progress=…)` (`TODO(A)-9`), and `decide_from_report`, shared by `decide` and `POST /api/decisions`. Done in #39: the web's local mode (§8.5): `LocalApiSource` as `web/src/lib/local-api.ts`, run history in the header, New review with live steps, Save decision through the API; static mode unchanged. Next: the packaged web (§8.2).
 
 **Goal:** one command opens the viewer on localhost, already connected to the repository's real data — run a review, browse history, save a decision straight into the repo. Same pattern as `jupyter lab`, `mlflow ui`, `tensorboard`, `dbt docs serve`: a Python CLI starts a small local server and opens the browser.
 

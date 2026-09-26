@@ -74,11 +74,18 @@ def _commit_ref(root: Path, ref: str) -> str:
 
 
 def default_base(root: Path) -> str:
-    """The remote's default branch (e.g. 'origin/main'), else 'main'."""
+    """The remote's default branch (e.g. 'origin/main'), else a local main/master, else the current branch."""
     try:
         return git(root, "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
     except SnapshotError:
-        return "main"
+        pass
+    for candidate in ("main", "master"):
+        try:
+            resolve_commit(root, candidate)
+            return candidate
+        except SnapshotError:
+            continue
+    return git(root, "rev-parse", "--abbrev-ref", "HEAD")
 
 
 def _repo_info(root: Path) -> dict:

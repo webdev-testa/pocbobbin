@@ -1,5 +1,5 @@
 import { useId, useState, type FormEvent } from "react";
-import { CircleAlert, Download, Info } from "lucide-react";
+import { CircleAlert, Download, Info, Save } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TONE_CLASSES } from "@/components/StatusBadge";
-import { buildDecisions, downloadDecisions, MIN_RATIONALE, type DecisionInput } from "@/lib/decision-file";
+import { MIN_RATIONALE, type DecisionInput } from "@/lib/decision-file";
+import { useDecisionSaver, type SavedFile } from "@/lib/decision-saver";
 import { formatValue } from "@/lib/evidence";
 import type { Comparison, Decision, Intent, ReviewReport } from "@/lib/review-report";
 
@@ -32,20 +33,19 @@ function readyIntent(draft: Draft): Intent | null {
   return draft.intent === "intended" && draft.rationale.trim().length < MIN_RATIONALE ? null : draft.intent;
 }
 
-type SaveState = { status: "saved"; decisions: Decision[] } | { status: "error"; message: string } | null;
+type SaveState = { status: "saved"; files: SavedFile[] } | { status: "error"; message: string } | null;
 
-function useDecisionDownload(report: ReviewReport) {
+function useDecisionSave(report: ReviewReport) {
+  const saver = useDecisionSaver();
   const [save, setSave] = useState<SaveState>(null);
-  const download = async (items: DecisionInput[]) => {
+  const run = async (items: DecisionInput[]) => {
     try {
-      const decisions = await buildDecisions(report, items);
-      await downloadDecisions(decisions);
-      setSave({ status: "saved", decisions });
+      setSave({ status: "saved", files: await saver.save(report, items) });
     } catch (error: unknown) {
-      setSave({ status: "error", message: error instanceof Error ? error.message : "The decision file could not be built." });
+      setSave({ status: "error", message: error instanceof Error ? error.message : "The decision could not be saved." });
     }
   };
-  return { save, download, clear: () => setSave(null) };
+  return { verb: saver.verb, save, run, clear: () => setSave(null) };
 }
 
 function SaveStatus({ state }: { state: SaveState }) {
@@ -57,14 +57,20 @@ function SaveStatus({ state }: { state: SaveState }) {
       </p>
     );
   }
-  const [only] = state.decisions;
-  const many = state.decisions.length > 1;
+  const [only] = state.files;
+  const many = state.files.length > 1;
+  const written = state.files.every((file) => file.path);
+  const names = state.files.map((file, i) => <span key={file.id}>{i ? ", " : ""}<code>{file.path ?? `${file.id}.json`}</code></span>);
   return (
     <p role="status" className="max-w-prose text-sm text-muted-foreground">
-      Downloaded {state.decisions.map((d, i) => <span key={d.id}>{i ? ", " : ""}<code>{d.id}.json</code></span>)} as{" "}
-      {many ? "proposed decisions" : "a proposed decision"}
-      {!many && only.supersedes ? <> that supersedes <code>{only.supersedes}</code></> : null}. Commit {many ? "them" : "it"} to{" "}
-      <code>.behavior-review/decisions/</code> (or <code>behavior_decisions/</code>) on this PR's branch; {many ? "they count" : "it counts"} as approved once the PR is merged.
+      {written ? "Saved" : "Downloaded"} {names} as {many ? "proposed decisions" : "a proposed decision"}
+      {!many && only.supersedes ? <> that supersedes <code>{only.supersedes}</code></> : null}.{" "}
+      {written ? (
+        <>Commit {many ? "them" : "it"}: <code>git add {state.files.map((file) => file.path).join(" ")}</code>;</>
+      ) : (
+        <>Commit {many ? "them" : "it"} to <code>.behavior-review/decisions/</code> (or <code>behavior_decisions/</code>) on this PR's branch;</>
+      )}{" "}
+      {many ? "they count" : "it counts"} as approved once the PR is merged.
     </p>
   );
 }
@@ -91,7 +97,7 @@ interface DraftState {
 }
 
 function DeltaDecision({ report, comparison, draft }: { report: ReviewReport; comparison: Comparison; draft: DraftState }) {
-  const { save, download, clear } = useDecisionDownload(report);
+  const { verb, save, run, clear } = useDecisionSave(report);
   const id = comparison.probe.id;
   const { intent, rationale } = draft.value;
   const ready = readyIntent(draft.value);
@@ -101,7 +107,7 @@ function DeltaDecision({ report, comparison, draft }: { report: ReviewReport; co
   };
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (ready) void download([{ comparison, intent: ready, rationale }]);
+    if (ready) void run([{ comparison, intent: ready, rationale }]);
   };
   return (
     <form className="space-y-3" onSubmit={submit}>
@@ -123,21 +129,24 @@ function DeltaDecision({ report, comparison, draft }: { report: ReviewReport; co
         />
       </div>
       <Button type="submit" disabled={!ready || report.fixture}>
-        <Download aria-hidden="true" />Download decision
+        {verb === "Save" ? <Save aria-hidden="true" /> : <Download aria-hidden="true" />}{verb} decision
       </Button>
       <SaveStatus state={save} />
     </form>
   );
 }
 
-function DownloadAll({ report, ready, total }: { report: ReviewReport; ready: DecisionInput[]; total: number }) {
-  const { save, download } = useDecisionDownload(report);
+function SaveAll({ report, ready, total }: { report: ReviewReport; ready: DecisionInput[]; total: number }) {
+  const { verb, save, run } = useDecisionSave(report);
   return (
     <div className="space-y-2">
-      <Button variant="outline" disabled={!ready.length || report.fixture} onClick={() => void download(ready)}>
-        <Download aria-hidden="true" />Download all ready decisions ({ready.length} of {total})
+      <Button variant="outline" disabled={!ready.length || report.fixture} onClick={() => void run(ready)}>
+        {verb === "Save" ? <Save aria-hidden="true" /> : <Download aria-hidden="true" />}
+        {verb} all ready decisions ({ready.length} of {total})
       </Button>
-      <p className="text-xs text-muted-foreground">One file per decision; your browser may ask to allow several downloads.</p>
+      {verb === "Download" ? (
+        <p className="text-xs text-muted-foreground">One file per decision; your browser may ask to allow several downloads.</p>
+      ) : null}
       <SaveStatus state={save} />
     </div>
   );
@@ -186,7 +195,7 @@ function PendingDecisions({ report, deltas }: { report: ReviewReport; deltas: Co
   return (
     <>
       {report.fixture ? <p className="text-sm text-muted-foreground">A fixture report cannot produce ledger records.</p> : null}
-      {deltas.length > 1 ? <DownloadAll report={report} ready={ready} total={deltas.length} /> : null}
+      {deltas.length > 1 ? <SaveAll report={report} ready={ready} total={deltas.length} /> : null}
       {deltas.map((comparison) => (
         <div key={comparison.probe.id} className="space-y-6">
           <Separator />
@@ -201,6 +210,21 @@ function PendingDecisions({ report, deltas }: { report: ReviewReport; deltas: Co
   );
 }
 
+function LedgerNote() {
+  const { verb } = useDecisionSaver();
+  return (
+    <Alert>
+      <Info aria-hidden="true" />
+      <AlertTitle>{verb === "Save" ? "Saving proposes; only merging approves" : "This page saves nothing and cannot approve anything"}</AlertTitle>
+      <AlertDescription>
+        {verb === "Save" ? "Save writes" : "Download writes"} the ledger record <code>&lt;id&gt;.json</code> for{" "}
+        <code>.behavior-review/decisions/</code> (<code>behavior_decisions/</code> in older layouts). Commit it on the PR's
+        branch: it is proposed there, and counts as approved once that PR is merged.
+      </AlertDescription>
+    </Alert>
+  );
+}
+
 export function DecisionPanel({ report }: { report: ReviewReport }) {
   const deltas = report.comparisons.filter((c) => c.outcome === "delta_observed");
   return (
@@ -210,14 +234,7 @@ export function DecisionPanel({ report }: { report: ReviewReport }) {
         <CardDescription>Every behavior difference needs a human disposition.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Alert>
-          <Info aria-hidden="true" />
-          <AlertTitle>This page saves nothing and cannot approve anything</AlertTitle>
-          <AlertDescription>
-            Download writes the ledger record <code>&lt;id&gt;.json</code> for <code>.behavior-review/decisions/</code> (<code>behavior_decisions/</code> in older layouts). Commit it on the PR's branch: it is
-            proposed there, and counts as approved once that PR is merged.
-          </AlertDescription>
-        </Alert>
+        <LedgerNote />
         <PendingDecisions report={report} deltas={deltas} />
         <Separator />
         {report.decisions.length ? (

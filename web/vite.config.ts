@@ -13,4 +13,9 @@ export default defineConfig({
   build: {
     target: "es2020",
   },
+  // `npm run dev` against a running `behavior-review ui --no-browser` (default port 8765); open the
+  // dev page with that server's ?token=. changeOrigin keeps the Host the server accepts.
+  server: {
+    proxy: { "/api": { target: "http://127.0.0.1:8765", changeOrigin: true } },
+  },
 });
