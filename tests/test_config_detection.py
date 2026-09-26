@@ -126,3 +126,73 @@ def test_this_repository_states_its_own_layout():
     """This repo ships behavior.json so the demo keeps running sample_project/tests."""
     assert load_config(REPO_ROOT).tests_dir == "sample_project/tests"
     assert resolve_tests_dir(load_config(REPO_ROOT), REPO_ROOT) == "sample_project/tests"
+
+
+# --- probe runner target forms ---------------------------------------------------------------
+
+def _run_probe(repo: Path, probe: dict, *extra: str):
+    import json as _json
+    probe_file = repo / "probe.json"
+    probe_file.write_text(_json.dumps(probe))
+    runner = Path(__file__).resolve().parents[1] / "tools" / "run_probe.py"
+    result = subprocess.run(
+        [sys.executable, str(runner), str(probe_file), *extra],
+        cwd=repo, capture_output=True, text=True, timeout=120,
+    )
+    return result, _json.loads(result.stdout or "{}")
+
+
+def test_probe_runner_accepts_the_string_target_form(tmp_path):
+    """The concise 'module:function' form must keep working."""
+    repo = _repo(tmp_path, {"plainmod.py": "def double(n):\n    return n * 2\n"})
+    _, payload = _run_probe(repo, {"id": "p", "target": "plainmod:double", "args": [21]})
+    assert payload["outcome"] == "value" and payload["value"] == 42
+
+
+def test_probe_runner_accepts_the_object_target_form(tmp_path):
+    """The Bob mode documents {"path", "symbol"}; following it must not crash the runner."""
+    repo = _repo(tmp_path, {"pkg/deep.py": "def three():\n    return 3\n"})
+    _, payload = _run_probe(
+        repo, {"id": "p", "target": {"path": "pkg/deep.py", "symbol": "three"}, "args": []}
+    )
+    assert payload["outcome"] == "value" and payload["value"] == 3
+
+
+def test_probe_runner_resolves_a_class_method_symbol(tmp_path):
+    """Symbols are spelled 'Class.method' in reports, so the runner must resolve that too."""
+    repo = _repo(tmp_path, {
+        "pkg/calc.py": "class Calc:\n    def add(self, a, b):\n        return a + b\n"
+    })
+    _, payload = _run_probe(
+        repo, {"id": "p", "target": {"path": "pkg/calc.py", "symbol": "Calc.add"}, "args": [2, 3]}
+    )
+    assert payload["outcome"] == "value" and payload["value"] == 5
+
+
+def test_probe_runner_imports_a_monorepo_package_by_its_real_name(tmp_path):
+    """A module nested under backend/ must import with backend/ as the root, or its own
+    internal `from app... import ...` lines fail even though the file is right there."""
+    repo = _repo(tmp_path, {
+        "backend/app/__init__.py": "",
+        "backend/app/engine/__init__.py": "",
+        "backend/app/engine/inner.py": "VALUE = 11\n",
+        "backend/app/engine/outer.py": (
+            "from app.engine.inner import VALUE\n\n"
+            "def read():\n    return VALUE\n"
+        ),
+    })
+    _, payload = _run_probe(
+        repo, {"id": "p", "target": {"path": "backend/app/engine/outer.py", "symbol": "read"}, "args": []}
+    )
+    assert payload["outcome"] == "value", payload
+    assert payload["value"] == 11
+
+
+def test_probe_runner_reports_a_missing_target_rather_than_raising(tmp_path):
+    """A broken probe is an outcome the report can carry, not a crash for the runner."""
+    repo = _repo(tmp_path, {"pkg/only.py": "def f():\n    return 1\n"})
+    _, payload = _run_probe(
+        repo, {"id": "p", "target": {"path": "pkg/missing.py", "symbol": "f"}, "args": []}
+    )
+    assert payload["outcome"] == "exception"
+    assert payload["error_type"] == "FileNotFoundError"
