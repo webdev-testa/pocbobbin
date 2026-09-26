@@ -24,6 +24,8 @@ def load_target(spec: str):
 def main(argv: list[str]) -> int:
     probe_path = Path(argv[1])
     probe = json.loads(probe_path.read_text())
+    # The checkout under test is the cwd, not wherever this script lives.
+    sys.path.insert(0, str(Path.cwd()))
     fn = load_target(probe["target"])
     try:
         result = fn(*probe["args"])
