@@ -25,6 +25,10 @@ behavior-review = "app.cli:main"
 [tool.setuptools.packages.find]
 include = ["app*"]
 
+# The probe runners ship with the tool, so a reviewed repository doesn't have to copy them.
+[tool.setuptools.package-data]
+app = ["harness/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]

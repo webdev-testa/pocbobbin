@@ -450,6 +450,57 @@ def _canon(value) -> str:
     return json.dumps(value, sort_keys=True, default=str)
 
 
+# --- what runs: the probe runner (code) and the probes (data) ----------------------------
+
+# Runners shipped with the tool; a repository only commits its own to override one.
+PACKAGED_HARNESS = Path(__file__).parent / "harness"
+
+
+def _freeze_runner(runner_rel: str, base_wt: Path, head_wt: Path, frozen: Path, notes: list[str]) -> Path | None:
+    """The base's copy of the configured runner, else the packaged one of the same name.
+
+    Never a copy only the PR has: the runner decides what "same" means, so a change that could
+    supply its own could make every probe agree. The report says when a PR's copy was set aside.
+    """
+    base_copy, head_copy = base_wt / runner_rel, head_wt / runner_rel
+    if base_copy.is_file():
+        source, label = base_copy, f"the base revision's '{runner_rel}'"
+        if head_copy.is_file() and head_copy.read_bytes() != base_copy.read_bytes():
+            notes.append(f"this change edits '{runner_rel}'; its base version ran on both sides.")
+    else:
+        source, label = PACKAGED_HARNESS / Path(runner_rel).name, f"the packaged '{Path(runner_rel).name}'"
+        if head_copy.is_file():
+            notes.append(f"this change adds '{runner_rel}'; it was not used, since a change can't supply its own runner.")
+    if not source.is_file():
+        notes.append(f"no probe runner '{runner_rel}' was found, so no behaviour claim is made from probe execution.")
+        return None
+    frozen_runner = frozen / source.name
+    shutil.copy2(source, frozen_runner)
+    notes.append(f"probes ran with {label} (sha256:{_sha8(source.read_text(encoding='utf-8'))}).")
+    return frozen_runner
+
+
+def _freeze_probes(base_dir: Path, head_dir: Path, frozen_dir: Path, notes: list[str]) -> None:
+    """The base's probes plus the ones this change adds; an edited probe keeps its base bytes.
+
+    New probes are how an impacted caller gets covered (Bob writes them on the PR branch), so they
+    must run before the merge. The same frozen bytes run on both sides either way.
+    """
+    frozen_dir.mkdir(parents=True, exist_ok=True)
+    base = {p.name: p for p in base_dir.glob("*.json")} if base_dir.is_dir() else {}
+    head = {p.name: p for p in head_dir.glob("*.json")} if head_dir.is_dir() else {}
+    for name, path in {**head, **base}.items():
+        shutil.copy2(path, frozen_dir / name)
+    added = sorted(head.keys() - base.keys())
+    edited = sorted(n for n in head.keys() & base.keys() if head[n].read_bytes() != base[n].read_bytes())
+    if added:
+        notes.append(f"probes added by this change ran on both sides: {', '.join(added)}.")
+    if edited:
+        notes.append(
+            f"this change edits {', '.join(edited)}; the base versions ran, since a rerun must use the unchanged probe."
+        )
+
+
 # --- the contract -------------------------------------------------------------
 
 
@@ -461,9 +512,9 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
     `bundle` is accepted for A's signature; the probes actually executed are the
     committed files, so the Action and the IDE cannot diverge on which bytes ran.
 
-    Sources: the frozen test suite always comes from BASE. The probe runner and the
-    probe files come from BASE when they exist there, else from HEAD (a PR that adds
-    the harness itself), and the report says which revision supplied them.
+    Sources: the frozen test suite always comes from BASE. The probe runner comes from
+    BASE, else the package (never HEAD alone); the probes are BASE's plus the ones HEAD
+    adds. The report says what ran and what was set aside.
 
     `prior_report` is an earlier ReviewReport (a dict or a path to one). When a probe
     that showed a delta then shows no delta now, the new comparison is linked to that
@@ -480,18 +531,6 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
     base_wt, head_wt = Path(pair.base_path), Path(pair.head_path)
     notes: list[str] = []
     prior_deltas = _prior_delta_probes(prior_report)
-
-    def source_of(rel: str) -> Path:
-        """BASE is authoritative; fall back to HEAD and record why."""
-        if (base_wt / rel).exists():
-            return base_wt / rel
-        if (head_wt / rel).exists():
-            notes.append(
-                f"'{rel}' does not exist on the base revision; the head revision supplied it, "
-                "so both sides ran the head copy of that file."
-            )
-            return head_wt / rel
-        raise FileNotFoundError(f"neither revision contains '{rel}'")
 
     # Freeze the base test suite and the probe runner before touching any checkout.
     with tempfile.TemporaryDirectory(prefix="behavior-review-frozen-") as tmp:
@@ -510,23 +549,13 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
             (token for token in settings.probe_runner if token.endswith((".py", ".ts", ".tsx", ".js", ".mjs"))),
             "tools/run_probe.py",
         )
-        # Probes and the probe runner are opt-in: a repository under review need not ship them.
-        # When absent, the paired test-suite comparison still runs and is still evidence; no
-        # behaviour claim is made from probes, and the report says so.
-        frozen_runner: Path | None = None
-        try:
-            runner_src = source_of(runner_rel)
-            frozen_runner = frozen / runner_src.name
-            shutil.copy2(runner_src, frozen_runner)
-            probes_src = source_of(probes_dir)
-            shutil.copytree(probes_src, frozen / "probes")
-        except FileNotFoundError:
-            notes.append(
-                f"this repository has no probe runner ('{runner_rel}') or no '{probes_dir}/' "
-                "directory, so no behaviour claim is made from probe execution; only the paired "
-                "test run above counts."
-            )
-        if not sorted((frozen / "probes").glob("*.json")):
+        # Probes are opt-in: without any, the paired test-suite comparison still runs and is still
+        # evidence; no behaviour claim is made from probes, and the report says so.
+        _freeze_probes(base_wt / probes_dir, head_wt / probes_dir, frozen / "probes", notes)
+        frozen_runner = None
+        if any((frozen / "probes").glob("*.json")):
+            frozen_runner = _freeze_runner(runner_rel, base_wt, head_wt, frozen, notes)
+        else:
             notes.append("no committed probes were found; no behavior claim is made from execution.")
 
         suites = []

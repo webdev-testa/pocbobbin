@@ -4,7 +4,10 @@ Executes one probe JSON file against a checkout and prints the canonical JSON
 output. Same script bytes are used on both revisions, so any difference in the
 printed output is a real behavioral difference, not a runner artifact.
 
-Usage:  python tools/run_probe.py probes/price_total_boundary.json
+Standard library only: it runs under the reviewed project's interpreter, which
+need not have behavior-review or its dependencies installed.
+
+Usage:  python run_probe.py probes/price_total_boundary.json   (cwd = the checkout)
 """
 
 from __future__ import annotations
@@ -24,8 +27,10 @@ def load_target(spec: str):
 def main(argv: list[str]) -> int:
     probe_path = Path(argv[1])
     probe = json.loads(probe_path.read_text())
-    # The checkout under test is the cwd, not wherever this script lives.
-    sys.path.insert(0, str(Path.cwd()))
+    # The checkout under test is the cwd, not wherever this script lives; a `src/` layout
+    # package is importable from `src/`.
+    root = Path.cwd()
+    sys.path[:0] = [str(root)] + ([str(root / "src")] if (root / "src").is_dir() else [])
     fn = load_target(probe["target"])
     try:
         result = fn(*probe["args"])

@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 
 from app.cli import pipeline
+from app.runner import PACKAGED_HARNESS
 from app.schemas import Outcome, RunStatus
 
 
@@ -47,7 +48,7 @@ def test_typescript_e2e_paired_execution(tmp_path: Path):
     git(repo, "init", "-q", "-b", "base")
 
     # Copy the tools/run_probe.ts runner into the repo
-    runner_src = Path(__file__).parents[1] / "tools" / "run_probe.ts"
+    runner_src = PACKAGED_HARNESS / "run_probe.ts"
     tools_dir = repo / "tools"
     tools_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(runner_src, tools_dir / "run_probe.ts")
@@ -108,7 +109,7 @@ def test_missing_toolchain_fails_cleanly_as_inconclusive(tmp_path: Path):
     repo.mkdir()
     git(repo, "init", "-q", "-b", "base")
 
-    command_runner = Path(__file__).parents[1] / "tools" / "run_command_probe.py"
+    command_runner = PACKAGED_HARNESS / "run_command_probe.py"
     tools_dir = repo / "tools"
     tools_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(command_runner, tools_dir / "run_command_probe.py")

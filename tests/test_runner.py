@@ -151,8 +151,8 @@ def test_summary_counts_each_caller_site_once():
 def test_compare_survives_a_base_without_the_harness(tmp_path):
     """A PR that ADDS tools/ and probes/ must still produce a report.
 
-    The probe runner and probes come from HEAD in that case, and the report has to
-    say so rather than crash or silently pretend BASE supplied them.
+    Its probes run (data), but its runner does not (code): the packaged one runs instead,
+    and the report says both.
     """
     import subprocess
 
@@ -175,9 +175,10 @@ def test_compare_survives_a_base_without_the_harness(tmp_path):
     with open_pair(repo, "base", "HEAD") as pair:
         suites, comparisons, _, notes = compare(pair)
     assert suites and all(s.status == RunStatus.OK for s in suites)
-    assert comparisons, "probes added by the head revision must still run"
-    assert any("head revision supplied it" in note for note in notes)
-    assert any("tools/run_probe.py" in note for note in notes)
+    assert {c.probe.id: c.outcome for c in comparisons}["price_total_boundary"] == Outcome.DELTA_OBSERVED
+    assert any("probes added by this change ran on both sides" in note for note in notes)
+    assert any("this change adds 'tools/run_probe.py'; it was not used" in note for note in notes)
+    assert any("probes ran with the packaged 'run_probe.py'" in note for note in notes)
 
 
 def test_scenario2_policy_change_produces_a_delta():
@@ -416,9 +417,11 @@ def test_needs_bob_action_when_a_caller_has_no_probe(tmp_path):
     run("fetch", "-q", str(REPO), "refs/tags/ref/base:refs/heads/noprobe")
     # not "head": a branch of that name collides with HEAD on case-insensitive filesystems (Windows)
     run("fetch", "-q", str(REPO), "refs/remotes/origin/scenario1-head:refs/heads/changed")
-    run("checkout", "-q", "noprobe")
-    (repo / "probes" / "price_total_boundary.json").unlink()
-    run("commit", "-qam", "drop caller probe")
+    # Drop the caller's probe on both sides: a probe the change adds would run and cover it.
+    for branch in ("noprobe", "changed"):
+        run("checkout", "-q", branch)
+        (repo / "probes" / "price_total_boundary.json").unlink()
+        run("commit", "-qam", "drop caller probe")
 
     with open_pair(repo, "noprobe", "changed") as pair:
         _, comparisons, missing, _ = compare(pair)

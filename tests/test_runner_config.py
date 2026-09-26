@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from app.config import BehaviorConfig
-from app.runner import _target_ref, run_probe_configured, run_suite
+from app.runner import PACKAGED_HARNESS, _target_ref, run_probe_configured, run_suite
 from app.schemas import RunStatus
 
 
@@ -25,7 +25,7 @@ def test_configured_probe_uses_frozen_runner_and_probe_bytes(tmp_path: Path):
     (tmp_path / "sample.py").write_text("def value(number):\n    return number + 1\n", encoding="utf-8")
     probe = tmp_path / "probe.json"
     probe.write_text(json.dumps({"id": "value", "target": "sample:value", "args": [4]}), encoding="utf-8")
-    runner = Path(__file__).parents[1] / "tools" / "run_probe.py"
+    runner = PACKAGED_HARNESS / "run_probe.py"
     result = run_probe_configured(tmp_path, ("python", "{runner}"), runner, probe, sys.executable)
     assert result[0] == RunStatus.OK
     assert result[1] == 5
@@ -37,7 +37,7 @@ def test_javascript_probe_harness_returns_value(tmp_path: Path):
     (tmp_path / "sample.mjs").write_text("export function value(number) { return number + 2; }\n", encoding="utf-8")
     probe = tmp_path / "probe.json"
     probe.write_text(json.dumps({"id": "value", "target": {"path": "sample.mjs", "symbol": "value"}, "args": [4]}), encoding="utf-8")
-    harness = Path(__file__).parents[1] / "tools" / "run_probe.ts"
+    harness = PACKAGED_HARNESS / "run_probe.ts"
     completed = subprocess.run(
         ["node", "--experimental-strip-types", str(harness), str(probe)],
         cwd=tmp_path,
@@ -57,7 +57,7 @@ def test_generic_command_probe_returns_value(tmp_path: Path):
         "command": [sys.executable, "emit.py", "{input}"],
         "input": {"value": 4},
     }), encoding="utf-8")
-    runner = Path(__file__).parents[1] / "tools" / "run_command_probe.py"
+    runner = PACKAGED_HARNESS / "run_command_probe.py"
     result = run_probe_configured(tmp_path, ("python", "{runner}"), runner, probe, sys.executable)
     assert result[0] == RunStatus.OK
     assert result[1] == 7

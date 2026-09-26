@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # 22.6+ for `--experimental-strip-types`, which tools/run_probe.ts needs.
+      # 22.6+ for `--experimental-strip-types`, which the TypeScript probe runner (app/harness/run_probe.ts) needs.
       - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:

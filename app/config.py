@@ -37,6 +37,8 @@ SUPPORTED_LANGUAGES = {
     "bash",
 }
 
+# A `probe_runner` path names the runner: the base revision's copy at that path overrides the
+# packaged one of the same name (`app/harness/`), and a copy only the change has is never used.
 LANGUAGE_DEFAULTS: dict[str, dict[str, Any]] = {
     "python": {
         "extensions": (".py",),
