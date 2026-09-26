@@ -1,0 +1,1248 @@
+{
+  "schema_version": "map-0.1",
+  "repo": "webdev-testa/pocbobbin",
+  "sha": "e99a9c8122edaa8386fb7be828f6c8409b6ef716",
+  "generated_at": "2026-09-26T15:47:58.604762Z",
+  "modules": [
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "5e62099",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #2 from webdev-testa/lane-d",
+        "pr": 2
+      }
+    },
+    {
+      "path": "app/adapters/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "app/adapters/registry.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "app/cli.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "app/decisions.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "52c58d3",
+        "date": "2026-09-26",
+        "subject": "Lane D follow-up: approval follows the merge (#13)",
+        "pr": 13
+      }
+    },
+    {
+      "path": "app/impact.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/impact_treesitter.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/repo_map.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/report.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e99a9c8",
+        "date": "2026-09-26",
+        "subject": "Merge 4f39e48f789715a458f5213ae14fd06ec4b1a352 into 1298f5b4a149f37856e2ecda9592db382de6ba65",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/runner.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "app/schemas.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/snapshot.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "c0d9885",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #1 from kafiirgie/feat/analysis-engine",
+        "pr": 1
+      }
+    },
+    {
+      "path": "sample_project/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/discount.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/invoice.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/tests/test_discount.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "5e62099",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #2 from webdev-testa/lane-d",
+        "pr": 2
+      }
+    },
+    {
+      "path": "tests/conftest.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "c0d9885",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #1 from kafiirgie/feat/analysis-engine",
+        "pr": 1
+      }
+    },
+    {
+      "path": "tests/test_config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e892cf6",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #23 from webdev-testa/feat/auto-detect-language-adapter",
+        "pr": 23
+      }
+    },
+    {
+      "path": "tests/test_contracts.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "tests/test_decisions.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "52c58d3",
+        "date": "2026-09-26",
+        "subject": "Lane D follow-up: approval follows the merge (#13)",
+        "pr": 13
+      }
+    },
+    {
+      "path": "tests/test_impact.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "tests/test_repo_map.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "tests/test_report.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e99a9c8",
+        "date": "2026-09-26",
+        "subject": "Merge 4f39e48f789715a458f5213ae14fd06ec4b1a352 into 1298f5b4a149f37856e2ecda9592db382de6ba65",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_runner.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "tests/test_runner_config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e99a9c8",
+        "date": "2026-09-26",
+        "subject": "Merge 4f39e48f789715a458f5213ae14fd06ec4b1a352 into 1298f5b4a149f37856e2ecda9592db382de6ba65",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_snapshot_cli.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "tests/test_treesitter.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "tools/run_command_probe.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "tools/run_probe.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "tools/run_probe.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "web/src/App.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/AppHeader.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/BehaviorDifferences.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/CopyButton.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/DecisionPanel.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/EvidenceMap.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/NeedsAttention.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/NodeDetailsSheet.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/OpenReportDialog.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/RepoMapTab.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/ReportStates.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/StatusBadge.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/SummaryHeader.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/TestsAndLimits.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/TierBadge.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/map-parts.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/accordion.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/alert.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/badge.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/button.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/card.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/dialog.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/components/ui/empty.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/label.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/radio-group.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/scroll-area.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/separator.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/sheet.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/skeleton.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/switch.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/table.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/tabs.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/textarea.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/components/ui/tooltip.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/decision-file.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/lib/evidence-map.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/evidence.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/nested-layout.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/open-report.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "40ce9ad",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #27 from webdev-testa/feat/web-open-report",
+        "pr": 27
+      }
+    },
+    {
+      "path": "web/src/lib/repo-map.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/review-report.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/use-theme.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/lib/utils.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    },
+    {
+      "path": "web/src/main.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/vite.config.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e79adb4",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #26 from webdev-testa/feat/web-shadcn-redesign",
+        "pr": 26
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "app/adapters/__init__.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 42
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/impact_treesitter.py",
+      "kind": "import",
+      "line": 52
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 13
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/decisions.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/repo_map.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/report.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 30
+    },
+    {
+      "from": "app/decisions.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/adapters/__init__.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/impact_treesitter.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/impact_treesitter.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/impact_treesitter.py",
+      "kind": "import",
+      "line": 94
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 29
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 34
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 35
+    },
+    {
+      "from": "app/snapshot.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "sample_project/pricing/invoice.py",
+      "to": "sample_project/pricing/discount.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "sample_project/tests/test_discount.py",
+      "to": "sample_project/pricing/discount.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "sample_project/tests/test_discount.py",
+      "to": "sample_project/pricing/invoice.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_config.py",
+      "to": "app/adapters/__init__.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_config.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_contracts.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 25
+    },
+    {
+      "from": "tests/test_contracts.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_decisions.py",
+      "to": "app/decisions.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_decisions.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "tests/test_impact.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "tests/test_repo_map.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "tests/test_repo_map.py",
+      "to": "tests/conftest.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_report.py",
+      "to": "app/report.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 12
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 100
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 13
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "tests/conftest.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "web/src/main.tsx",
+      "to": "web/src/App.tsx",
+      "kind": "import",
+      "line": 3
+    }
+  ],
+  "unknowns": [
+    {
+      "path": "tools/run_probe.py",
+      "line": 20,
+      "expression": "importlib.import_module(module_path)",
+      "reason": "dynamic import"
+    }
+  ],
+  "limits": [
+    "File-level imports only; function calls are in the PR evidence map.",
+    "Imports of packages outside this repository are not shown; neither are TypeScript path aliases (e.g. `@/`), which need the project's tsconfig to resolve.",
+    "Imports the adapters cannot resolve (dynamic, ambiguous, unresolved relative) are listed as unknowns.",
+    "Last commit per module is taken from git history at e99a9c8."
+  ]
+}

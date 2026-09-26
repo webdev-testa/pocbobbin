@@ -1,0 +1,3120 @@
+{
+  "schema_version": "0.1",
+  "fixture": false,
+  "generated_at": "2026-09-26T16:24:08.970819Z",
+  "repo": "webdev-testa/pocbobbin",
+  "revisions": {
+    "base_ref": "origin/main",
+    "head_ref": "HEAD",
+    "base_sha": "f4cd25abe843d110cc6e88c398a5b931dfc8fc98",
+    "head_sha": "1a6b7c0a04386d58adaedaea93e001a9c427b459",
+    "changed_files": [
+      ".github/workflows/behavior-review.yml",
+      ".github/workflows/multilang-review.yml",
+      "README.md",
+      "app/cli.py",
+      "app/decisions.py",
+      "app/schemas.py",
+      "tests/test_decisions.py",
+      "tests/test_snapshot_cli.py",
+      "web/src/components/DecisionPanel.tsx",
+      "web/src/lib/decision-file.ts"
+    ]
+  },
+  "analysis": {
+    "language": "python",
+    "adapter": "python-ast",
+    "tier": "full",
+    "config_source": "detected",
+    "languages": [
+      {
+        "language": "python",
+        "adapter": "python-ast",
+        "tier": "full"
+      },
+      {
+        "language": "typescript",
+        "adapter": "tree-sitter",
+        "tier": "static_probe"
+      }
+    ]
+  },
+  "impact": {
+    "changed_symbols": [
+      {
+        "path": "app/cli.py",
+        "symbol": "<module>",
+        "tags": [
+          "imports_changed"
+        ],
+        "base_line": 6,
+        "head_line": 6
+      },
+      {
+        "path": "app/cli.py",
+        "symbol": "_decisions_in_change",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 90
+      },
+      {
+        "path": "app/cli.py",
+        "symbol": "_prior_decisions",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 67,
+        "head_line": 71
+      },
+      {
+        "path": "app/cli.py",
+        "symbol": "_summary",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 124,
+        "head_line": 147
+      },
+      {
+        "path": "app/cli.py",
+        "symbol": "_symbol_refs",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 67
+      },
+      {
+        "path": "app/cli.py",
+        "symbol": "pipeline",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 83,
+        "head_line": 104
+      },
+      {
+        "path": "app/decisions.py",
+        "symbol": "current_decision",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 45
+      },
+      {
+        "path": "app/decisions.py",
+        "symbol": "validate_and_save",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 45,
+        "head_line": 63
+      },
+      {
+        "path": "app/schemas.py",
+        "symbol": "ReviewReport.decisions",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 242,
+        "head_line": 242
+      },
+      {
+        "path": "tests/test_decisions.py",
+        "symbol": "<module>",
+        "tags": [
+          "imports_changed"
+        ],
+        "base_line": 3,
+        "head_line": 3
+      },
+      {
+        "path": "tests/test_decisions.py",
+        "symbol": "TestDecisionsModule._ledger_record",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 178
+      },
+      {
+        "path": "tests/test_decisions.py",
+        "symbol": "TestDecisionsModule.test_current_decision_follows_the_supersedes_chain_not_the_file_order",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 187
+      },
+      {
+        "path": "tests/test_decisions.py",
+        "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 199
+      },
+      {
+        "path": "tests/test_snapshot_cli.py",
+        "symbol": "_decision",
+        "tags": [
+          "signature_changed",
+          "body_changed"
+        ],
+        "base_line": 51,
+        "head_line": 51
+      },
+      {
+        "path": "tests/test_snapshot_cli.py",
+        "symbol": "test_decision_history_across_three_decisions_on_one_function",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 79
+      },
+      {
+        "path": "tests/test_snapshot_cli.py",
+        "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 104
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "DecisionPanel",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 194,
+        "head_line": 204
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "DownloadAll",
+        "tags": [
+          "signature_changed"
+        ],
+        "base_line": 139,
+        "head_line": 133
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "LedgerDecision",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 146
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "LedgerSection",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 164
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "PriorDecision",
+        "tags": [
+          "removed"
+        ],
+        "base_line": 152,
+        "head_line": null
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "ReadyDecision",
+        "tags": [
+          "removed"
+        ],
+        "base_line": 35,
+        "head_line": null
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "symbol": "useDecisionDownload",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 43,
+        "head_line": 37
+      },
+      {
+        "path": "web/src/lib/decision-file.ts",
+        "symbol": "DecisionInput",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 9
+      },
+      {
+        "path": "web/src/lib/decision-file.ts",
+        "symbol": "buildDecision",
+        "tags": [
+          "signature_changed",
+          "body_changed"
+        ],
+        "base_line": 17,
+        "head_line": 33
+      },
+      {
+        "path": "web/src/lib/decision-file.ts",
+        "symbol": "buildDecisions",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 61
+      },
+      {
+        "path": "web/src/lib/decision-file.ts",
+        "symbol": "currentDecision",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 27
+      }
+    ],
+    "edges": [
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "_decisions_in_change"
+        },
+        "line": 116,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "_prior_decisions"
+        },
+        "line": 115,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "_summary"
+        },
+        "line": 270,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_summary_counts_each_caller_site_once"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "_summary"
+        },
+        "line": 121,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "_decisions_in_change"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "_symbol_refs"
+        },
+        "line": 95,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "_prior_decisions"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "_symbol_refs"
+        },
+        "line": 80,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "<module>"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 275,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_repo_map.py",
+          "symbol": "_map"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 20,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_cli_records_links_in_json_and_markdown"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 131,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_cli_writes_markdown_report"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 118,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_cli_writes_report_without_local_paths"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 40,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_decision_history_across_three_decisions_on_one_function"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 100,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 76,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 258,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_multilang_e2e.py",
+          "symbol": "test_missing_toolchain_fails_cleanly_as_inconclusive"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 148,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_multilang_e2e.py",
+          "symbol": "test_typescript_e2e_paired_execution"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 89,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_impact_finds_the_caller_outside_the_diff"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 88,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_pipeline_populates_the_shared_report"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 70,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_report_contains_no_local_paths"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 81,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_rerun_links_to_the_earlier_delta"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 188,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_summary_counts_each_caller_site_once"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 120,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_decision_history_across_three_decisions_on_one_function"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 93,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 69,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_report_names_its_analysis_and_ignores_config_changed_by_the_change"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 141,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 108,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_treesitter.py",
+          "symbol": "test_cli_pipeline_uses_repository_language_config"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 72,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_treesitter.py",
+          "symbol": "test_mixed_repository_reports_every_language_and_warns_per_weaker_tier"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 353,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_treesitter.py",
+          "symbol": "test_typescript_report_states_language_tier_and_its_limit"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 331,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "current_decision"
+        },
+        "line": 183,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_current_decision_follows_the_supersedes_chain_not_the_file_order"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "current_decision"
+        },
+        "line": 194,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "current_decision"
+        },
+        "line": 215,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_approve_decision"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 224,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_auto_supersedes_detection"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 152,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_lookup_approved_and_superseded_records"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 245,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_merged_record_is_approved_even_when_stored_status_is_proposed"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 329,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 203,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_validate_and_save_intended_missing_rationale_raises_error"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 95,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_validate_and_save_intended_with_valid_rationale"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 45,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_validate_and_save_invalid_disposition"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 138,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_validate_and_save_unintended_and_unresolved"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 119,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_validate_and_save_with_target_dict_or_object"
+        },
+        "callee": {
+          "path": "app/decisions.py",
+          "symbol": "validate_and_save"
+        },
+        "line": 78,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_current_decision_follows_the_supersedes_chain_not_the_file_order"
+        },
+        "callee": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule._ledger_record"
+        },
+        "line": 189,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one"
+        },
+        "callee": {
+          "path": "tests/test_decisions.py",
+          "symbol": "TestDecisionsModule._ledger_record"
+        },
+        "line": 200,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_decision_history_across_three_decisions_on_one_function"
+        },
+        "callee": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "_decision"
+        },
+        "line": 87,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded"
+        },
+        "callee": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "_decision"
+        },
+        "line": 62,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change"
+        },
+        "callee": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "_decision"
+        },
+        "line": 105,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "web/src/components/DecisionPanel.tsx",
+          "symbol": "DeltaDecision"
+        },
+        "callee": {
+          "path": "web/src/components/DecisionPanel.tsx",
+          "symbol": "useDecisionDownload"
+        },
+        "line": 94,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "web/src/components/DecisionPanel.tsx",
+          "symbol": "DownloadAll"
+        },
+        "callee": {
+          "path": "web/src/components/DecisionPanel.tsx",
+          "symbol": "useDecisionDownload"
+        },
+        "line": 134,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "web/src/lib/decision-file.ts",
+          "symbol": "buildDecisions"
+        },
+        "callee": {
+          "path": "web/src/lib/decision-file.ts",
+          "symbol": "buildDecision"
+        },
+        "line": 65,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "web/src/lib/decision-file.ts",
+          "symbol": "buildDecision"
+        },
+        "callee": {
+          "path": "web/src/lib/decision-file.ts",
+          "symbol": "currentDecision"
+        },
+        "line": 52,
+        "revisions": [
+          "head"
+        ]
+      }
+    ],
+    "paths": [
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_cli_pipeline_uses_repository_language_config",
+            "line": 72
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_finds_the_caller_outside_the_diff",
+            "line": 88
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_missing_toolchain_fails_cleanly_as_inconclusive",
+            "line": 148
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_mixed_repository_reports_every_language_and_warns_per_weaker_tier",
+            "line": 353
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_pipeline_populates_the_shared_report",
+            "line": 70
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_report_contains_no_local_paths",
+            "line": 81
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_rerun_links_to_the_earlier_delta",
+            "line": 188
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 121
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 120
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_typescript_e2e_paired_execution",
+            "line": 89
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_typescript_report_states_language_tier_and_its_limit",
+            "line": 331
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_repo_map.py",
+            "symbol": "_map",
+            "line": 20
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_repo_map.py",
+            "symbol": "_map",
+            "line": 20
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_cli_pipeline_uses_repository_language_config",
+            "line": 72
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_cli_pipeline_uses_repository_language_config",
+            "line": 72
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_finds_the_caller_outside_the_diff",
+            "line": 88
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_finds_the_caller_outside_the_diff",
+            "line": 88
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_missing_toolchain_fails_cleanly_as_inconclusive",
+            "line": 148
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_missing_toolchain_fails_cleanly_as_inconclusive",
+            "line": 148
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_mixed_repository_reports_every_language_and_warns_per_weaker_tier",
+            "line": 353
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_mixed_repository_reports_every_language_and_warns_per_weaker_tier",
+            "line": 353
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_pipeline_populates_the_shared_report",
+            "line": 70
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_pipeline_populates_the_shared_report",
+            "line": 70
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_report_contains_no_local_paths",
+            "line": 81
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_report_contains_no_local_paths",
+            "line": 81
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_rerun_links_to_the_earlier_delta",
+            "line": 188
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_rerun_links_to_the_earlier_delta",
+            "line": 188
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 120
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 120
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_typescript_e2e_paired_execution",
+            "line": 89
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_typescript_e2e_paired_execution",
+            "line": 89
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_typescript_report_states_language_tier_and_its_limit",
+            "line": 331
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_typescript_report_states_language_tier_and_its_limit",
+            "line": 331
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "web/src/components/DecisionPanel.tsx",
+            "symbol": "DeltaDecision",
+            "line": 94
+          },
+          {
+            "path": "web/src/components/DecisionPanel.tsx",
+            "symbol": "useDecisionDownload",
+            "line": 37
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "web/src/components/DecisionPanel.tsx",
+            "symbol": "DownloadAll",
+            "line": 134
+          },
+          {
+            "path": "web/src/components/DecisionPanel.tsx",
+            "symbol": "useDecisionDownload",
+            "line": 37
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 95
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_symbol_refs",
+            "line": 67
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 80
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_symbol_refs",
+            "line": 67
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "buildDecision",
+            "line": 52
+          },
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "currentDecision",
+            "line": 27
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "buildDecisions",
+            "line": 65
+          },
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "buildDecision",
+            "line": 33
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "<module>",
+            "line": 275
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "<module>",
+            "line": 275
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "buildDecisions",
+            "line": 65
+          },
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "buildDecision",
+            "line": 52
+          },
+          {
+            "path": "web/src/lib/decision-file.ts",
+            "symbol": "currentDecision",
+            "line": 27
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 95
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_symbol_refs",
+            "line": 67
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 80
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_symbol_refs",
+            "line": 67
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_approve_decision",
+            "line": 224
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_auto_supersedes_detection",
+            "line": 152
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_current_decision_follows_the_supersedes_chain_not_the_file_order",
+            "line": 189
+          },
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule._ledger_record",
+            "line": 178
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_current_decision_follows_the_supersedes_chain_not_the_file_order",
+            "line": 194
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_lookup_approved_and_superseded_records",
+            "line": 245
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_merged_record_is_approved_even_when_stored_status_is_proposed",
+            "line": 329
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one",
+            "line": 200
+          },
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule._ledger_record",
+            "line": 178
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one",
+            "line": 215
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one",
+            "line": 203
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_intended_missing_rationale_raises_error",
+            "line": 95
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_intended_with_valid_rationale",
+            "line": 45
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_invalid_disposition",
+            "line": 138
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_unintended_and_unresolved",
+            "line": 119
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_with_target_dict_or_object",
+            "line": 78
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 63
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 87
+          },
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "_decision",
+            "line": 51
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 93
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 62
+          },
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "_decision",
+            "line": 51
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 69
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_report_names_its_analysis_and_ignores_config_changed_by_the_change",
+            "line": 141
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+            "line": 105
+          },
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "_decision",
+            "line": 51
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+            "line": 108
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_approve_decision",
+            "line": 224
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_auto_supersedes_detection",
+            "line": 152
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_lookup_approved_and_superseded_records",
+            "line": 245
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_merged_record_is_approved_even_when_stored_status_is_proposed",
+            "line": 329
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_third_decision_supersedes_the_current_one",
+            "line": 203
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_intended_missing_rationale_raises_error",
+            "line": 95
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_intended_with_valid_rationale",
+            "line": 45
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_invalid_disposition",
+            "line": 138
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_unintended_and_unresolved",
+            "line": 119
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_decisions.py",
+            "symbol": "TestDecisionsModule.test_validate_and_save_with_target_dict_or_object",
+            "line": 78
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "validate_and_save",
+            "line": 183
+          },
+          {
+            "path": "app/decisions.py",
+            "symbol": "current_decision",
+            "line": 45
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_records_links_in_json_and_markdown",
+            "line": 131
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_records_links_in_json_and_markdown",
+            "line": 131
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_writes_markdown_report",
+            "line": 118
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_writes_markdown_report",
+            "line": 118
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_writes_report_without_local_paths",
+            "line": 40
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_writes_report_without_local_paths",
+            "line": 40
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 100
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 100
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 93
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 93
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 76
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 270
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_summary",
+            "line": 147
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 76
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 104
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 69
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 69
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_report_names_its_analysis_and_ignores_config_changed_by_the_change",
+            "line": 141
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_report_names_its_analysis_and_ignores_config_changed_by_the_change",
+            "line": 141
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+            "line": 108
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 116
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_decisions_in_change",
+            "line": 90
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+            "line": 108
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 115
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "_prior_decisions",
+            "line": 71
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      }
+    ],
+    "unknowns": [
+      {
+        "path": "app/cli.py",
+        "line": 176,
+        "symbol": "_summary",
+        "expression": "report.decisions",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/schemas.py::ReviewReport.decisions"
+        ]
+      },
+      {
+        "path": "tests/test_snapshot_cli.py",
+        "line": 99,
+        "symbol": "test_decision_history_across_three_decisions_on_one_function",
+        "expression": "report.decisions",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/schemas.py::ReviewReport.decisions"
+        ]
+      },
+      {
+        "path": "tests/test_snapshot_cli.py",
+        "line": 110,
+        "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+        "expression": "report.decisions",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/schemas.py::ReviewReport.decisions"
+        ]
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "line": 41,
+        "symbol": "useDecisionDownload",
+        "expression": "buildDecisions",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "web/src/lib/decision-file.ts::buildDecisions"
+        ]
+      },
+      {
+        "path": "web/src/components/DecisionPanel.tsx",
+        "line": 47,
+        "symbol": "useDecisionDownload",
+        "expression": "buildDecision",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "web/src/lib/decision-file.ts::buildDecision"
+        ]
+      }
+    ],
+    "max_hops": 2
+  },
+  "tests": [
+    {
+      "revision": "base",
+      "sha": "f4cd25abe843d110cc6e88c398a5b931dfc8fc98",
+      "status": "ok",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "9778630411a22608"
+    },
+    {
+      "revision": "head",
+      "sha": "1a6b7c0a04386d58adaedaea93e001a9c427b459",
+      "status": "ok",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "9778630411a22608"
+    }
+  ],
+  "comparisons": [
+    {
+      "probe": {
+        "id": "apply_discount_contract",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            105.26,
+            5.0
+          ]
+        },
+        "hash": "sha256:954edd7451e49763",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "f4cd25abe843d110cc6e88c398a5b931dfc8fc98",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 27
+      },
+      "head": {
+        "revision": "head",
+        "sha": "1a6b7c0a04386d58adaedaea93e001a9c427b459",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T16:24:08.845321Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "apply_discount_policy_cap",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            100.0,
+            40.0
+          ]
+        },
+        "hash": "sha256:da3bc559473826fc",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "f4cd25abe843d110cc6e88c398a5b931dfc8fc98",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "head": {
+        "revision": "head",
+        "sha": "1a6b7c0a04386d58adaedaea93e001a9c427b459",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T16:24:08.898547Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "price_total_boundary",
+        "target": {
+          "path": "sample_project/pricing/invoice.py",
+          "symbol": "price_total"
+        },
+        "input": {
+          "args": [
+            [
+              {
+                "description": "widget",
+                "unit_price": 39.46,
+                "qty": 2
+              },
+              {
+                "description": "gizmo",
+                "unit_price": 8.78,
+                "qty": 3
+              }
+            ],
+            5.0
+          ]
+        },
+        "hash": "sha256:c61213d5b7c994d4",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "f4cd25abe843d110cc6e88c398a5b931dfc8fc98",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 29
+      },
+      "head": {
+        "revision": "head",
+        "sha": "1a6b7c0a04386d58adaedaea93e001a9c427b459",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 29
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T16:24:08.958022Z",
+      "reruns": null
+    }
+  ],
+  "needs_bob_action": [],
+  "decisions": [],
+  "prior_decisions": [],
+  "limits": [
+    "Callers traced up to 2 hops; deeper callers are not shown.",
+    "Impact is static parser analysis: calls through variables, dynamic dispatch or class hierarchies may be missed. Unresolved references that could reach a changed symbol are listed as unknowns, not as safe.",
+    "Language 'typescript' is supported at tier 'static_probe': static cross-file impact plus a probe harness; no end-to-end behavior run is verified for this language yet. Treat missing paths as unknown.",
+    "'same_on_tested_cases' means identical output for these frozen inputs only; it is not proof of equivalence."
+  ],
+  "links": {
+    "action_run": "https://github.com/webdev-testa/pocbobbin/actions/runs/36255296488"
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, type NodeProps } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { ArrowLeftToLine, CircleAlert, FileQuestion, GitPullRequest, Info, RotateCcw } from "lucide-react";
@@ -7,24 +7,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { FolderGroup, LineSwatch, MINIMAP_FROM_NODES, PortHandles, TooltipEdge, useAsyncLayout, useFlowColorMode } from "@/components/map-parts";
 import { TONE_CLASSES } from "@/components/StatusBadge";
 import { TierBadge, TierLegend } from "@/components/TierBadge";
 import type { TooltipFlowEdge } from "@/lib/nested-layout";
-import { buildRepoMap, parseRepoMap, type ModuleFlowNode, type RepoMap, type RepoMapNode } from "@/lib/repo-map";
-import { fetchJson, shortSha } from "@/lib/review-report";
+import { buildRepoMap, type ModuleFlowNode, type RepoMap, type RepoMapNode } from "@/lib/repo-map";
+import { shortSha } from "@/lib/review-report";
 import { cn } from "@/lib/utils";
 
 interface RepoMapTabProps {
   changedFiles: string[];
-  /** Undefined loads /data/repo_map.json; null means the opened report came without one. */
-  map?: RepoMap | null;
+  /** null when the run has no repo map. */
+  map: RepoMap | null;
   onShowEvidence: () => void;
 }
-
-type LoadState = { status: "loading" } | { status: "missing" } | { status: "ready"; map: RepoMap } | { status: "error"; message: string };
 
 function ModuleNode({ data }: NodeProps<ModuleFlowNode>) {
   const { module, touched } = data;
@@ -120,50 +117,21 @@ function Canvas({ map, changedFiles, onShowEvidence }: { map: RepoMap } & RepoMa
   );
 }
 
-function useRepoMap(given: RepoMap | null | undefined): LoadState {
-  const [state, setState] = useState<LoadState>({ status: "loading" });
-  useEffect(() => {
-    if (given !== undefined) return;
-    const controller = new AbortController();
-    fetchJson("/data/repo_map.json", controller.signal)
-      .then((json) => setState(json === null ? { status: "missing" } : { status: "ready", map: parseRepoMap(json) }))
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        setState({ status: "error", message: error instanceof Error ? error.message : "The repo map could not be loaded." });
-      });
-    return () => controller.abort();
-  }, [given]);
-  if (given === null) return { status: "missing" };
-  return given ? { status: "ready", map: given } : state;
-}
-
-export default function RepoMapTab({ changedFiles, map: given, onShowEvidence }: RepoMapTabProps) {
-  const state = useRepoMap(given);
-  if (state.status === "loading") return <Skeleton className="h-128 w-full" />;
-  if (state.status === "error") {
-    return (
-      <Alert variant="destructive">
-        <CircleAlert aria-hidden="true" />
-        <AlertTitle>The repo map could not be shown</AlertTitle>
-        <AlertDescription>{state.message}</AlertDescription>
-      </Alert>
-    );
-  }
-  if (state.status === "missing") {
+export default function RepoMapTab({ changedFiles, map, onShowEvidence }: RepoMapTabProps) {
+  if (!map) {
     return (
       <Empty className="border">
         <EmptyHeader>
           <EmptyMedia variant="icon"><FileQuestion aria-hidden="true" /></EmptyMedia>
-          <EmptyTitle>No repo map yet</EmptyTitle>
+          <EmptyTitle>No repo map for this run</EmptyTitle>
           <EmptyDescription>
             Generate one with <code>behavior-review map --ref HEAD --out repo_map.json</code> on the report's head commit, then
-            pick it together with report.json in Open report… (or put it in <code>web/public/data/</code> and reload).
+            pick it together with report.json in Open report… (the Action publishes both).
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
   }
-  const { map } = state;
   return (
     <Card>
       <CardHeader>

@@ -9,6 +9,7 @@
     "typecheck": "tsc -b",
     "test": "npm run check:report",
     "check:report": "node scripts/check-report.mjs",
+    "reports:index": "node scripts/build-report-index.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

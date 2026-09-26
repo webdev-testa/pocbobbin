@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { BehaviorDifferences } from "@/components/BehaviorDifferences";
 import { DecisionPanel } from "@/components/DecisionPanel";
@@ -6,7 +6,8 @@ import { LimitsCard, TestsCard } from "@/components/TestsAndLimits";
 import { NeedsAttention } from "@/components/NeedsAttention";
 import { NodeDetailsSheet } from "@/components/NodeDetailsSheet";
 import { OpenReportDialog } from "@/components/OpenReportDialog";
-import { ErrorState, LoadingState, OpenedNotice } from "@/components/ReportStates";
+import { PrPicker, prLabel } from "@/components/PrPicker";
+import { ErrorState, LoadingState, OpenedNotice, UnknownPrState } from "@/components/ReportStates";
 import { SummaryHeader } from "@/components/SummaryHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { evidenceNodes } from "@/lib/evidence";
@@ -14,29 +15,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { OpenedReport } from "@/lib/open-report";
 import type { RepoMap } from "@/lib/repo-map";
-import { fetchJson, parseReport, ReportError, type ReviewReport } from "@/lib/review-report";
+import { useReportSource, type ReportSource } from "@/lib/report-source";
+import type { ReviewReport } from "@/lib/review-report";
 import { useTheme } from "@/lib/use-theme";
-
-type LoadState = { status: "loading" } | { status: "ready"; report: ReviewReport } | { status: "error"; message: string };
-
-function useReport(reloadToken: number): LoadState {
-  const [state, setState] = useState<LoadState>({ status: "loading" });
-  useEffect(() => {
-    const controller = new AbortController();
-    setState({ status: "loading" });
-    fetchJson("/data/report.json", controller.signal)
-      .then((json) => {
-        if (json === null) throw new ReportError("No report was found at /data/report.json.");
-        setState({ status: "ready", report: parseReport(json) });
-      })
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        setState({ status: "error", message: error instanceof Error ? error.message : "The report could not be loaded." });
-      });
-    return () => controller.abort();
-  }, [reloadToken]);
-  return state;
-}
 
 const EvidenceMap = lazy(() => import("@/components/EvidenceMap"));
 const RepoMapTab = lazy(() => import("@/components/RepoMapTab"));
@@ -63,52 +44,77 @@ function PrReview({ report }: { report: ReviewReport }) {
   );
 }
 
-/** `map` undefined loads the shipped repo_map.json; null means none was opened alongside the report. */
-function ReportViews({ report, map }: { report: ReviewReport; map?: RepoMap | null }) {
+/** The chosen tab outlives a PR switch, so both maps change together without jumping tabs. */
+function useViewTab() {
   const [tab, setTab] = useState("pr");
   const showEvidence = useCallback(() => {
     setTab("pr");
     requestAnimationFrame(() => document.getElementById("map-heading")?.scrollIntoView({ block: "start" }));
   }, []);
+  return { tab, setTab, showEvidence };
+}
+
+interface ReportViewsProps {
+  report: ReviewReport;
+  map: RepoMap | null;
+  view: ReturnType<typeof useViewTab>;
+}
+
+function ReportViews({ report, map, view }: ReportViewsProps) {
   return (
-    <Tabs value={tab} onValueChange={setTab} className="gap-6">
+    <Tabs value={view.tab} onValueChange={view.setTab} className="gap-6">
       <TabsList aria-label="Views">
         <TabsTrigger value="pr">PR review</TabsTrigger>
         <TabsTrigger value="repo">Repo map</TabsTrigger>
       </TabsList>
-      <TabsContent value="pr"><PrReview report={report} /></TabsContent>
+      {/* Keyed by run, so a node selected in one PR's review never carries over to another. */}
+      <TabsContent value="pr"><PrReview key={report.generated_at} report={report} /></TabsContent>
       <TabsContent value="repo">
         <Suspense fallback={<Skeleton className="h-128 w-full" />}>
-          <RepoMapTab changedFiles={report.revisions.changed_files} map={map} onShowEvidence={showEvidence} />
+          <RepoMapTab changedFiles={report.revisions.changed_files} map={map} onShowEvidence={view.showEvidence} />
         </Suspense>
       </TabsContent>
     </Tabs>
   );
 }
 
-function ShippedReport() {
-  const [reloadToken, setReloadToken] = useState(0);
-  const state = useReport(reloadToken);
-  if (state.status === "loading") return <LoadingState />;
-  if (state.status === "error") return <ErrorState message={state.message} onRetry={() => setReloadToken((t) => t + 1)} />;
-  return <ReportViews report={state.report} />;
+function PublishedReports({ source }: { source: ReportSource & { select: (pr: number | null) => void } }) {
+  const view = useViewTab();
+  if (source.status === "loading") return <LoadingState />;
+  if (source.status === "error") return <ErrorState message={source.message} onRetry={() => window.location.reload()} />;
+  if (source.status === "unknown-pr") {
+    return <UnknownPrState pr={source.pr} latest={prLabel(source.entries[0])} onShowLatest={() => source.select(null)} />;
+  }
+  return <ReportViews report={source.report} map={source.map} view={view} />;
+}
+
+function OpenedReportViews({ opened, onClose }: { opened: OpenedReport; onClose: () => void }) {
+  const view = useViewTab();
+  return (
+    <>
+      <OpenedNotice names={opened.names} onClose={onClose} />
+      <ReportViews report={opened.report} map={opened.map} view={view} />
+    </>
+  );
 }
 
 export default function App() {
-  const { theme, toggle } = useTheme();
+  const themeControl = useTheme();
+  const source = useReportSource();
   const [opened, setOpened] = useState<OpenedReport | null>(null);
+  const selected = source.status === "ready" ? source.pr : null;
+  const picker = !opened && source.entries ? <PrPicker entries={source.entries} selected={selected} onSelect={source.select} /> : null;
 
   return (
     <TooltipProvider>
-      <AppHeader theme={theme} onToggleTheme={toggle}>
+      <AppHeader themeControl={themeControl} picker={picker}>
         <OpenReportDialog onOpen={setOpened} />
       </AppHeader>
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
-        {opened ? <OpenedNotice names={opened.names} onClose={() => setOpened(null)} /> : null}
         {opened ? (
-          <ReportViews key={`${opened.names.join()}:${opened.report.generated_at}`} report={opened.report} map={opened.map} />
+          <OpenedReportViews key={`${opened.names.join()}:${opened.report.generated_at}`} opened={opened} onClose={() => setOpened(null)} />
         ) : (
-          <ShippedReport />
+          <PublishedReports source={source} />
         )}
       </main>
     </TooltipProvider>

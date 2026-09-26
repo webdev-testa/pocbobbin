@@ -1,0 +1,788 @@
+{
+  "schema_version": "map-0.1",
+  "repo": "webdev-testa/pocbobbin",
+  "sha": "845737e6c984c0225809dec02d04e8f69d9401af",
+  "generated_at": "2026-09-26T16:55:05.488188Z",
+  "modules": [
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "5e62099",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #2 from webdev-testa/lane-d",
+        "pr": 2
+      }
+    },
+    {
+      "path": "app/adapters/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "app/adapters/registry.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "ee17ab6",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/cli.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "aedc9a9",
+        "date": "2026-09-26",
+        "subject": "fix(decisions): approved after merge, the PR's own decisions, correct supersede chain (#30)",
+        "pr": 30
+      }
+    },
+    {
+      "path": "app/config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "845737e",
+        "date": "2026-09-26",
+        "subject": "Merge 386aae268dd82b939cf5186872955fa43eec7658 into aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/decisions.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "aedc9a9",
+        "date": "2026-09-26",
+        "subject": "fix(decisions): approved after merge, the PR's own decisions, correct supersede chain (#30)",
+        "pr": 30
+      }
+    },
+    {
+      "path": "app/impact.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/impact_treesitter.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/repo_map.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/report.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/runner.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "845737e",
+        "date": "2026-09-26",
+        "subject": "Merge 386aae268dd82b939cf5186872955fa43eec7658 into aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "pr": null
+      }
+    },
+    {
+      "path": "app/schemas.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "aedc9a9",
+        "date": "2026-09-26",
+        "subject": "fix(decisions): approved after merge, the PR's own decisions, correct supersede chain (#30)",
+        "pr": 30
+      }
+    },
+    {
+      "path": "app/snapshot.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "c0d9885",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #1 from kafiirgie/feat/analysis-engine",
+        "pr": 1
+      }
+    },
+    {
+      "path": "sample_project/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/discount.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/invoice.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/tests/test_discount.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "5e62099",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #2 from webdev-testa/lane-d",
+        "pr": 2
+      }
+    },
+    {
+      "path": "tests/conftest.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "c0d9885",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #1 from kafiirgie/feat/analysis-engine",
+        "pr": 1
+      }
+    },
+    {
+      "path": "tests/test_config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f79d177",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_config_detection.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "845737e",
+        "date": "2026-09-26",
+        "subject": "Merge 386aae268dd82b939cf5186872955fa43eec7658 into aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_contracts.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "ee17ab6",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_decisions.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "aedc9a9",
+        "date": "2026-09-26",
+        "subject": "fix(decisions): approved after merge, the PR's own decisions, correct supersede chain (#30)",
+        "pr": 30
+      }
+    },
+    {
+      "path": "tests/test_impact.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "tests/test_multilang_e2e.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "dcc285a",
+        "date": "2026-09-26",
+        "subject": "fix: CI support other language",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_repo_map.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_report.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_runner.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "845737e",
+        "date": "2026-09-26",
+        "subject": "Merge 386aae268dd82b939cf5186872955fa43eec7658 into aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_runner_config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "tests/test_snapshot_cli.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "aedc9a9",
+        "date": "2026-09-26",
+        "subject": "fix(decisions): approved after merge, the PR's own decisions, correct supersede chain (#30)",
+        "pr": 30
+      }
+    },
+    {
+      "path": "tests/test_treesitter.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "f4cd25a",
+        "date": "2026-09-26",
+        "subject": "Merge branch 'main' of https://github.com/webdev-testa/pocbobbin",
+        "pr": null
+      }
+    },
+    {
+      "path": "tools/run_command_probe.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "tools/run_probe.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "app/adapters/__init__.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 42
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/impact_treesitter.py",
+      "kind": "import",
+      "line": 52
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 13
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/decisions.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/repo_map.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/report.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 30
+    },
+    {
+      "from": "app/decisions.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/adapters/__init__.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/impact_treesitter.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/impact_treesitter.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/impact_treesitter.py",
+      "kind": "import",
+      "line": 94
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 29
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 34
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 35
+    },
+    {
+      "from": "app/snapshot.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "sample_project/pricing/invoice.py",
+      "to": "sample_project/pricing/discount.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "sample_project/tests/test_discount.py",
+      "to": "sample_project/pricing/discount.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "sample_project/tests/test_discount.py",
+      "to": "sample_project/pricing/invoice.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_config.py",
+      "to": "app/adapters/__init__.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_config.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_config_detection.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "tests/test_config_detection.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 91
+    },
+    {
+      "from": "tests/test_config_detection.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 92
+    },
+    {
+      "from": "tests/test_contracts.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 25
+    },
+    {
+      "from": "tests/test_contracts.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_decisions.py",
+      "to": "app/decisions.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_decisions.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "tests/test_impact.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "tests/test_multilang_e2e.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "tests/test_multilang_e2e.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "tests/test_repo_map.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "tests/test_repo_map.py",
+      "to": "tests/conftest.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_report.py",
+      "to": "app/report.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 105
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "tests/conftest.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 7
+    }
+  ],
+  "unknowns": [
+    {
+      "path": "tools/run_probe.py",
+      "line": 20,
+      "expression": "importlib.import_module(module_path)",
+      "reason": "dynamic import"
+    }
+  ],
+  "limits": [
+    "File-level imports only; function calls are in the PR evidence map.",
+    "Imports of packages outside this repository are not shown; neither are TypeScript path aliases (e.g. `@/`), which need the project's tsconfig to resolve.",
+    "Imports the adapters cannot resolve (dynamic, ambiguous, unresolved relative) are listed as unknowns.",
+    "Last commit per module is taken from git history at 845737e."
+  ]
+}

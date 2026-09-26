@@ -1,0 +1,388 @@
+{
+  "schema_version": "0.1",
+  "fixture": false,
+  "generated_at": "2026-09-26T15:02:32.505691Z",
+  "repo": "webdev-testa/pocbobbin",
+  "revisions": {
+    "base_ref": "origin/main",
+    "head_ref": "HEAD",
+    "base_sha": "be2d0e2b38260a378808423dcc91773132695bf9",
+    "head_sha": "895868a366ab6beafe683fe43f24ed2de1a4ada3",
+    "changed_files": [
+      "sample_project/pricing/discount.py"
+    ]
+  },
+  "analysis": {
+    "language": "python",
+    "adapter": "python-ast",
+    "tier": "full",
+    "config_source": "detected",
+    "languages": [
+      {
+        "language": "python",
+        "adapter": "python-ast",
+        "tier": "full"
+      },
+      {
+        "language": "typescript",
+        "adapter": "tree-sitter",
+        "tier": "static_probe"
+      }
+    ]
+  },
+  "impact": {
+    "changed_symbols": [
+      {
+        "path": "sample_project/pricing/discount.py",
+        "symbol": "<module>",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 7
+      },
+      {
+        "path": "sample_project/pricing/discount.py",
+        "symbol": "apply_discount",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 10,
+        "head_line": 12
+      }
+    ],
+    "edges": [
+      {
+        "caller": {
+          "path": "sample_project/pricing/invoice.py",
+          "symbol": "price_total"
+        },
+        "callee": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "line": 25,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "sample_project/tests/test_discount.py",
+          "symbol": "test_apply_discount_half_off"
+        },
+        "callee": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "line": 23,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "sample_project/tests/test_discount.py",
+          "symbol": "test_apply_discount_no_discount"
+        },
+        "callee": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "line": 27,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "sample_project/tests/test_discount.py",
+          "symbol": "test_apply_discount_rejects_out_of_range"
+        },
+        "callee": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "line": 32,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "sample_project/tests/test_discount.py",
+          "symbol": "test_apply_discount_ten_percent"
+        },
+        "callee": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "line": 19,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      }
+    ],
+    "paths": [
+      {
+        "hops": [
+          {
+            "path": "sample_project/pricing/invoice.py",
+            "symbol": "price_total",
+            "line": 25
+          },
+          {
+            "path": "sample_project/pricing/discount.py",
+            "symbol": "apply_discount",
+            "line": 12
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "sample_project/tests/test_discount.py",
+            "symbol": "test_apply_discount_half_off",
+            "line": 23
+          },
+          {
+            "path": "sample_project/pricing/discount.py",
+            "symbol": "apply_discount",
+            "line": 12
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "sample_project/tests/test_discount.py",
+            "symbol": "test_apply_discount_no_discount",
+            "line": 27
+          },
+          {
+            "path": "sample_project/pricing/discount.py",
+            "symbol": "apply_discount",
+            "line": 12
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "sample_project/tests/test_discount.py",
+            "symbol": "test_apply_discount_rejects_out_of_range",
+            "line": 32
+          },
+          {
+            "path": "sample_project/pricing/discount.py",
+            "symbol": "apply_discount",
+            "line": 12
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "sample_project/tests/test_discount.py",
+            "symbol": "test_apply_discount_ten_percent",
+            "line": 19
+          },
+          {
+            "path": "sample_project/pricing/discount.py",
+            "symbol": "apply_discount",
+            "line": 12
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      }
+    ],
+    "unknowns": [],
+    "max_hops": 2
+  },
+  "tests": [
+    {
+      "revision": "base",
+      "sha": "be2d0e2b38260a378808423dcc91773132695bf9",
+      "status": "ok",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "9778630411a22608"
+    },
+    {
+      "revision": "head",
+      "sha": "895868a366ab6beafe683fe43f24ed2de1a4ada3",
+      "status": "ok",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "9778630411a22608"
+    }
+  ],
+  "comparisons": [
+    {
+      "probe": {
+        "id": "apply_discount_contract",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            105.26,
+            5.0
+          ]
+        },
+        "hash": "sha256:954edd7451e49763",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "be2d0e2b38260a378808423dcc91773132695bf9",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 27
+      },
+      "head": {
+        "revision": "head",
+        "sha": "895868a366ab6beafe683fe43f24ed2de1a4ada3",
+        "status": "ok",
+        "output": 99.99,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "outcome": "delta_observed",
+      "ran_at": "2026-09-26T15:02:32.380152Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "apply_discount_policy_cap",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            100.0,
+            40.0
+          ]
+        },
+        "hash": "sha256:da3bc559473826fc",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "be2d0e2b38260a378808423dcc91773132695bf9",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "head": {
+        "revision": "head",
+        "sha": "895868a366ab6beafe683fe43f24ed2de1a4ada3",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T15:02:32.433040Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "price_total_boundary",
+        "target": {
+          "path": "sample_project/pricing/invoice.py",
+          "symbol": "price_total"
+        },
+        "input": {
+          "args": [
+            [
+              {
+                "description": "widget",
+                "unit_price": 39.46,
+                "qty": 2
+              },
+              {
+                "description": "gizmo",
+                "unit_price": 8.78,
+                "qty": 3
+              }
+            ],
+            5.0
+          ]
+        },
+        "hash": "sha256:c61213d5b7c994d4",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "be2d0e2b38260a378808423dcc91773132695bf9",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 30
+      },
+      "head": {
+        "revision": "head",
+        "sha": "895868a366ab6beafe683fe43f24ed2de1a4ada3",
+        "status": "ok",
+        "output": 99.99,
+        "exception": null,
+        "duration_ms": 30
+      },
+      "outcome": "delta_observed",
+      "ran_at": "2026-09-26T15:02:32.493779Z",
+      "reruns": null
+    }
+  ],
+  "needs_bob_action": [],
+  "decisions": [],
+  "prior_decisions": [
+    {
+      "id": "951cc25e49ee",
+      "repo": "webdev-testa/pocbobbin",
+      "target": {
+        "path": "sample_project/pricing/discount.py",
+        "symbol": "apply_discount"
+      },
+      "base_sha": "1cb1511c4eb3f3c1b955cb9b97c24033d8be15d0",
+      "head_sha": "91993531872945007438c1b9f026717d9da6910f",
+      "probe_hash": "sha256:1a4c3ef89d3f5cdb",
+      "before": 60.0,
+      "after": "ValueError: discount_pct out of range",
+      "intent": "intended",
+      "rationale": "Business policy update: maximum allowable discount capped at 30% per Q3 pricing review.",
+      "requirement_ref": "PRICE-2026-Q3",
+      "status": "approved",
+      "supersedes": null
+    }
+  ],
+  "limits": [
+    "Callers traced up to 2 hops; deeper callers are not shown.",
+    "Impact is static parser analysis: calls through variables, dynamic dispatch or class hierarchies may be missed. Unresolved references that could reach a changed symbol are listed as unknowns, not as safe.",
+    "Language 'typescript' is supported at tier 'static_probe': static cross-file impact plus a probe harness; no end-to-end behavior run is verified for this language yet. Treat missing paths as unknown.",
+    "'same_on_tested_cases' means identical output for these frozen inputs only; it is not proof of equivalence."
+  ],
+  "links": {
+    "action_run": "https://github.com/webdev-testa/pocbobbin/actions/runs/36250533649"
+  }
+}

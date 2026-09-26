@@ -1,6 +1,7 @@
-import { CircleAlert, FolderOpen, RotateCw, Undo2 } from "lucide-react";
+import { CircleAlert, FolderOpen, RotateCw, SearchX, Undo2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TONE_CLASSES } from "@/components/StatusBadge";
 
@@ -20,13 +21,33 @@ export function OpenedNotice({ names, onClose }: { names: string[]; onClose: () 
       <FolderOpen aria-hidden="true" />
       <AlertTitle>Showing {names.join(" and ")} from your computer</AlertTitle>
       <AlertDescription className="space-y-3">
-        <p>The files were read in this browser and not uploaded. Reloading the page returns to the shipped report.</p>
+        <p>The files were read in this browser and not uploaded. Reloading the page returns to the published reports.</p>
         <Button variant="outline" size="sm" onClick={onClose}>
           <Undo2 aria-hidden="true" />
-          Back to the shipped report
+          Back to the published reports
         </Button>
       </AlertDescription>
     </Alert>
+  );
+}
+
+export function UnknownPrState({ pr, latest, onShowLatest }: { pr: string; latest: string; onShowLatest: () => void }) {
+  return (
+    <Empty className="border">
+      <EmptyHeader>
+        <EmptyMedia variant="icon"><SearchX aria-hidden="true" /></EmptyMedia>
+        <EmptyTitle>No published review for PR #{pr}</EmptyTitle>
+        <EmptyDescription>
+          Only PRs whose Behavior Review run was published here can be shown. The latest is {latest}.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button variant="outline" size="sm" onClick={onShowLatest}>
+          <Undo2 aria-hidden="true" />
+          Show the latest
+        </Button>
+      </EmptyContent>
+    </Empty>
   );
 }
 

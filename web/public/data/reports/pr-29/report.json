@@ -1,0 +1,1502 @@
+{
+  "schema_version": "0.1",
+  "fixture": false,
+  "generated_at": "2026-09-26T15:47:58.057058Z",
+  "repo": "webdev-testa/pocbobbin",
+  "revisions": {
+    "base_ref": "origin/main",
+    "head_ref": "HEAD",
+    "base_sha": "1298f5b4a149f37856e2ecda9592db382de6ba65",
+    "head_sha": "e99a9c8122edaa8386fb7be828f6c8409b6ef716",
+    "changed_files": [
+      ".bob/custom_modes.yaml",
+      ".github/workflows/behavior-review.yml",
+      "FINAL_PLAN.md",
+      "README.md",
+      "app/report.py",
+      "handoffs/C.md",
+      "handoffs/E.md",
+      "tests/test_report.py",
+      "tests/test_runner_config.py"
+    ]
+  },
+  "analysis": {
+    "language": "python",
+    "adapter": "python-ast",
+    "tier": "full",
+    "config_source": "detected",
+    "languages": [
+      {
+        "language": "python",
+        "adapter": "python-ast",
+        "tier": "full"
+      },
+      {
+        "language": "typescript",
+        "adapter": "tree-sitter",
+        "tier": "static_probe"
+      }
+    ]
+  },
+  "impact": {
+    "changed_symbols": [
+      {
+        "path": "app/report.py",
+        "symbol": "_render_analysis",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 1013
+      },
+      {
+        "path": "app/report.py",
+        "symbol": "_render_extra_fields",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 1013,
+        "head_line": 1027
+      },
+      {
+        "path": "app/report.py",
+        "symbol": "render_markdown",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 1061,
+        "head_line": 1076
+      },
+      {
+        "path": "tests/test_report.py",
+        "symbol": "ReportRenderingTests.test_every_analyzed_language_and_tier_is_named_at_the_top",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 128
+      },
+      {
+        "path": "tests/test_runner_config.py",
+        "symbol": "<module>",
+        "tags": [
+          "imports_changed"
+        ],
+        "base_line": 1,
+        "head_line": 1
+      },
+      {
+        "path": "tests/test_runner_config.py",
+        "symbol": "test_probe_target_joins_on_the_adapter_spelling",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 114
+      },
+      {
+        "path": "tests/test_runner_config.py",
+        "symbol": "test_unparseable_test_output_is_an_error_never_a_pass",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 95
+      }
+    ],
+    "edges": [
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "<module>"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 251,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_repo_map.py",
+          "symbol": "_map"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 20,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_cli_records_links_in_json_and_markdown"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 95,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_cli_writes_markdown_report"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 82,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_cli_writes_report_without_local_paths"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 40,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "line": 75,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "_render_analysis"
+        },
+        "line": 1093,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "_render_extra_fields"
+        },
+        "line": 1125,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 245,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/report.py",
+          "symbol": "render"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 1134,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_action_and_artifact_urls_survive_query_secret_redaction"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 76,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_canonical_revision_containers_and_commit_metadata_are_preserved"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 116,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_every_analyzed_language_and_tier_is_named_at_the_top"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 140,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_explicit_flags_are_preserved_without_inference"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 294,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_intended_decisions_require_non_blank_rationale"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 272,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_legacy_aliases_and_singular_sections_are_normalized"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 232,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_machine_decision_status_is_not_rendered_as_human_disposition"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 261,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_markdown_is_deterministic_and_evidence_first"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 37,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_markdown_link_destinations_are_escaped"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 237,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_missing_optional_sections_do_not_crash_or_create_a_verdict"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 155,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_report.py",
+          "symbol": "ReportRenderingTests.test_paths_and_secrets_are_redacted_in_web_data_and_markdown"
+        },
+        "callee": {
+          "path": "app/report.py",
+          "symbol": "render_markdown"
+        },
+        "line": 191,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      }
+    ],
+    "paths": [
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "<module>",
+            "line": 251
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_repo_map.py",
+            "symbol": "_map",
+            "line": 20
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_records_links_in_json_and_markdown",
+            "line": 95
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_writes_markdown_report",
+            "line": 82
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_cli_writes_report_without_local_paths",
+            "line": 40
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 75
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 245
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "app/report.py",
+            "symbol": "render",
+            "line": 1134
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/report.py",
+            "symbol": "render",
+            "line": 1134
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/report.py",
+            "symbol": "render",
+            "line": 1134
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_action_and_artifact_urls_survive_query_secret_redaction",
+            "line": 76
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_canonical_revision_containers_and_commit_metadata_are_preserved",
+            "line": 116
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_every_analyzed_language_and_tier_is_named_at_the_top",
+            "line": 140
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_explicit_flags_are_preserved_without_inference",
+            "line": 294
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_intended_decisions_require_non_blank_rationale",
+            "line": 272
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_legacy_aliases_and_singular_sections_are_normalized",
+            "line": 232
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_machine_decision_status_is_not_rendered_as_human_disposition",
+            "line": 261
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_markdown_is_deterministic_and_evidence_first",
+            "line": 37
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_markdown_link_destinations_are_escaped",
+            "line": 237
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_missing_optional_sections_do_not_crash_or_create_a_verdict",
+            "line": 155
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_paths_and_secrets_are_redacted_in_web_data_and_markdown",
+            "line": 191
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1076
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_action_and_artifact_urls_survive_query_secret_redaction",
+            "line": 76
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_action_and_artifact_urls_survive_query_secret_redaction",
+            "line": 76
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_canonical_revision_containers_and_commit_metadata_are_preserved",
+            "line": 116
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_canonical_revision_containers_and_commit_metadata_are_preserved",
+            "line": 116
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_every_analyzed_language_and_tier_is_named_at_the_top",
+            "line": 140
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_every_analyzed_language_and_tier_is_named_at_the_top",
+            "line": 140
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_explicit_flags_are_preserved_without_inference",
+            "line": 294
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_explicit_flags_are_preserved_without_inference",
+            "line": 294
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_intended_decisions_require_non_blank_rationale",
+            "line": 272
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_intended_decisions_require_non_blank_rationale",
+            "line": 272
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_legacy_aliases_and_singular_sections_are_normalized",
+            "line": 232
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_legacy_aliases_and_singular_sections_are_normalized",
+            "line": 232
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_machine_decision_status_is_not_rendered_as_human_disposition",
+            "line": 261
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_machine_decision_status_is_not_rendered_as_human_disposition",
+            "line": 261
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_markdown_is_deterministic_and_evidence_first",
+            "line": 37
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_markdown_is_deterministic_and_evidence_first",
+            "line": 37
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_markdown_link_destinations_are_escaped",
+            "line": 237
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_markdown_link_destinations_are_escaped",
+            "line": 237
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_missing_optional_sections_do_not_crash_or_create_a_verdict",
+            "line": 155
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_missing_optional_sections_do_not_crash_or_create_a_verdict",
+            "line": 155
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_paths_and_secrets_are_redacted_in_web_data_and_markdown",
+            "line": 191
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1093
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_analysis",
+            "line": 1013
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_report.py",
+            "symbol": "ReportRenderingTests.test_paths_and_secrets_are_redacted_in_web_data_and_markdown",
+            "line": 191
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "render_markdown",
+            "line": 1125
+          },
+          {
+            "path": "app/report.py",
+            "symbol": "_render_extra_fields",
+            "line": 1027
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      }
+    ],
+    "unknowns": [],
+    "max_hops": 2
+  },
+  "tests": [
+    {
+      "revision": "base",
+      "sha": "1298f5b4a149f37856e2ecda9592db382de6ba65",
+      "status": "ok",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "9778630411a22608"
+    },
+    {
+      "revision": "head",
+      "sha": "e99a9c8122edaa8386fb7be828f6c8409b6ef716",
+      "status": "ok",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "9778630411a22608"
+    }
+  ],
+  "comparisons": [
+    {
+      "probe": {
+        "id": "apply_discount_contract",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            105.26,
+            5.0
+          ]
+        },
+        "hash": "sha256:954edd7451e49763",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "1298f5b4a149f37856e2ecda9592db382de6ba65",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "head": {
+        "revision": "head",
+        "sha": "e99a9c8122edaa8386fb7be828f6c8409b6ef716",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T15:47:57.933317Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "apply_discount_policy_cap",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            100.0,
+            40.0
+          ]
+        },
+        "hash": "sha256:da3bc559473826fc",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "1298f5b4a149f37856e2ecda9592db382de6ba65",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "head": {
+        "revision": "head",
+        "sha": "e99a9c8122edaa8386fb7be828f6c8409b6ef716",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 26
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T15:47:57.986207Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "price_total_boundary",
+        "target": {
+          "path": "sample_project/pricing/invoice.py",
+          "symbol": "price_total"
+        },
+        "input": {
+          "args": [
+            [
+              {
+                "description": "widget",
+                "unit_price": 39.46,
+                "qty": 2
+              },
+              {
+                "description": "gizmo",
+                "unit_price": 8.78,
+                "qty": 3
+              }
+            ],
+            5.0
+          ]
+        },
+        "hash": "sha256:c61213d5b7c994d4",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "1298f5b4a149f37856e2ecda9592db382de6ba65",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 29
+      },
+      "head": {
+        "revision": "head",
+        "sha": "e99a9c8122edaa8386fb7be828f6c8409b6ef716",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 29
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T15:47:58.044708Z",
+      "reruns": null
+    }
+  ],
+  "needs_bob_action": [
+    {
+      "path": "app/cli.py",
+      "symbol": "main"
+    },
+    {
+      "path": "app/cli.py",
+      "symbol": "<module>"
+    }
+  ],
+  "decisions": [],
+  "prior_decisions": [],
+  "limits": [
+    "Callers traced up to 2 hops; deeper callers are not shown.",
+    "Impact is static parser analysis: calls through variables, dynamic dispatch or class hierarchies may be missed. Unresolved references that could reach a changed symbol are listed as unknowns, not as safe.",
+    "Language 'typescript' is supported at tier 'static_probe': static cross-file impact plus a probe harness; no end-to-end behavior run is verified for this language yet. Treat missing paths as unknown.",
+    "'same_on_tested_cases' means identical output for these frozen inputs only; it is not proof of equivalence.",
+    "2 impacted non-test caller(s) outside the diff have no committed probe; see needs_bob_action."
+  ],
+  "links": {
+    "action_run": "https://github.com/webdev-testa/pocbobbin/actions/runs/36253174059"
+  }
+}

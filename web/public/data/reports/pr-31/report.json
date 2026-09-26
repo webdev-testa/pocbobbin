@@ -1,0 +1,4032 @@
+{
+  "schema_version": "0.1",
+  "fixture": false,
+  "generated_at": "2026-09-26T16:55:05.151079Z",
+  "repo": "webdev-testa/pocbobbin",
+  "revisions": {
+    "base_ref": "origin/main",
+    "head_ref": "HEAD",
+    "base_sha": "aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+    "head_sha": "845737e6c984c0225809dec02d04e8f69d9401af",
+    "changed_files": [
+      ".gitignore",
+      "app/config.py",
+      "app/runner.py",
+      "behavior.json",
+      "handoffs/mutation-testing-findings.md",
+      "setup.cfg",
+      "tests/test_config_detection.py",
+      "tests/test_runner.py"
+    ]
+  },
+  "analysis": {
+    "language": "python",
+    "adapter": "python-ast",
+    "tier": "full",
+    "config_source": "detected",
+    "languages": [
+      {
+        "language": "python",
+        "adapter": "python-ast",
+        "tier": "full"
+      },
+      {
+        "language": "typescript",
+        "adapter": "tree-sitter",
+        "tier": "static_probe"
+      }
+    ]
+  },
+  "impact": {
+    "changed_symbols": [
+      {
+        "path": "app/config.py",
+        "symbol": "<module>",
+        "tags": [
+          "imports_changed"
+        ],
+        "base_line": 8,
+        "head_line": 8
+      },
+      {
+        "path": "app/config.py",
+        "symbol": "BehaviorConfig.tests_dir",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 287,
+        "head_line": 345
+      },
+      {
+        "path": "app/config.py",
+        "symbol": "LANGUAGE_DEFAULTS",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 39,
+        "head_line": 40
+      },
+      {
+        "path": "app/config.py",
+        "symbol": "__all__",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 427,
+        "head_line": 485
+      },
+      {
+        "path": "app/config.py",
+        "symbol": "detect_tests_dir",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 274
+      },
+      {
+        "path": "app/config.py",
+        "symbol": "resolve_tests_dir",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 305
+      },
+      {
+        "path": "app/runner.py",
+        "symbol": "<module>",
+        "tags": [
+          "imports_changed"
+        ],
+        "base_line": 15,
+        "head_line": 15
+      },
+      {
+        "path": "app/runner.py",
+        "symbol": "_freeze_tests",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 293,
+        "head_line": 294
+      },
+      {
+        "path": "app/runner.py",
+        "symbol": "compare",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 449,
+        "head_line": 456
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "<module>",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 8
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "REPO_ROOT",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 18
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "_repo",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 21
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 103
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_a_stated_tests_dir_is_never_overridden",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 57
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_detection_ignores_virtualenvs_and_node_modules",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 49
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_detects_a_nested_test_directory",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 31
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_detects_root_level_tests_as_empty_string",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 39
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_missing_config_detects_instead_of_using_our_sample_project",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 69
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_reports_no_tests_rather_than_guessing",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 44
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_runner_resolves_the_target_repos_tests_not_ours",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 76
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "symbol": "test_this_repository_states_its_own_layout",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 125
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "<module>",
+        "tags": [
+          "body_changed",
+          "imports_changed"
+        ],
+        "base_line": 9,
+        "head_line": 9
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "REPO",
+        "tags": [
+          "body_changed"
+        ],
+        "base_line": 17,
+        "head_line": 293
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "_git_repo_with",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 514
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "_repo_root",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 273
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_prior_delta_probes_accepts_a_real_report_object",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 644
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_prior_delta_probes_ignores_entries_without_a_probe_id",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 634
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_prior_delta_probes_reads_a_report_file",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 624
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_run_suite_counts_a_green_suite",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 534
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_run_suite_counts_failures_and_distinguishes_them_from_errors",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 541
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_run_suite_records_the_frozen_suite_hash",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 597
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_run_suite_reports_a_collection_error_as_an_error",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 559
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_run_suite_survives_a_silent_failing_run",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 580
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_run_suite_timeout_is_inconclusive_not_a_failure",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 567
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_suite_run_builds_the_shared_model",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 608
+      },
+      {
+        "path": "tests/test_runner.py",
+        "symbol": "test_suite_run_carries_status_exactly",
+        "tags": [
+          "added"
+        ],
+        "base_line": null,
+        "head_line": 616
+      }
+    ],
+    "edges": [
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "main"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 258,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_multilang_e2e.py",
+          "symbol": "test_missing_toolchain_fails_cleanly_as_inconclusive"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 148,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_multilang_e2e.py",
+          "symbol": "test_typescript_e2e_paired_execution"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 89,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_impact_finds_the_caller_outside_the_diff"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 93,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_pipeline_populates_the_shared_report"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 75,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_prior_delta_probes_accepts_a_real_report_object"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 645,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_report_contains_no_local_paths"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 86,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_rerun_links_to_the_earlier_delta"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 193,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_summary_counts_each_caller_site_once"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 125,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_decision_history_across_three_decisions_on_one_function"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 93,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 69,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_report_names_its_analysis_and_ignores_config_changed_by_the_change"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 141,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_snapshot_cli.py",
+          "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 108,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_treesitter.py",
+          "symbol": "test_cli_pipeline_uses_repository_language_config"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 72,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_treesitter.py",
+          "symbol": "test_mixed_repository_reports_every_language_and_warns_per_weaker_tier"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 353,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_treesitter.py",
+          "symbol": "test_typescript_report_states_language_tier_and_its_limit"
+        },
+        "callee": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "line": 331,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "BehaviorConfig.for_language"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "LANGUAGE_DEFAULTS"
+        },
+        "line": 362,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "BehaviorConfig.from_mapping"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "LANGUAGE_DEFAULTS"
+        },
+        "line": 395,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "_detect_languages"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "LANGUAGE_DEFAULTS"
+        },
+        "line": 260,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "_repository_source_counts"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "LANGUAGE_DEFAULTS"
+        },
+        "line": 240,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "resolve_tests_dir"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "LANGUAGE_DEFAULTS"
+        },
+        "line": 322,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "_auto_detect_config"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "_detect_languages"
+        },
+        "line": 332,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "_detect_languages"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "_repository_source_counts"
+        },
+        "line": 258,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/config.py",
+          "symbol": "resolve_tests_dir"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "detect_tests_dir"
+        },
+        "line": 315,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_detection_ignores_virtualenvs_and_node_modules"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "detect_tests_dir"
+        },
+        "line": 54,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_detects_a_nested_test_directory"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "detect_tests_dir"
+        },
+        "line": 36,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_detects_root_level_tests_as_empty_string"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "detect_tests_dir"
+        },
+        "line": 41,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_reports_no_tests_rather_than_guessing"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "detect_tests_dir"
+        },
+        "line": 46,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "resolve_tests_dir"
+        },
+        "line": 479,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_a_stated_tests_dir_is_never_overridden"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "resolve_tests_dir"
+        },
+        "line": 66,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_missing_config_detects_instead_of_using_our_sample_project"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "resolve_tests_dir"
+        },
+        "line": 72,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_this_repository_states_its_own_layout"
+        },
+        "callee": {
+          "path": "app/config.py",
+          "symbol": "resolve_tests_dir"
+        },
+        "line": 128,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "_freeze_tests"
+        },
+        "line": 504,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "app/cli.py",
+          "symbol": "pipeline"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 118,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 119,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_runner_resolves_the_target_repos_tests_not_ours"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 95,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_broken_setup_is_inconclusive_never_a_bug"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 69,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_caller_outside_the_diff_shows_a_real_delta"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 45,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_compare_survives_a_base_without_the_harness"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 156,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 35,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_green_tests_do_not_prevent_a_delta_observation"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 56,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_needs_bob_action_when_a_caller_has_no_probe"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 266,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_refactor_shows_no_delta"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 63,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_scenario2_policy_change_produces_a_delta"
+        },
+        "callee": {
+          "path": "app/runner.py",
+          "symbol": "compare"
+        },
+        "line": 173,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "REPO_ROOT"
+        },
+        "line": 114,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_runner_resolves_the_target_repos_tests_not_ours"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "REPO_ROOT"
+        },
+        "line": 90,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_this_repository_states_its_own_layout"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "REPO_ROOT"
+        },
+        "line": 127,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 105,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_a_stated_tests_dir_is_never_overridden"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 59,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_detection_ignores_virtualenvs_and_node_modules"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 50,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_detects_a_nested_test_directory"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 32,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_detects_root_level_tests_as_empty_string"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 40,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_missing_config_detects_instead_of_using_our_sample_project"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 71,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_reports_no_tests_rather_than_guessing"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 45,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "test_runner_resolves_the_target_repos_tests_not_ours"
+        },
+        "callee": {
+          "path": "tests/test_config_detection.py",
+          "symbol": "_repo"
+        },
+        "line": 78,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_broken_setup_is_inconclusive_never_a_bug"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 68,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_caller_outside_the_diff_shows_a_real_delta"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 44,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_compare_survives_a_base_without_the_harness"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 147,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 34,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_green_tests_do_not_prevent_a_delta_observation"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 55,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_impact_finds_the_caller_outside_the_diff"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 93,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_impact_graph_traverses_into_added_helpers"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 107,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_needs_bob_action_when_a_caller_has_no_probe"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 258,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_pipeline_populates_the_shared_report"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 75,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_prior_delta_probes_accepts_a_real_report_object"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 645,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_refactor_shows_no_delta"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 62,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_report_contains_no_local_paths"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 86,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_rerun_links_to_the_earlier_delta"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 193,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_scenario2_policy_change_produces_a_delta"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 172,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_scenario_revisions_are_reachable_from_this_repo"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 29,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_summary_counts_each_caller_site_once"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "line": 125,
+        "revisions": [
+          "base",
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_run_suite_counts_a_green_suite"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "_git_repo_with"
+        },
+        "line": 535,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_run_suite_counts_failures_and_distinguishes_them_from_errors"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "_git_repo_with"
+        },
+        "line": 551,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_run_suite_records_the_frozen_suite_hash"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "_git_repo_with"
+        },
+        "line": 598,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_run_suite_reports_a_collection_error_as_an_error"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "_git_repo_with"
+        },
+        "line": 560,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "test_run_suite_survives_a_silent_failing_run"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "_git_repo_with"
+        },
+        "line": 587,
+        "revisions": [
+          "head"
+        ]
+      },
+      {
+        "caller": {
+          "path": "tests/test_runner.py",
+          "symbol": "REPO"
+        },
+        "callee": {
+          "path": "tests/test_runner.py",
+          "symbol": "_repo_root"
+        },
+        "line": 293,
+        "revisions": [
+          "head"
+        ]
+      }
+    ],
+    "paths": [
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "main",
+            "line": 258
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": true,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_cli_pipeline_uses_repository_language_config",
+            "line": 72
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_decision_history_across_three_decisions_on_one_function",
+            "line": 93
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_missing_toolchain_fails_cleanly_as_inconclusive",
+            "line": 148
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_mixed_repository_reports_every_language_and_warns_per_weaker_tier",
+            "line": 353
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_prior_decisions_match_path_and_symbol_and_flag_superseded",
+            "line": 69
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_report_names_its_analysis_and_ignores_config_changed_by_the_change",
+            "line": 141
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_multilang_e2e.py",
+            "symbol": "test_typescript_e2e_paired_execution",
+            "line": 89
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_treesitter.py",
+            "symbol": "test_typescript_report_states_language_tier_and_its_limit",
+            "line": 331
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_snapshot_cli.py",
+            "symbol": "test_unchanged_ledger_records_are_not_decisions_of_this_change",
+            "line": 108
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": true,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "BehaviorConfig.for_language",
+            "line": 362
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "BehaviorConfig.from_mapping",
+            "line": 395
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "_detect_languages",
+            "line": 260
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "_repository_source_counts",
+            "line": 240
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 322
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 315
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "_auto_detect_config",
+            "line": 332
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "_detect_languages",
+            "line": 260
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/config.py",
+            "symbol": "_detect_languages",
+            "line": 258
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "_repository_source_counts",
+            "line": 240
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 322
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 315
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": false
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing",
+            "line": 114
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "REPO_ROOT",
+            "line": 18
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing",
+            "line": 105
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing",
+            "line": 119
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_stated_tests_dir_is_never_overridden",
+            "line": 59
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_stated_tests_dir_is_never_overridden",
+            "line": 66
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_broken_setup_is_inconclusive_never_a_bug",
+            "line": 68
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_broken_setup_is_inconclusive_never_a_bug",
+            "line": 69
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_caller_outside_the_diff_shows_a_real_delta",
+            "line": 44
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_caller_outside_the_diff_shows_a_real_delta",
+            "line": 45
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_compare_survives_a_base_without_the_harness",
+            "line": 147
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_compare_survives_a_base_without_the_harness",
+            "line": 156
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_detection_ignores_virtualenvs_and_node_modules",
+            "line": 50
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_detection_ignores_virtualenvs_and_node_modules",
+            "line": 54
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_detects_a_nested_test_directory",
+            "line": 32
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_detects_a_nested_test_directory",
+            "line": 36
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_detects_root_level_tests_as_empty_string",
+            "line": 40
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_detects_root_level_tests_as_empty_string",
+            "line": 41
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green",
+            "line": 34
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green",
+            "line": 35
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_green_tests_do_not_prevent_a_delta_observation",
+            "line": 55
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_green_tests_do_not_prevent_a_delta_observation",
+            "line": 56
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_finds_the_caller_outside_the_diff",
+            "line": 93
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_graph_traverses_into_added_helpers",
+            "line": 107
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_missing_config_detects_instead_of_using_our_sample_project",
+            "line": 71
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_missing_config_detects_instead_of_using_our_sample_project",
+            "line": 72
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_needs_bob_action_when_a_caller_has_no_probe",
+            "line": 258
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_needs_bob_action_when_a_caller_has_no_probe",
+            "line": 266
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_pipeline_populates_the_shared_report",
+            "line": 75
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_prior_delta_probes_accepts_a_real_report_object",
+            "line": 645
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_refactor_shows_no_delta",
+            "line": 62
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_refactor_shows_no_delta",
+            "line": 63
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_report_contains_no_local_paths",
+            "line": 86
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_reports_no_tests_rather_than_guessing",
+            "line": 45
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_reports_no_tests_rather_than_guessing",
+            "line": 46
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_rerun_links_to_the_earlier_delta",
+            "line": 193
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_run_suite_counts_a_green_suite",
+            "line": 535
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_git_repo_with",
+            "line": 514
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_run_suite_counts_failures_and_distinguishes_them_from_errors",
+            "line": 551
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_git_repo_with",
+            "line": 514
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_run_suite_records_the_frozen_suite_hash",
+            "line": 598
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_git_repo_with",
+            "line": 514
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_run_suite_reports_a_collection_error_as_an_error",
+            "line": 560
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_git_repo_with",
+            "line": 514
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_run_suite_survives_a_silent_failing_run",
+            "line": 587
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_git_repo_with",
+            "line": 514
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_runner_resolves_the_target_repos_tests_not_ours",
+            "line": 90
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "REPO_ROOT",
+            "line": 18
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_runner_resolves_the_target_repos_tests_not_ours",
+            "line": 78
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "_repo",
+            "line": 21
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_runner_resolves_the_target_repos_tests_not_ours",
+            "line": 95
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario2_policy_change_produces_a_delta",
+            "line": 172
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario2_policy_change_produces_a_delta",
+            "line": 173
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario_revisions_are_reachable_from_this_repo",
+            "line": 29
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 125
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_this_repository_states_its_own_layout",
+            "line": 127
+          },
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "REPO_ROOT",
+            "line": 18
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_this_repository_states_its_own_layout",
+            "line": 128
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing",
+            "line": 119
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_repo_with_no_tests_reports_a_limit_instead_of_crashing",
+            "line": 119
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_stated_tests_dir_is_never_overridden",
+            "line": 66
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 322
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_a_stated_tests_dir_is_never_overridden",
+            "line": 66
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 315
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_broken_setup_is_inconclusive_never_a_bug",
+            "line": 68
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_broken_setup_is_inconclusive_never_a_bug",
+            "line": 69
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_broken_setup_is_inconclusive_never_a_bug",
+            "line": 69
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_caller_outside_the_diff_shows_a_real_delta",
+            "line": 44
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_caller_outside_the_diff_shows_a_real_delta",
+            "line": 45
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_caller_outside_the_diff_shows_a_real_delta",
+            "line": 45
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_compare_survives_a_base_without_the_harness",
+            "line": 147
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_compare_survives_a_base_without_the_harness",
+            "line": 156
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_compare_survives_a_base_without_the_harness",
+            "line": 156
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green",
+            "line": 34
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green",
+            "line": 35
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_frozen_suite_runs_on_both_revisions_and_stays_green",
+            "line": 35
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_green_tests_do_not_prevent_a_delta_observation",
+            "line": 55
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_green_tests_do_not_prevent_a_delta_observation",
+            "line": 56
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_green_tests_do_not_prevent_a_delta_observation",
+            "line": 56
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_finds_the_caller_outside_the_diff",
+            "line": 93
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_finds_the_caller_outside_the_diff",
+            "line": 93
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_impact_graph_traverses_into_added_helpers",
+            "line": 107
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_missing_config_detects_instead_of_using_our_sample_project",
+            "line": 72
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 322
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_missing_config_detects_instead_of_using_our_sample_project",
+            "line": 72
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 315
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_needs_bob_action_when_a_caller_has_no_probe",
+            "line": 258
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_needs_bob_action_when_a_caller_has_no_probe",
+            "line": 266
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_needs_bob_action_when_a_caller_has_no_probe",
+            "line": 266
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_pipeline_populates_the_shared_report",
+            "line": 75
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_pipeline_populates_the_shared_report",
+            "line": 75
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_prior_delta_probes_accepts_a_real_report_object",
+            "line": 645
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_prior_delta_probes_accepts_a_real_report_object",
+            "line": 645
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_refactor_shows_no_delta",
+            "line": 62
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_refactor_shows_no_delta",
+            "line": 63
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_refactor_shows_no_delta",
+            "line": 63
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_report_contains_no_local_paths",
+            "line": 86
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_report_contains_no_local_paths",
+            "line": 86
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_rerun_links_to_the_earlier_delta",
+            "line": 193
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_rerun_links_to_the_earlier_delta",
+            "line": 193
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_runner_resolves_the_target_repos_tests_not_ours",
+            "line": 95
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_runner_resolves_the_target_repos_tests_not_ours",
+            "line": 95
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario2_policy_change_produces_a_delta",
+            "line": 172
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario2_policy_change_produces_a_delta",
+            "line": 173
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 504
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "_freeze_tests",
+            "line": 294
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario2_policy_change_produces_a_delta",
+            "line": 173
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 479
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 305
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_scenario_revisions_are_reachable_from_this_repo",
+            "line": 29
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 125
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "REPO",
+            "line": 293
+          },
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "_repo_root",
+            "line": 273
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_runner.py",
+            "symbol": "test_summary_counts_each_caller_site_once",
+            "line": 125
+          },
+          {
+            "path": "app/cli.py",
+            "symbol": "pipeline",
+            "line": 118
+          },
+          {
+            "path": "app/runner.py",
+            "symbol": "compare",
+            "line": 456
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_this_repository_states_its_own_layout",
+            "line": 128
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 322
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "LANGUAGE_DEFAULTS",
+            "line": 40
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      },
+      {
+        "hops": [
+          {
+            "path": "tests/test_config_detection.py",
+            "symbol": "test_this_repository_states_its_own_layout",
+            "line": 128
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "resolve_tests_dir",
+            "line": 315
+          },
+          {
+            "path": "app/config.py",
+            "symbol": "detect_tests_dir",
+            "line": 274
+          }
+        ],
+        "outside_diff": false,
+        "is_test": true
+      }
+    ],
+    "unknowns": [
+      {
+        "path": "app/config.py",
+        "line": 312,
+        "symbol": "resolve_tests_dir",
+        "expression": "config.tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "app/config.py",
+        "line": 313,
+        "symbol": "resolve_tests_dir",
+        "expression": "config.tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "app/config.py",
+        "line": 328,
+        "symbol": "resolve_tests_dir",
+        "expression": "config.tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "app/impact_treesitter.py",
+        "line": 617,
+        "symbol": "_is_test",
+        "expression": "config.tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "app/runner.py",
+        "line": 470,
+        "symbol": "compare",
+        "expression": "settings.tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "line": 65,
+        "symbol": "test_a_stated_tests_dir_is_never_overridden",
+        "expression": "config.tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "line": 73,
+        "symbol": "test_missing_config_detects_instead_of_using_our_sample_project",
+        "expression": "BehaviorConfig().tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      },
+      {
+        "path": "tests/test_config_detection.py",
+        "line": 127,
+        "symbol": "test_this_repository_states_its_own_layout",
+        "expression": "load_config(REPO_ROOT).tests_dir",
+        "reason": "unresolved reference",
+        "may_reach": [
+          "app/config.py::BehaviorConfig.tests_dir"
+        ]
+      }
+    ],
+    "max_hops": 2
+  },
+  "tests": [
+    {
+      "revision": "base",
+      "sha": "aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+      "status": "ok",
+      "passed": 143,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "7dbddb87ec54138c"
+    },
+    {
+      "revision": "head",
+      "sha": "845737e6c984c0225809dec02d04e8f69d9401af",
+      "status": "ok",
+      "passed": 143,
+      "failed": 0,
+      "errors": 0,
+      "suite_hash": "7dbddb87ec54138c"
+    }
+  ],
+  "comparisons": [
+    {
+      "probe": {
+        "id": "apply_discount_contract",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            105.26,
+            5.0
+          ]
+        },
+        "hash": "sha256:954edd7451e49763",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 19
+      },
+      "head": {
+        "revision": "head",
+        "sha": "845737e6c984c0225809dec02d04e8f69d9401af",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 19
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T16:55:05.061626Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "apply_discount_policy_cap",
+        "target": {
+          "path": "sample_project/pricing/discount.py",
+          "symbol": "apply_discount"
+        },
+        "input": {
+          "args": [
+            100.0,
+            40.0
+          ]
+        },
+        "hash": "sha256:da3bc559473826fc",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 17
+      },
+      "head": {
+        "revision": "head",
+        "sha": "845737e6c984c0225809dec02d04e8f69d9401af",
+        "status": "ok",
+        "output": 60.0,
+        "exception": null,
+        "duration_ms": 17
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T16:55:05.097310Z",
+      "reruns": null
+    },
+    {
+      "probe": {
+        "id": "price_total_boundary",
+        "target": {
+          "path": "sample_project/pricing/invoice.py",
+          "symbol": "price_total"
+        },
+        "input": {
+          "args": [
+            [
+              {
+                "description": "widget",
+                "unit_price": 39.46,
+                "qty": 2
+              },
+              {
+                "description": "gizmo",
+                "unit_price": 8.78,
+                "qty": 3
+              }
+            ],
+            5.0
+          ]
+        },
+        "hash": "sha256:c61213d5b7c994d4",
+        "authored_by": "human"
+      },
+      "base": {
+        "revision": "base",
+        "sha": "aedc9a901b5bcf9a304becbd8ce839f8aa56eb6b",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 20
+      },
+      "head": {
+        "revision": "head",
+        "sha": "845737e6c984c0225809dec02d04e8f69d9401af",
+        "status": "ok",
+        "output": 100.0,
+        "exception": null,
+        "duration_ms": 20
+      },
+      "outcome": "same_on_tested_cases",
+      "ran_at": "2026-09-26T16:55:05.139117Z",
+      "reruns": null
+    }
+  ],
+  "needs_bob_action": [
+    {
+      "path": "app/cli.py",
+      "symbol": "pipeline"
+    },
+    {
+      "path": "app/cli.py",
+      "symbol": "main"
+    }
+  ],
+  "decisions": [],
+  "prior_decisions": [],
+  "limits": [
+    "Callers traced up to 2 hops; deeper callers are not shown.",
+    "Impact is static parser analysis: calls through variables, dynamic dispatch or class hierarchies may be missed. Unresolved references that could reach a changed symbol are listed as unknowns, not as safe.",
+    "Language 'typescript' is supported at tier 'static_probe': static cross-file impact plus a probe harness; no end-to-end behavior run is verified for this language yet. Treat missing paths as unknown.",
+    "'same_on_tested_cases' means identical output for these frozen inputs only; it is not proof of equivalence.",
+    "2 impacted non-test caller(s) outside the diff have no committed probe; see needs_bob_action.",
+    "behavior.json differs in this change; the base revision's configuration was used."
+  ],
+  "links": {
+    "action_run": "https://github.com/webdev-testa/pocbobbin/actions/runs/36257117279"
+  }
+}

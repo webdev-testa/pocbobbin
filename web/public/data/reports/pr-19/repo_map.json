@@ -1,0 +1,1313 @@
+{
+  "schema_version": "map-0.1",
+  "repo": "webdev-testa/pocbobbin",
+  "sha": "895868a366ab6beafe683fe43f24ed2de1a4ada3",
+  "generated_at": "2026-09-26T15:02:32.995890Z",
+  "modules": [
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "5e62099",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #2 from webdev-testa/lane-d",
+        "pr": 2
+      }
+    },
+    {
+      "path": "app/adapters/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "app/adapters/registry.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "app/cli.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "app/decisions.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "52c58d3",
+        "date": "2026-09-26",
+        "subject": "Lane D follow-up: approval follows the merge (#13)",
+        "pr": 13
+      }
+    },
+    {
+      "path": "app/impact.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/impact_treesitter.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/repo_map.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/report.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "app/runner.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "app/schemas.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "app/snapshot.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "c0d9885",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #1 from kafiirgie/feat/analysis-engine",
+        "pr": 1
+      }
+    },
+    {
+      "path": "sample_project/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/pricing/discount.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "895868a",
+        "date": "2026-09-26",
+        "subject": "Merge 3c55d663f4592494a1867d28013e9fb7a79b3d9d into be2d0e2b38260a378808423dcc91773132695bf9",
+        "pr": null
+      }
+    },
+    {
+      "path": "sample_project/pricing/invoice.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "sample_project/tests/test_discount.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "5e62099",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #2 from webdev-testa/lane-d",
+        "pr": 2
+      }
+    },
+    {
+      "path": "tests/conftest.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "c0d9885",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #1 from kafiirgie/feat/analysis-engine",
+        "pr": 1
+      }
+    },
+    {
+      "path": "tests/test_config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e892cf6",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #23 from webdev-testa/feat/auto-detect-language-adapter",
+        "pr": 23
+      }
+    },
+    {
+      "path": "tests/test_contracts.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "tests/test_decisions.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "52c58d3",
+        "date": "2026-09-26",
+        "subject": "Lane D follow-up: approval follows the merge (#13)",
+        "pr": 13
+      }
+    },
+    {
+      "path": "tests/test_impact.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "tests/test_repo_map.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "tests/test_report.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "tests/test_runner.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "tests/test_runner_config.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "tests/test_snapshot_cli.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "e784d08",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #24 from webdev-testa/feat/lane-a-foundation",
+        "pr": 24
+      }
+    },
+    {
+      "path": "tests/test_treesitter.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "be2d0e2",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #25 from webdev-testa/feat/repo-map",
+        "pr": 25
+      }
+    },
+    {
+      "path": "tools/run_command_probe.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "tools/run_probe.py",
+      "language": "python",
+      "tier": "full",
+      "last_commit": {
+        "sha": "bb7c38a",
+        "date": "2026-09-26",
+        "subject": "Lane B: paired execution engine wired into the shared report (#3)",
+        "pr": 3
+      }
+    },
+    {
+      "path": "tools/run_probe.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "4017458",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #22 from webdev-testa/feat/multi-language-support",
+        "pr": 22
+      }
+    },
+    {
+      "path": "web/src/App.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/BehaviorComparison.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ChangedSymbols.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/DecisionPanel.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/EvidenceSummary.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "4b7b325",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #17 from webdev-testa/fix/lane-a-review",
+        "pr": 17
+      }
+    },
+    {
+      "path": "web/src/components/ImpactPath.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/LimitsPanel.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ReportStates.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/RunHeader.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/RunLinks.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/SectionHeading.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ui/badge.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ui/button.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ui/card.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ui/separator.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/components/ui/textarea.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/lib/decision-state.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/lib/report-adapter.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "e5f3231",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #20 from webdev-testa/fix/lane-a-review",
+        "pr": 20
+      }
+    },
+    {
+      "path": "web/src/lib/report-types.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/lib/utils.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/src/main.tsx",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    },
+    {
+      "path": "web/vite.config.ts",
+      "language": "typescript",
+      "tier": "static_probe",
+      "last_commit": {
+        "sha": "1ca0b7f",
+        "date": "2026-09-26",
+        "subject": "Merge pull request #12 from webdev-testa/person-c",
+        "pr": 12
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "app/adapters/__init__.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 42
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/impact_treesitter.py",
+      "kind": "import",
+      "line": 52
+    },
+    {
+      "from": "app/adapters/registry.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 13
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/decisions.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/repo_map.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/report.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/cli.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 30
+    },
+    {
+      "from": "app/decisions.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/adapters/__init__.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/impact.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/impact_treesitter.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/impact_treesitter.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 18
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 19
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/impact_treesitter.py",
+      "kind": "import",
+      "line": 94
+    },
+    {
+      "from": "app/repo_map.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 20
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 29
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 34
+    },
+    {
+      "from": "app/runner.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 35
+    },
+    {
+      "from": "app/snapshot.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 16
+    },
+    {
+      "from": "sample_project/pricing/invoice.py",
+      "to": "sample_project/pricing/discount.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "sample_project/tests/test_discount.py",
+      "to": "sample_project/pricing/discount.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "sample_project/tests/test_discount.py",
+      "to": "sample_project/pricing/invoice.py",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/conftest.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_config.py",
+      "to": "app/adapters/__init__.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_config.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_contracts.py",
+      "to": "app/adapters/registry.py",
+      "kind": "import",
+      "line": 25
+    },
+    {
+      "from": "tests/test_contracts.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_decisions.py",
+      "to": "app/decisions.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_decisions.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 17
+    },
+    {
+      "from": "tests/test_impact.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "tests/test_repo_map.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "tests/test_repo_map.py",
+      "to": "tests/conftest.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_report.py",
+      "to": "app/report.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 12
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 100
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 13
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 14
+    },
+    {
+      "from": "tests/test_runner.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 15
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/config.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/runner.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/test_runner_config.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/schemas.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "tests/test_snapshot_cli.py",
+      "to": "tests/conftest.py",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/cli.py",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/impact.py",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "tests/test_treesitter.py",
+      "to": "app/snapshot.py",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/BehaviorComparison.tsx",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/ChangedSymbols.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/DecisionPanel.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/EvidenceSummary.tsx",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/ImpactPath.tsx",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/LimitsPanel.tsx",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/ReportStates.tsx",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/RunHeader.tsx",
+      "kind": "import",
+      "line": 9
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/RunLinks.tsx",
+      "kind": "import",
+      "line": 10
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/components/ui/button.tsx",
+      "kind": "import",
+      "line": 11
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/lib/report-adapter.ts",
+      "kind": "import",
+      "line": 12
+    },
+    {
+      "from": "web/src/App.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 13
+    },
+    {
+      "from": "web/src/components/BehaviorComparison.tsx",
+      "to": "web/src/components/SectionHeading.tsx",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "web/src/components/BehaviorComparison.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/BehaviorComparison.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/BehaviorComparison.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/ChangedSymbols.tsx",
+      "to": "web/src/components/SectionHeading.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/ChangedSymbols.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/ChangedSymbols.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/ChangedSymbols.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/DecisionPanel.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "web/src/components/DecisionPanel.tsx",
+      "to": "web/src/components/ui/button.tsx",
+      "kind": "import",
+      "line": 6
+    },
+    {
+      "from": "web/src/components/DecisionPanel.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 7
+    },
+    {
+      "from": "web/src/components/DecisionPanel.tsx",
+      "to": "web/src/components/ui/textarea.tsx",
+      "kind": "import",
+      "line": 8
+    },
+    {
+      "from": "web/src/components/DecisionPanel.tsx",
+      "to": "web/src/lib/decision-state.ts",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/DecisionPanel.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/EvidenceSummary.tsx",
+      "to": "web/src/components/SectionHeading.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/EvidenceSummary.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/EvidenceSummary.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/EvidenceSummary.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/ImpactPath.tsx",
+      "to": "web/src/components/SectionHeading.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/ImpactPath.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/ImpactPath.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/ImpactPath.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/LimitsPanel.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/LimitsPanel.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/LimitsPanel.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/ReportStates.tsx",
+      "to": "web/src/components/ui/button.tsx",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/RunHeader.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/RunHeader.tsx",
+      "to": "web/src/components/ui/button.tsx",
+      "kind": "import",
+      "line": 5
+    },
+    {
+      "from": "web/src/components/RunHeader.tsx",
+      "to": "web/src/lib/report-adapter.ts",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/RunHeader.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/RunLinks.tsx",
+      "to": "web/src/components/ui/badge.tsx",
+      "kind": "import",
+      "line": 3
+    },
+    {
+      "from": "web/src/components/RunLinks.tsx",
+      "to": "web/src/components/ui/card.tsx",
+      "kind": "import",
+      "line": 4
+    },
+    {
+      "from": "web/src/components/RunLinks.tsx",
+      "to": "web/src/lib/report-adapter.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/RunLinks.tsx",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/components/ui/badge.tsx",
+      "to": "web/src/lib/utils.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/ui/button.tsx",
+      "to": "web/src/lib/utils.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/ui/card.tsx",
+      "to": "web/src/lib/utils.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/ui/separator.tsx",
+      "to": "web/src/lib/utils.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/components/ui/textarea.tsx",
+      "to": "web/src/lib/utils.ts",
+      "kind": "import",
+      "line": 2
+    },
+    {
+      "from": "web/src/lib/decision-state.ts",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/lib/report-adapter.ts",
+      "to": "web/src/lib/report-types.ts",
+      "kind": "import",
+      "line": 1
+    },
+    {
+      "from": "web/src/main.tsx",
+      "to": "web/src/App.tsx",
+      "kind": "import",
+      "line": 3
+    }
+  ],
+  "unknowns": [
+    {
+      "path": "tools/run_probe.py",
+      "line": 20,
+      "expression": "importlib.import_module(module_path)",
+      "reason": "dynamic import"
+    }
+  ],
+  "limits": [
+    "File-level imports only; function calls are in the PR evidence map.",
+    "Imports of packages outside this repository are not shown; neither are TypeScript path aliases (e.g. `@/`), which need the project's tsconfig to resolve.",
+    "Imports the adapters cannot resolve (dynamic, ambiguous, unresolved relative) are listed as unknowns.",
+    "Last commit per module is taken from git history at 895868a."
+  ]
+}
