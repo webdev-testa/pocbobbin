@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from app.config import BehaviorConfig
-from app.runner import run_probe_configured, run_suite
+from app.runner import _target_ref, run_probe_configured, run_suite
 from app.schemas import RunStatus
 
 
@@ -89,3 +89,28 @@ def test_configured_reporters_parse_common_language_output(tmp_path: Path, repor
     result = run_suite(tmp_path, "tests", "suite-hash", sys.executable, "base", "sha", config)
     assert result.status == RunStatus.OK
     assert (result.passed, result.failed, result.errors) == expected
+
+
+@pytest.mark.parametrize("language", ["python", "typescript", "java", "csharp", "go", "rust", "php", "ruby", "bash"])
+def test_unparseable_test_output_is_an_error_never_a_pass(tmp_path: Path, language: str):
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "emit.py").write_text("print('ok  example.com/pricing 0.01s')\n", encoding="utf-8")
+    config = BehaviorConfig.from_mapping(
+        {"language": language, "test_command": ["python", "emit.py"], "append_tests": False, "tests_dir": "tests"}
+    )
+    result = run_suite(tmp_path, "tests", "suite-hash", sys.executable, "base", "sha", config)
+    assert result.status == RunStatus.ERROR
+    assert (result.passed, result.failed, result.errors) == (0, 0, 1)
+
+
+@pytest.mark.parametrize(
+    "language, target, expected",
+    [
+        ("python", "sample_project.pricing.invoice:price_total", ("sample_project/pricing/invoice.py", "price_total")),
+        ("java", {"path": "src/Discount.java", "symbol": "Discount.apply"}, ("src/Discount.java", "Discount.apply")),
+        ("typescript", {"path": "src/cart.tsx", "symbol": "priceTotal"}, ("src/cart.tsx", "priceTotal")),
+    ],
+)
+def test_probe_target_joins_on_the_adapter_spelling(language: str, target, expected: tuple[str, str]):
+    config = BehaviorConfig.from_mapping({"language": language})
+    assert _target_ref({"id": "p", "target": target}, config) == expected

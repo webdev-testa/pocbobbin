@@ -1,7 +1,7 @@
 # Handoff — Lane E (Maps)
 
 **Status:** E1 evidence map and E2 repo map are on `main` (#25 backend, #26 web). E3
-(`CHANGE_NOTES.md` template) is open.
+(`CHANGE_NOTES.md` template) is step 7 of the Bob mode in `.bob/custom_modes.yaml`.
 
 ## Works
 - `app/repo_map.py` — `build(checkout, repo_root, repo, sha) -> RepoMap` (`map-0.1`, FINAL_PLAN §16.3):
@@ -36,6 +36,5 @@ and behavior differs; a locally generated report with 330 impact paths lays out 
 about a second, and its repo map highlights the 22 touched files.
 
 ## Next
-- `CHANGE_NOTES.md` template for D's Bob mode (§16.4, `TODO(D)-2`).
 - Large diffs: the evidence map fits every node, which is unreadable past ~50 functions; open it on
   the changed functions first, as the repo map already does.

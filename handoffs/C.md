@@ -44,7 +44,6 @@ the dialog, and a downloaded decision that validates as `Decision` in Python wit
 `generate_decision_id` computes.
 
 ## Next
-- `TODO(C)-6`, Markdown side: the PR comment still has no language + tier line (the page has it).
 - Deploy to Vercel and test the URL from a fresh browser.
 
 ## Open question for the team

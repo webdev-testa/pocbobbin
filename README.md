@@ -117,17 +117,23 @@ is a labeled example.
 ## In Bob IDE: `/behavior-review`
 
 `.bob/custom_modes.yaml` registers a **Behavior Review** custom mode. In it, Bob runs the CLI with
-`--run`, explains the evidence, writes a probe (in `probes/*.json`) for any impacted caller listed in
-`needs_bob_action`, and helps fix unintended changes by rerunning the **unchanged** probe. Bob never
-chooses the intent or writes a rationale for the author; for intended changes the author's rationale
-is recorded with `app.decisions.validate_and_save`.
+`--run` against the base branch you name (`/behavior-review release/2.0`; it asks if you don't),
+first states each analyzed language's tier and what that tier can't show, explains the evidence,
+writes a probe in that language's format (see the probe table below) for any impacted caller listed
+in `needs_bob_action`, and helps fix unintended changes by rerunning the **unchanged** probe. It also
+drafts `CHANGE_NOTES.md`, labeled "Drafted by Bob — not evidence", ending in questions only you can
+answer. Bob never chooses the intent or writes a rationale for the author; for intended changes the
+author's rationale is recorded with `app.decisions.validate_and_save`.
 
 ## On every PR: GitHub Action
 
 `.github/workflows/behavior-review.yml` runs on each pull request push: it runs the CLI with `--run`
-against the PR's base branch, uploads `report.json` and `repo_map.json` as a build artifact (stamped with `links.action_run`,
-the URL of that run's public log), and creates or updates one PR comment with the evidence. It reuses committed probes and never calls Bob; if an impacted caller has
-no probe, the comment says so (`needs_bob_action`).
+against the PR's base branch, uploads `report.json`, `report.md` and `repo_map.json` as a build
+artifact (stamped with `links.action_run`, the URL of that run's public log), and creates or updates
+one PR comment from `report.md` (the same renderer as `--markdown`). A comment over GitHub's size
+limit is cut and points to the artifact; a failed install fails the job rather than reviewing with a
+half-installed tool. It reuses committed probes and never calls Bob; if an impacted caller has no
+probe, the comment says so (`needs_bob_action`).
 
 ## Decision ledger
 
@@ -215,14 +221,30 @@ runtime/test profile and all entries participate in static impact analysis:
 The adapter resolves direct, statically visible calls. Dynamic dispatch, reflection, unresolved
 imports, generated code, macros, and unsupported build behavior remain unknown or inconclusive;
 they are never treated as proof of no impact. The configured runtime and build tool must be
-installed by the reviewed repository. TypeScript/JavaScript probes can use
-`tools/run_probe.ts`; compiled-language repositories can use `tools/run_command_probe.py` with a
-probe `command` array and `{input}` placeholder.
+installed by the reviewed repository.
+
+### Probe formats
+
+A probe is one JSON file in `probes/`; the same bytes run on both revisions. Its `target` joins
+the outcome to a node in the impact graph by `(path, symbol)`, so the symbol must be spelled the way
+the report spells it in `impact`: `Class.method` for a method, the bare name for a top-level
+function. Outside Python, use the object form `{"path", "symbol"}`: the `"module:symbol"` string
+form guesses the file extension from the first configured one.
+
+| Language | Runner (`probe_runner`) | Probe |
+|---|---|---|
+| Python | `tools/run_probe.py` (default) | `{"id": "price_total_boundary", "target": "sample_project.pricing.invoice:price_total", "args": [[...], 5.0]}` |
+| TypeScript, JavaScript | `["npx", "tsx", "tools/run_probe.ts"]` | `{"id": "price_total", "target": {"path": "src/invoice.ts", "symbol": "priceTotal"}, "args": [[...], 5]}` (an exported function) |
+| Java, C#, Go and the rest | `tools/run_command_probe.py` | `{"id": "apply", "target": {"path": "src/Discount.java", "symbol": "Discount.apply"}, "command": ["java", "-cp", "build", "ProbeMain", "{input}"], "input": {"args": [105.26, 5.0]}}` |
+
+The command form runs your own entry point with the probe's `input` as JSON in place of `{input}`
+and expects the result as JSON on stdout; no shell is involved. A probe whose code can't be loaded
+is inconclusive, not a behavior difference.
 
 Language-specific test report names include `pytest-text`, `vitest-json`, `junit-xml`, `trx-xml`,
 `go-test-json`, `ctest-text`, `cargo-text`, `phpunit-text`, `rspec-json`, `swift-text`,
 `dart-json`, and `shell-text`. An unparseable report is inconclusive rather than a passing
-result. Every configured language has an explicit entry in `app/adapters/registry.py`; the
+result (the suite is recorded as `error`; `tests/test_runner_config.py` checks this per language). Every configured language has an explicit entry in `app/adapters/registry.py`; the
 Tree-sitter implementation is shared, but language selection is not implicit.
 
 ## License
