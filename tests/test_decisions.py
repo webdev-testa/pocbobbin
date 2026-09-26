@@ -1,0 +1,265 @@
+"""Unit tests for app.decisions (Lane D deliverables) integrated with Lane A schemas."""
+
+import json
+import shutil
+import tempfile
+import unittest
+from pathlib import Path
+
+from app.decisions import (
+    approve_decision,
+    generate_decision_id,
+    load_all_decisions,
+    load_decision_from_file,
+    lookup,
+    validate_and_save,
+)
+from app.schemas import Decision, DecisionStatus, Intent, SymbolRef
+
+
+class TestDecisionsModule(unittest.TestCase):
+    def setUp(self):
+        self.test_dir = tempfile.mkdtemp()
+        self.repo_root = Path(self.test_dir)
+        (self.repo_root / "behavior_decisions").mkdir(parents=True, exist_ok=True)
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir, ignore_errors=True)
+
+    def test_generate_decision_id_deterministic(self):
+        id1 = generate_decision_id("repo", "apply_discount", "sha1", "sha2", "probe123")
+        id2 = generate_decision_id("repo", "apply_discount", "sha1", "sha2", "probe123")
+        self.assertEqual(id1, id2)
+        self.assertEqual(len(id1), 12)
+
+    def test_validate_and_save_intended_with_valid_rationale(self):
+        delta = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "probe_hash": "probe_abc123",
+            "before": 100.0,
+            "after": 70.0,
+        }
+        rationale = "Policy update: cap maximum discount at 30% per Q3 pricing review."
+        decision = validate_and_save(
+            delta=delta,
+            disposition="intended",
+            rationale=rationale,
+            repo_root=self.repo_root,
+            repo="my-org/pocbobbin",
+            base_sha="base111",
+            head_sha="head222",
+        )
+
+        self.assertIsInstance(decision, Decision)
+        self.assertEqual(decision.intent, Intent.INTENDED)
+        self.assertEqual(decision.target.symbol, "apply_discount")
+        self.assertEqual(decision.target.path, "pricing/discount.py")
+        self.assertEqual(decision.rationale, rationale)
+        self.assertEqual(decision.status, DecisionStatus.PROPOSED)
+
+        # Verify file persisted on disk and matches schema
+        saved_file = self.repo_root / "behavior_decisions" / f"{decision.id}.json"
+        self.assertTrue(saved_file.exists())
+
+        loaded = load_decision_from_file(saved_file)
+        self.assertEqual(loaded.id, decision.id)
+        self.assertEqual(loaded.before, 100.0)
+        self.assertEqual(loaded.after, 70.0)
+
+    def test_validate_and_save_with_target_dict_or_object(self):
+        delta = {
+            "target": {"symbol": "price_total", "path": "pricing/invoice.py"},
+            "probe_hash": "probe_xyz",
+            "before": 100.0,
+            "after": 99.99,
+        }
+        dec = validate_and_save(
+            delta=delta,
+            disposition="unintended",
+            repo_root=self.repo_root,
+        )
+        self.assertEqual(dec.target.symbol, "price_total")
+        self.assertEqual(dec.target.path, "pricing/invoice.py")
+        self.assertEqual(dec.intent, Intent.UNINTENDED)
+
+    def test_validate_and_save_intended_missing_rationale_raises_error(self):
+        delta = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "before": 100.0,
+            "after": 70.0,
+        }
+        with self.assertRaises(ValueError) as ctx:
+            validate_and_save(
+                delta=delta,
+                disposition="intended",
+                rationale="too short",  # < 10 chars
+                repo_root=self.repo_root,
+            )
+        self.assertIn("at least 10 characters", str(ctx.exception))
+
+        with self.assertRaises(ValueError) as ctx2:
+            validate_and_save(
+                delta=delta,
+                disposition="intended",
+                rationale=None,
+                repo_root=self.repo_root,
+            )
+        self.assertIn("at least 10 characters", str(ctx2.exception))
+
+    def test_validate_and_save_unintended_and_unresolved(self):
+        delta = {
+            "symbol": "price_total",
+            "path": "pricing/invoice.py",
+            "before": 100.00,
+            "after": 99.99,
+        }
+        decision_unintended = validate_and_save(
+            delta=delta,
+            disposition="unintended",
+            repo_root=self.repo_root,
+        )
+        self.assertEqual(decision_unintended.intent, Intent.UNINTENDED)
+        self.assertEqual(decision_unintended.status, DecisionStatus.PROPOSED)
+
+        decision_unresolved = validate_and_save(
+            delta=delta,
+            disposition="unresolved",
+            repo_root=self.repo_root,
+            base_sha="diff_sha",
+        )
+        self.assertEqual(decision_unresolved.intent, Intent.UNRESOLVED)
+
+    def test_validate_and_save_invalid_disposition(self):
+        delta = {"symbol": "foo", "path": "bar.py"}
+        with self.assertRaises(ValueError) as ctx:
+            validate_and_save(
+                delta=delta,
+                disposition="approved_by_ai",
+                repo_root=self.repo_root,
+            )
+        self.assertIn("Invalid disposition", str(ctx.exception))
+
+    def test_auto_supersedes_detection(self):
+        delta1 = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "before": 100.0,
+            "after": 80.0,
+        }
+        dec1 = validate_and_save(
+            delta=delta1,
+            disposition="intended",
+            rationale="Initial policy adjustment to 20%",
+            repo_root=self.repo_root,
+            base_sha="sha_A",
+            head_sha="sha_B",
+        )
+
+        delta2 = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "before": 80.0,
+            "after": 70.0,
+        }
+        dec2 = validate_and_save(
+            delta=delta2,
+            disposition="intended",
+            rationale="Subsequent policy adjustment to 30%",
+            repo_root=self.repo_root,
+            base_sha="sha_B",
+            head_sha="sha_C",
+        )
+
+        self.assertEqual(dec2.supersedes, dec1.id)
+
+    def test_approve_decision(self):
+        delta = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "before": 100.0,
+            "after": 70.0,
+        }
+        dec = validate_and_save(
+            delta=delta,
+            disposition="intended",
+            rationale="Approved business change for holiday pricing",
+            repo_root=self.repo_root,
+        )
+        self.assertEqual(dec.status, DecisionStatus.PROPOSED)
+
+        approved = approve_decision(dec.id, repo_root=self.repo_root)
+        self.assertEqual(approved.status, DecisionStatus.APPROVED)
+
+        reloaded = load_decision_from_file(self.repo_root / "behavior_decisions" / f"{dec.id}.json")
+        self.assertEqual(reloaded.status, DecisionStatus.APPROVED)
+
+    def test_lookup_approved_and_superseded_records(self):
+        delta1 = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "before": 100.0,
+            "after": 80.0,
+        }
+        dec1 = validate_and_save(
+            delta=delta1,
+            disposition="intended",
+            rationale="Initial policy adjustment to 20%",
+            repo_root=self.repo_root,
+            base_sha="sha_A",
+            head_sha="sha_B",
+            status=DecisionStatus.APPROVED,
+        )
+
+        matches = lookup(
+            symbols=["apply_discount"],
+            repo_root=self.repo_root,
+        )
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0].match_type, "approved")
+        self.assertFalse(matches[0].is_stale)
+        self.assertEqual(matches[0].decision.id, dec1.id)
+
+        # Now add a second decision superseding dec1 and approve it
+        delta2 = {
+            "symbol": "apply_discount",
+            "path": "pricing/discount.py",
+            "before": 80.0,
+            "after": 70.0,
+        }
+        dec2 = validate_and_save(
+            delta=delta2,
+            disposition="intended",
+            rationale="Subsequent policy adjustment to 30%",
+            repo_root=self.repo_root,
+            base_sha="sha_B",
+            head_sha="sha_C",
+            status=DecisionStatus.APPROVED,
+        )
+
+        matches_after = lookup(
+            symbols=["apply_discount"],
+            repo_root=self.repo_root,
+        )
+        self.assertEqual(len(matches_after), 2)
+        match_dec1 = next(m for m in matches_after if m.decision.id == dec1.id)
+        match_dec2 = next(m for m in matches_after if m.decision.id == dec2.id)
+
+        self.assertTrue(match_dec1.is_stale)
+        self.assertEqual(match_dec1.match_type, "superseded")
+        self.assertIn("superseded", match_dec1.reason)
+
+        self.assertFalse(match_dec2.is_stale)
+        self.assertEqual(match_dec2.match_type, "approved")
+
+    def test_lookup_unrelated_symbol(self):
+        matches = lookup(
+            symbols=["unrelated_function"],
+            repo_root=self.repo_root,
+        )
+        self.assertEqual(len(matches), 0)
+
+
+if __name__ == "__main__":
+    unittest.main()

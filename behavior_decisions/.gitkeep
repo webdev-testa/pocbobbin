@@ -1,0 +1,3 @@
+# Behavior decisions ledger
+# This directory stores versioned JSON decisions regarding observed behavioral changes.
+# Proposed decisions are created on PR branches; they become approved when merged into main.
