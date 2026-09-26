@@ -54,27 +54,33 @@ Markdown report writer, for regenerating evidence without the CLI.
 
 ## Real results (integrated CLI, `--run`)
 
-| Scenario | diff | frozen suite | probe | base to head | outcome |
-|---|---|---|---|---|---|
-| 1 (rounding change) | 1 file, `pricing/discount.py` | 6 passed base, 6 passed head | `price_total_boundary` | 100.0 to 99.99 | `delta_observed` |
-| 1 | | | `apply_discount_contract` | 100.0 to 99.99 | `delta_observed` |
-| 3 (refactor) | 1 file | 6 passed both | both probes | 100.0 to 100.0 | `same_on_tested_cases` |
-| 4 (broken setup) | 1 file | 6 passed base, 1 error head | both probes | value to runner failure | `inconclusive` |
+All four plan scenarios, verified on a fresh clone of `main`:
+
+| Scenario | diff | frozen suite | probes | outcome |
+|---|---|---|---|---|
+| 1 rounding change | 1 file | 6 passed base, 6 passed head | `price_total_boundary` 100.0 to 99.99, `apply_discount_contract` 100.0 to 99.99 | `delta_observed` |
+| 2 policy cap 50 to 30 | 1 file | 6 passed base, 5 passed 1 failed head | `apply_discount_policy_cap` 60.0 to `ValueError: discount_pct out of range` | `delta_observed` |
+| 3 refactor | 1 file | 6 passed both | all three probes 100.0 to 100.0 | `same_on_tested_cases` |
+| 4 broken setup | 1 file | 6 passed base, 1 error head | all three probes value to runner failure | `inconclusive` |
 
 Scenario 1 is the demo: the suite is green on both revisions while a caller in another file
 returns a different number for the same input. The impact graph names that caller,
 `price_total → apply_discount` at `sample_project/pricing/invoice.py:25`, outside the diff.
 
-`needs_bob_action` fires correctly: with the caller's probe removed, the report lists
+Scenario 2 needed its own probe. The arithmetic probes stay quiet on a policy change, so a
+50% to 30% cap change produced no delta at all and the decision ledger had nothing to record.
+`apply_discount_policy_cap` exercises the boundary (40% off is legal under the old cap and
+rejected under the new one), which is what P1.2 and Scenario 5 depend on.
+
+`needs_bob_action` fires correctly: with the caller's probe removed the report lists
 `sample_project/pricing/invoice.py::price_total` and adds the limit "1 impacted non-test
 caller(s) outside the diff have no committed probe".
 
-Tests: **27 passed** (A's 15 plus 12 from `tests/test_runner.py`), verified on a fresh clone
-of the pushed branch, not only in this checkout. Every scenario revision is resolved as
-`origin/<name>` so the suite runs anywhere.
+Tests: **40 passed** on a fresh clone, including a regression test that fails if scenario 2
+stops producing a delta.
 
-SHAs: base `60d933a2`; s1 head `7b686d8c`; s3 head `f5054caf`; s4 head `f7a09999`.
-Each scenario-head diff is exactly one file.
+SHAs: `base` `1cb1511`; `scenario1-head` `13ffdbb`; `scenario2-head`; `scenario3-head` `665ca80`;
+`scenario4-head` `27132d8`. Each scenario-head diff vs `base` is exactly one file.
 
 ## Probe format (contract for D's Bob mode and the Action)
 
