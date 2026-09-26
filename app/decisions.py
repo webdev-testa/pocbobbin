@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field
 
 from app.config import DECISION_DIRS, HOME_DIR
-from app.schemas import Decision, DecisionStatus, Intent, SymbolRef
+from app.schemas import Decision, DecisionStatus, Intent, ReviewReport, SymbolRef
 
 
 def ledger_dir(repo_root: Path) -> Path:
@@ -216,6 +216,32 @@ def validate_and_save(
     (target_dir / f"{decision_id}.json").write_text(decision.model_dump_json(indent=2) + "\n", encoding="utf-8")
 
     return decision
+
+
+def decide_from_report(
+    report: ReviewReport,
+    probe_id: str,
+    intent: str,
+    rationale: Optional[str],
+    repo_root: Path,
+    requirement_ref: Optional[str] = None,
+) -> tuple[Decision, str]:
+    """Record the author's decision on one probe's difference in a review, as proposed.
+
+    The one code path behind `behavior-review decide` and the local UI's Save decision.
+    Returns the decision and its repository-relative path, ready for `git add`.
+    """
+    comparison = next((c for c in report.comparisons if c.probe.id == probe_id), None)
+    if comparison is None:
+        raise ValueError(f"the report has no comparison for probe '{probe_id}'")
+    observed = lambda o: o.exception if o.exception is not None else o.output
+    delta = {"target": comparison.probe.target, "probe_hash": comparison.probe.hash,
+             "before": observed(comparison.base), "after": observed(comparison.head)}
+    decision = validate_and_save(
+        delta, intent, rationale, repo_root=repo_root, repo=report.repo, base_sha=report.revisions.base_sha,
+        head_sha=report.revisions.head_sha, requirement_ref=requirement_ref,
+    )
+    return decision, (ledger_dir(repo_root) / f"{decision.id}.json").relative_to(repo_root).as_posix()
 
 
 def load_all_decisions(directory: Union[Path, str]) -> List[Decision]:

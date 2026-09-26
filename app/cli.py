@@ -9,10 +9,11 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Callable, NamedTuple
 
 from app.adapters.registry import TIER_LIMITS, get_adapter
 from app.config import BehaviorConfig, ConfigError, load_revision_config
-from app.decisions import ledger_dir, load_branch_decisions_via_git, lookup, validate_and_save
+from app.decisions import decide_from_report, load_branch_decisions_via_git, lookup
 from app.interpreter import FALLBACK_LIMIT, display_path, python_version, resolve_python
 from app.impact import analyze
 from app.repo_map import build as build_repo_map
@@ -46,12 +47,23 @@ def _uses_python(config: BehaviorConfig) -> bool:
     return any(token in {"python", "python3", "{python}"} for token in (*config.test_command, *config.probe_runner))
 
 
-def _execute(pair: RevisionPair, impact: ImpactResult, config: BehaviorConfig, python: str | None, prior_report):
+Progress = Callable[[str, str], None]
+"""`on_progress(step, detail)`: impact, triage, tests (base / head), probes — for the local UI's progress."""
+
+
+class ExecOptions(NamedTuple):
+    python: str | None
+    prior_report: str | Path | None
+    on_progress: Progress | None
+
+
+def _execute(pair: RevisionPair, impact: ImpactResult, config: BehaviorConfig, options: ExecOptions):
     """Paired execution with the project's interpreter; also returns what ran, for the report."""
     root = Path(pair.root)
-    interpreter = resolve_python(root, python, config.python) if _uses_python(config) else None
+    interpreter = resolve_python(root, options.python, config.python) if _uses_python(config) else None
     suites, comparisons, missing, notes = compare(
-        pair, python=interpreter.path if interpreter else None, impact=impact, config=config, prior_report=prior_report,
+        pair, python=interpreter.path if interpreter else None, impact=impact, config=config,
+        prior_report=options.prior_report, on_progress=options.on_progress,
     )
     runtime = Runtime(
         python=display_path(interpreter.path, root) if interpreter else None,
@@ -152,7 +164,8 @@ def _decisions_in_change(pair: RevisionPair, impact: ImpactResult) -> list[Decis
 
 
 def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None, run: bool = False,
-             prior_report: str | Path | None = None, python: str | None = None, full: bool = False) -> ReviewReport:
+             prior_report: str | Path | None = None, python: str | None = None, full: bool = False,
+             on_progress: Progress | None = None) -> ReviewReport:
     """Snapshot → impact → triage → prior decisions → (with `run`) paired execution of the frozen suite and probes.
 
     Pass `prior_report` (a path to an earlier report.json) to link a probe that showed a
@@ -160,16 +173,20 @@ def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None
     overrides the project interpreter that runs Python tests and probes (app.interpreter).
     Triage (app.triage) may skip steps a PR provably doesn't need; `full` runs them anyway.
     """
+    progress = on_progress or (lambda step, detail: None)
     with open_pair(repo, base, head) as pair:
         config, config_notes = load_revision_config(pair.base_path, pair.head_path)
         effective_hops = config.max_hops if max_hops is None else max_hops
         impact = analyze(pair, effective_hops, config)
+        progress("impact", f"{len(impact.changed_symbols)} changed symbols, {len(impact.paths)} impact paths")
         profile = _triage(pair, impact, config, run, full)
+        progress("triage", profile.profile)
         prior = _prior_decisions(pair, impact)
         decided = _decisions_in_change(pair, impact)
         executes = run and not profile.skipped_steps
         suites, comparisons, missing, notes, runtime = (
-            _execute(pair, impact, config, python, prior_report) if executes else ([], [], [], [], None)
+            _execute(pair, impact, config, ExecOptions(python, prior_report, on_progress)) if executes
+            else ([], [], [], [], None)
         )
     analysis = _analysis(config, runtime)
     return ReviewReport(
@@ -294,10 +311,6 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _observed(observation) -> object:
-    return observation.exception if observation.exception is not None else observation.output
-
-
 def decide_main(argv: list[str]) -> int:
     """Record the author's decision on one probe's behavior difference, from a review's report.json.
 
@@ -315,23 +328,31 @@ def decide_main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
     try:
         report = ReviewReport.model_validate_json(args.report.read_text(encoding="utf-8"))
-        comparison = next((c for c in report.comparisons if c.probe.id == args.probe), None)
-        if comparison is None:
-            raise ValueError(f"{args.report} has no comparison for probe '{args.probe}'")
-        root = repo_root(args.repo)
-        delta = {"target": comparison.probe.target, "probe_hash": comparison.probe.hash,
-                 "before": _observed(comparison.base), "after": _observed(comparison.head)}
-        decision = validate_and_save(
-            delta, args.intent, args.rationale, repo_root=root, repo=report.repo, base_sha=report.revisions.base_sha,
-            head_sha=report.revisions.head_sha, requirement_ref=args.requirement,
+        decision, written = decide_from_report(
+            report, args.probe, args.intent, args.rationale, repo_root(args.repo), args.requirement,
         )
     except (OSError, ValueError, SnapshotError) as exc:
         print(f"behavior-review decide: {exc}", file=sys.stderr)
         return 2
-    written = (ledger_dir(root) / f"{decision.id}.json").relative_to(root).as_posix()
     print(f"proposed decision {decision.id} ({decision.intent}) on {decision.target.key} -> {written}")
     print(f"commit it on this branch: git add {written}; it counts as approved once the PR is merged.")
     return 0
+
+
+def ui_main(argv: list[str]) -> int:
+    """Open the viewer on localhost, wired to this repository: run reviews, browse them, save decisions."""
+    parser = argparse.ArgumentParser(prog="behavior-review ui", description=ui_main.__doc__)
+    parser.add_argument("--repo", default=".", help="Path inside the git repository (default: .)")
+    parser.add_argument("--port", type=int, default=8765, help="Port on 127.0.0.1 (default: 8765)")
+    parser.add_argument("--no-browser", action="store_true", help="Print the URL instead of opening a browser")
+    args = parser.parse_args(argv)
+    from app.server import serve  # FastAPI loads only for the UI
+
+    try:
+        return serve(repo_root(args.repo), args.port, open_browser=not args.no_browser)
+    except (SnapshotError, OSError) as exc:
+        print(f"behavior-review ui: {exc}", file=sys.stderr)
+        return 2
 
 
 def map_main(argv: list[str]) -> int:
@@ -363,6 +384,8 @@ def main(argv: list[str] | None = None) -> int:
         return map_main(argv[1:])
     if argv[:1] == ["decide"]:
         return decide_main(argv[1:])
+    if argv[:1] == ["ui"]:
+        return ui_main(argv[1:])
     args = _parser().parse_args(argv)
 
     try:

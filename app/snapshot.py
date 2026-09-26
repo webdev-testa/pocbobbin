@@ -45,7 +45,7 @@ def _changed_files(repo: Path, base_sha: str, head_sha: str) -> list[str]:
     return sorted(line for line in out.splitlines() if line)
 
 
-def _repo_slug(root: Path) -> str:
+def repo_slug(root: Path) -> str:
     """'owner/name' from the origin remote (https or ssh form), else the checkout folder name."""
     try:
         url = _git(root, "remote", "get-url", "origin")
@@ -53,6 +53,16 @@ def _repo_slug(root: Path) -> str:
         return root.name
     match = re.search(r"[:/]([^/:]+/[^/]+?)(?:\.git)?/?$", url)
     return match.group(1) if match else root.name
+
+
+def git(repo: str | Path, *args: str) -> str:
+    "`git -C repo <args>`'s output; raises SnapshotError on failure. Arguments are argv, never a shell."
+    return _git(Path(repo), *args)
+
+
+def resolve_commit(repo: str | Path, ref: str) -> str:
+    "The commit `ref` names; raises SnapshotError when it names none."
+    return _rev_parse(Path(repo), ref)
 
 
 def repo_root(repo: str | Path) -> Path:
@@ -75,7 +85,7 @@ def resolve_pair(repo: str | Path, base: str, head: str, dest: str | Path) -> Re
         raise
 
     return RevisionPair(
-        repo=_repo_slug(root),
+        repo=repo_slug(root),
         root=root.as_posix(),
         base_path=base_path.as_posix(),
         head_path=head_path.as_posix(),

@@ -13,10 +13,13 @@ dependencies = [
   "pydantic>=2.6",
   "tree-sitter>=0.26",
   "tree-sitter-language-pack>=1.20",
+  # `behavior-review ui`: the local web UI's API (LANE_F_PLAN F-F).
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+dev = ["pytest>=8", "httpx>=0.27"]
 multilang = ["tree-sitter>=0.26", "tree-sitter-language-pack>=1.20"]
 
 [project.scripts]

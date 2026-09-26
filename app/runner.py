@@ -532,7 +532,7 @@ def _probes_dir(base_wt: Path, head_wt: Path) -> str:
 
 def compare(pair, bundle=None, python: str | None = None, probes_dir: str | None = None,
             tests_rel: str = TESTS_DIR, impact=None, config: BehaviorConfig | None = None,
-            prior_report=None):
+            prior_report=None, on_progress=None):
     """A's contract: RevisionPair + ProbeBundle -> (suite runs, comparisons, needs_bob_action).
 
     `bundle` is accepted for A's signature; the probes actually executed are the
@@ -582,16 +582,20 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str | None
         else:
             notes.append("no committed probes were found; no behavior claim is made from execution.")
 
+        progress = on_progress or (lambda step, detail: None)
         suites = []
         if freeze_error is None:
             for revision, wt, sha in (("base", base_wt, pair.revisions.base_sha),
                                       ("head", head_wt, pair.revisions.head_sha)):
+                progress("tests", f"running the frozen suite on {revision}")
                 _install_frozen_tests(wt, tests_rel, frozen)
                 suites.append(run_suite(wt, tests_rel, suite_hash, python, revision, sha, settings))
 
         comparisons, probed = [], set()
         if frozen_runner is not None:
-            for probe_file in sorted((frozen / "probes").glob("*.json")):
+            probe_files = sorted((frozen / "probes").glob("*.json"))
+            progress("probes", f"running {len(probe_files)} probe(s) on both revisions")
+            for probe_file in probe_files:
                 spec = json.loads(probe_file.read_text())
                 b = run_probe_configured(base_wt, settings.probe_runner, frozen_runner, probe_file, python)
                 h = run_probe_configured(head_wt, settings.probe_runner, frozen_runner, probe_file, python)

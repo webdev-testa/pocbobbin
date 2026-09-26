@@ -154,6 +154,18 @@ probe, the comment says so (`needs_bob_action`).
 
 ## Decision ledger
 
+### Local UI: `behavior-review ui`
+
+```bash
+behavior-review ui            # prints (and opens) http://127.0.0.1:8765/?token=…
+```
+
+Serves the viewer on your machine, wired to the repository you started it in: start a review
+(base and head branch), watch its steps, browse earlier reviews, and save a decision straight into
+the ledger. Reviews are kept in `.behavior-review/runs/` (git-ignored); the UI writes nothing else
+but decisions. It answers only on 127.0.0.1, only to the URL's token, and only to a `Host` of
+`127.0.0.1`/`localhost`.
+
 A repository keeps everything behavior-review needs in one folder:
 
 ```
