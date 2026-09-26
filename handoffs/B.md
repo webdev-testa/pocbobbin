@@ -48,9 +48,6 @@ bytes on both sides, classify, one report.
 Outcome labels: `same_on_tested_cases` | `delta_observed` | `inconclusive`.
 Import error, timeout or unparsable output is `inconclusive`, never "bug".
 
-`tools/paired_run.py` stays as the standalone harness with the same classification plus a
-Markdown report writer, for regenerating evidence without the CLI.
-
 ## Real results (integrated CLI, `--run`)
 
 All four plan scenarios, verified on a fresh clone of `main`:
@@ -119,7 +116,7 @@ the added helpers). Now counted per caller site.
 
 ## Files B owns
 
-`sample_project/**`, `probes/**`, `tools/**`, `app/runner.py`, `tests/test_runner.py`,
+`sample_project/**`, `probes/**`, `tools/run_probe.py`, `app/runner.py`, `tests/test_runner.py`,
 `evidence/**` (gitignored, regenerate).
 
 `sample_project/pricing/invoice.py` deliberately calls the changed helper and stays **out of

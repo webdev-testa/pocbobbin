@@ -17,7 +17,6 @@ Verified on a fresh clone of this branch: **27 passed**, and the CLI produces th
 - **`app/cli.py`** — `--run` flag. `_limits()` no longer claims "no tests or probes were executed" once paired execution has actually run, and reports unprobed impacted callers. Also counts distinct caller sites in the summary (bug fix, below).
 - **`sample_project/`** — the demo package: `apply_discount` (the helper the demo PR touches), `invoice.price_total` (the caller deliberately left out of the diff), and a frozen test suite that stays green on both revisions.
 - **`probes/` + `tools/run_probe.py`** — the probe contract for the Bob mode and the GitHub Action: `{id, target: module:function, args, note}` in, `{outcome, value|error}` out.
-- **`tools/paired_run.py`** — standalone harness with the same classification, for regenerating `evidence/` without the CLI.
 - **`contracts/probebundle_scenario1.json`** — the probes expressed in lane A's `ProbeBundle` schema.
 - **`tests/test_runner.py`** — 9 tests covering the report, `needs_bob_action`, and impact behaviour.
 
