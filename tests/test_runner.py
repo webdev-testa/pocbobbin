@@ -15,7 +15,8 @@ from pathlib import Path
 import pytest
 
 from app.cli import pipeline
-from app.runner import _prior_delta_probes, _suite_run, compare, run_suite
+from app.config import load_config
+from app.runner import _prior_delta_probes, _suite_run, compare, probe_runner, run_suite
 from app.schemas import Observation, Outcome, ReviewReport, RunStatus
 from app.snapshot import open_pair
 
@@ -174,11 +175,12 @@ def test_compare_survives_a_base_without_the_harness(tmp_path):
 
     with open_pair(repo, "base", "HEAD") as pair:
         suites, comparisons, _, notes = compare(pair)
+        runner = probe_runner(load_config(pair.base_path), pair.base_path)
     assert suites and all(s.status == RunStatus.OK for s in suites)
     assert {c.probe.id: c.outcome for c in comparisons}["price_total_boundary"] == Outcome.DELTA_OBSERVED
     assert any("probes added by this change ran on both sides" in note for note in notes)
     assert any("this change adds 'tools/run_probe.py'; it was not used" in note for note in notes)
-    assert any("probes ran with the packaged 'run_probe.py'" in note for note in notes)
+    assert (runner.path, runner.source) == ("tools/run_probe.py", "packaged")
 
 
 def test_scenario2_policy_change_produces_a_delta():

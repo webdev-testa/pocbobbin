@@ -351,6 +351,8 @@ class BehaviorConfig:
     test_file_patterns: tuple[str, ...] = ("test_*.py", "*_test.py", "conftest.py")
     max_hops: int = 2
     append_tests: bool = True
+    # Interpreter for the project's Python tests and probes (app.interpreter); None = detect.
+    python: str | None = None
     source: str = "defaults"  # "defaults", "detected" (no config file), or the config file name
     extra: dict[str, Any] = field(default_factory=dict, compare=False, repr=False)
 
@@ -414,9 +416,13 @@ class BehaviorConfig:
         if not isinstance(max_hops, int) or isinstance(max_hops, bool) or max_hops < 1:
             raise ConfigError("behavior.json field 'max_hops' must be a positive integer")
 
+        python = value.get("python")
+        if python is not None and (not isinstance(python, str) or not python.strip()):
+            raise ConfigError("behavior.json field 'python' must be a non-empty string")
+
         known = {
             "language", "languages", "extensions", "changed_file_filter", "tests_dir", "test_command",
-            "test_report", "probe_runner", "test_file_patterns", "max_hops", "append_tests",
+            "test_report", "probe_runner", "test_file_patterns", "max_hops", "append_tests", "python",
         }
         test_command = strings("test_command", defaults["test_command"])
         probe_runner = strings("probe_runner", defaults["probe_runner"])
@@ -442,6 +448,7 @@ class BehaviorConfig:
             test_file_patterns=test_file_patterns,
             max_hops=max_hops,
             append_tests=append_tests,
+            python=python.strip() if python else None,
             extra={key: item for key, item in value.items() if key not in known},
         )
 

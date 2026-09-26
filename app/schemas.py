@@ -219,11 +219,31 @@ class LanguageSupport(Model):
     tier: str = Field(description="full | static_probe | static_cross_file | experimental (app/adapters/registry.py).")
 
 
+class ProbeRunner(Model):
+    path: str = Field(description="The configured runner path, e.g. 'tools/run_probe.py'.")
+    source: str = Field(description="'base' (the base revision's copy) or 'packaged' (shipped with behavior-review).")
+    sha256: str = Field(description="Hash of the runner bytes that ran, e.g. 'sha256:6cb6af9507440174'.")
+
+
+class Runtime(Model):
+    """What executed the project's tests and probes (only present after a --run)."""
+
+    python: str | None = Field(
+        default=None,
+        description="The interpreter: repository-relative, or only its file name when outside the repository; "
+                    "None when the configured test and probe commands don't use Python.",
+    )
+    version: str | None = Field(default=None, description="e.g. '3.12.4'; None if the interpreter could not start.")
+    source: str | None = Field(default=None, description="How it was chosen: 'flag', 'config', 'virtual_env', 'venv' or 'fallback'.")
+    probe_runner: ProbeRunner | None = Field(default=None, description="None when no probe ran.")
+
+
 class Analysis(LanguageSupport):
     """The primary language (runtime/test profile) plus every adapter that analyzed the change."""
 
     config_source: str = Field(description="'behavior.json' or 'detected' (both from the base revision), or 'defaults'.")
     languages: list[LanguageSupport] = Field(default_factory=list, description="Every analyzed language, primary first.")
+    runtime: Runtime | None = None
 
 
 class ReviewReport(Model):

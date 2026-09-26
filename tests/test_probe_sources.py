@@ -7,7 +7,8 @@ Probes are data: the base's plus the ones the change adds; an edited probe keeps
 import json
 import sys
 
-from app.runner import PACKAGED_HARNESS, compare
+from app.config import load_config
+from app.runner import PACKAGED_HARNESS, compare, probe_runner
 from app.schemas import Outcome, RunStatus
 from app.snapshot import open_pair
 
@@ -17,6 +18,12 @@ CHANGED = {"calc.py": "def multiply(a, b):\n    return abs(a * b)\n\n\ndef divid
 
 def _probe(probe_id: str, target: str, args: list, **extra) -> str:
     return json.dumps({"id": probe_id, "target": target, "args": args, **extra})
+
+
+def _runner(repo) -> tuple[str, str]:
+    with open_pair(repo, "base", "head") as pair:
+        runner = probe_runner(load_config(pair.base_path), pair.base_path)
+    return runner.path, runner.source
 
 
 def _compare(repo):
@@ -32,7 +39,7 @@ def test_repo_without_a_runner_uses_the_packaged_one(make_repo):
 
     [probe] = comparisons
     assert (probe.outcome, probe.base.output, probe.head.output) == (Outcome.DELTA_OBSERVED, -6, 6)
-    assert any("probes ran with the packaged 'run_probe.py'" in note for note in notes)
+    assert _runner(repo) == ("tools/run_probe.py", "packaged")
 
 
 def test_a_runner_the_change_adds_is_not_used(make_repo):
@@ -56,7 +63,7 @@ def test_a_runner_the_change_edits_runs_its_base_version(make_repo):
 
     assert comparison.outcome == Outcome.DELTA_OBSERVED
     assert any("this change edits 'tools/run_probe.py'; its base version ran" in note for note in notes)
-    assert any("probes ran with the base revision's 'tools/run_probe.py'" in note for note in notes)
+    assert _runner(repo) == ("tools/run_probe.py", "base")
 
 
 def test_a_probe_that_raises_on_both_sides_is_the_same_exception(make_repo):
@@ -88,7 +95,7 @@ def test_a_command_probe_config_uses_the_packaged_command_runner(make_repo):
     _, [comparison], _, notes = _compare(repo)
 
     assert (comparison.base.output, comparison.head.output) == (1, 2)
-    assert any("probes ran with the packaged 'run_command_probe.py'" in note for note in notes)
+    assert _runner(repo) == ("tools/run_command_probe.py", "packaged")
 
 
 def test_a_probe_the_change_adds_runs_on_both_sides(make_repo):

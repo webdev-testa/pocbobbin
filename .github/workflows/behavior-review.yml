@@ -45,6 +45,7 @@ jobs:
             --base "origin/${{ github.base_ref }}" \
             --head HEAD \
             --run \
+            --python "$(command -v python)" \
             --link "action_run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             --json report.json \
             --markdown report.md

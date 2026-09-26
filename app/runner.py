@@ -38,6 +38,7 @@ try:  # pragma: no cover - exercised by whichever entry point runs first
         Outcome,
         Probe,
         ProbeBundle,
+        ProbeRunner,
         ReviewReport,
         Revision,
         RunStatus,
@@ -456,27 +457,48 @@ def _canon(value) -> str:
 PACKAGED_HARNESS = Path(__file__).parent / "harness"
 
 
-def _freeze_runner(runner_rel: str, base_wt: Path, head_wt: Path, frozen: Path, notes: list[str]) -> Path | None:
+def runner_path(config: BehaviorConfig) -> str:
+    """The runner the config names, e.g. 'tools/run_probe.py' in `("python", "tools/run_probe.py")`."""
+    return next(
+        (token for token in config.probe_runner if token.endswith((".py", ".ts", ".tsx", ".js", ".mjs"))),
+        "tools/run_probe.py",
+    )
+
+
+def _runner_source(runner_rel: str, base_wt: Path) -> tuple[Path, str]:
     """The base's copy of the configured runner, else the packaged one of the same name.
 
     Never a copy only the PR has: the runner decides what "same" means, so a change that could
-    supply its own could make every probe agree. The report says when a PR's copy was set aside.
+    supply its own could make every probe agree.
     """
-    base_copy, head_copy = base_wt / runner_rel, head_wt / runner_rel
+    base_copy = base_wt / runner_rel
     if base_copy.is_file():
-        source, label = base_copy, f"the base revision's '{runner_rel}'"
-        if head_copy.is_file() and head_copy.read_bytes() != base_copy.read_bytes():
-            notes.append(f"this change edits '{runner_rel}'; its base version ran on both sides.")
-    else:
-        source, label = PACKAGED_HARNESS / Path(runner_rel).name, f"the packaged '{Path(runner_rel).name}'"
-        if head_copy.is_file():
-            notes.append(f"this change adds '{runner_rel}'; it was not used, since a change can't supply its own runner.")
+        return base_copy, "base"
+    return PACKAGED_HARNESS / Path(runner_rel).name, "packaged"
+
+
+def probe_runner(config: BehaviorConfig, base_wt: str | Path) -> "ProbeRunner | None":
+    """Which runner the probes run with, for the report; None when there is none."""
+    runner_rel = runner_path(config)
+    source, origin = _runner_source(runner_rel, Path(base_wt))
+    if not source.is_file():
+        return None
+    return ProbeRunner(path=runner_rel, source=origin, sha256="sha256:" + _sha8(source.read_text(encoding="utf-8")))
+
+
+def _freeze_runner(runner_rel: str, base_wt: Path, head_wt: Path, frozen: Path, notes: list[str]) -> Path | None:
+    """Copy the runner that will run; the report says when a PR's copy was set aside."""
+    source, origin = _runner_source(runner_rel, base_wt)
+    head_copy = head_wt / runner_rel
+    if origin == "base" and head_copy.is_file() and head_copy.read_bytes() != source.read_bytes():
+        notes.append(f"this change edits '{runner_rel}'; its base version ran on both sides.")
+    if origin == "packaged" and head_copy.is_file():
+        notes.append(f"this change adds '{runner_rel}'; it was not used, since a change can't supply its own runner.")
     if not source.is_file():
         notes.append(f"no probe runner '{runner_rel}' was found, so no behaviour claim is made from probe execution.")
         return None
     frozen_runner = frozen / source.name
     shutil.copy2(source, frozen_runner)
-    notes.append(f"probes ran with {label} (sha256:{_sha8(source.read_text(encoding='utf-8'))}).")
     return frozen_runner
 
 
@@ -545,10 +567,7 @@ def compare(pair, bundle=None, python: str | None = None, probes_dir: str = PROB
             freeze_error = str(exc)
             notes.append(f"{exc} No paired test run was performed, so no test-based claim is made.")
         suite_hash = _hash_extensions(frozen / "tests", settings.extensions) if freeze_error is None else ""
-        runner_rel = next(
-            (token for token in settings.probe_runner if token.endswith((".py", ".ts", ".tsx", ".js", ".mjs"))),
-            "tools/run_probe.py",
-        )
+        runner_rel = runner_path(settings)
         # Probes are opt-in: without any, the paired test-suite comparison still runs and is still
         # evidence; no behaviour claim is made from probes, and the report says so.
         _freeze_probes(base_wt / probes_dir, head_wt / probes_dir, frozen / "probes", notes)

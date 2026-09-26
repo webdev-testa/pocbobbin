@@ -1022,6 +1022,20 @@ def _render_analysis(lines: List[str], data: Mapping[str, Any]) -> None:
         for entry in entries
     ]
     lines.extend([f"**Analyzed as:** {', '.join(rendered)}", ""])
+    _render_runtime(lines, _mapping(analysis.get("runtime")))
+
+
+def _render_runtime(lines: List[str], runtime: Mapping[str, Any]) -> None:
+    """Which interpreter and probe runner executed this run (present only after a --run)."""
+    parts = []
+    if runtime.get("python"):
+        version = f" {runtime['version']}" if runtime.get("version") else ""
+        parts.append(f"{_inline(runtime['python'])}{_text(version)} (chosen by {_inline(runtime.get('source', 'unknown'))})")
+    runner = _mapping(runtime.get("probe_runner"))
+    if runner:
+        parts.append(f"probe runner {_inline(runner.get('path', ''))} ({_text(runner.get('source', ''))}, {_inline(runner.get('sha256', ''))})")
+    if parts:
+        lines.extend([f"**Ran with:** {'; '.join(parts)}", ""])
 
 
 def _render_extra_fields(lines: List[str], data: Mapping[str, Any]) -> None:

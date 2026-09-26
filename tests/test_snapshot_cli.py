@@ -141,7 +141,7 @@ def test_report_names_its_analysis_and_ignores_config_changed_by_the_change(make
     report = pipeline(repo, "base", "head")
 
     python = {"language": "python", "adapter": "python-ast", "tier": "full"}
-    assert report.analysis.model_dump() == {**python, "config_source": "detected", "languages": [python]}
+    assert report.analysis.model_dump() == {**python, "config_source": "detected", "languages": [python], "runtime": None}
     assert report.impact.max_hops == 2  # the head's behavior.json did not take effect
     assert any("behavior.json differs in this change" in limit for limit in report.limits)
     assert not any("is supported at tier" in limit for limit in report.limits)

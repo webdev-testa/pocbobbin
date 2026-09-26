@@ -13,10 +13,11 @@ from pathlib import Path
 from app.adapters.registry import TIER_LIMITS, get_adapter
 from app.config import BehaviorConfig, ConfigError, load_revision_config
 from app.decisions import load_branch_decisions_via_git, lookup
+from app.interpreter import FALLBACK_LIMIT, display_path, python_version, resolve_python
 from app.impact import analyze
 from app.repo_map import build as build_repo_map
 from app.report import render_markdown
-from app.runner import compare
+from app.runner import compare, probe_runner
 from app.schemas import (
     Analysis,
     Decision,
@@ -25,17 +26,40 @@ from app.schemas import (
     ImpactResult,
     ReviewReport,
     RevisionPair,
+    Runtime,
     SymbolRef,
 )
 from app.snapshot import SnapshotError, open_pair
 
 
-def _analysis(config: BehaviorConfig) -> Analysis:
+def _analysis(config: BehaviorConfig, runtime: Runtime | None) -> Analysis:
     supports = [
         LanguageSupport(language=spec.language, adapter=spec.kind, tier=spec.tier)
         for spec in (get_adapter(language).spec for language in config.languages)
     ]
-    return Analysis(**supports[0].model_dump(), config_source=config.source, languages=supports)
+    return Analysis(**supports[0].model_dump(), config_source=config.source, languages=supports, runtime=runtime)
+
+
+def _uses_python(config: BehaviorConfig) -> bool:
+    return any(token in {"python", "python3", "{python}"} for token in (*config.test_command, *config.probe_runner))
+
+
+def _execute(pair: RevisionPair, impact: ImpactResult, config: BehaviorConfig, python: str | None, prior_report):
+    """Paired execution with the project's interpreter; also returns what ran, for the report."""
+    root = Path(pair.root)
+    interpreter = resolve_python(root, python, config.python) if _uses_python(config) else None
+    suites, comparisons, missing, notes = compare(
+        pair, python=interpreter.path if interpreter else None, impact=impact, config=config, prior_report=prior_report,
+    )
+    runtime = Runtime(
+        python=display_path(interpreter.path, root) if interpreter else None,
+        version=python_version(interpreter) if interpreter else None,
+        source=interpreter.source if interpreter else None,
+        probe_runner=probe_runner(config, pair.base_path) if comparisons else None,
+    )
+    if interpreter and interpreter.source == "fallback":
+        notes = [*notes, FALLBACK_LIMIT]
+    return suites, comparisons, missing, notes, runtime
 
 
 def _limits(impact: ImpactResult, analysis: Analysis, executed: bool, unprobed: list[SymbolRef]) -> list[str]:
@@ -102,11 +126,12 @@ def _decisions_in_change(pair: RevisionPair, impact: ImpactResult) -> list[Decis
 
 
 def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None, run: bool = False,
-             prior_report: str | Path | None = None) -> ReviewReport:
+             prior_report: str | Path | None = None, python: str | None = None) -> ReviewReport:
     """Snapshot → impact → prior decisions → (with `run`) paired execution of the frozen suite and probes.
 
     Pass `prior_report` (a path to an earlier report.json) to link a probe that showed a
-    delta and now reports no delta to that earlier delta, via `Comparison.reruns`.
+    delta and now reports no delta to that earlier delta, via `Comparison.reruns`. `python`
+    overrides the project interpreter that runs Python tests and probes (app.interpreter).
     """
     with open_pair(repo, base, head) as pair:
         config, config_notes = load_revision_config(pair.base_path, pair.head_path)
@@ -114,11 +139,10 @@ def pipeline(repo: str | Path, base: str, head: str, max_hops: int | None = None
         impact = analyze(pair, effective_hops, config)
         prior = _prior_decisions(pair, impact)
         decided = _decisions_in_change(pair, impact)
-        suites, comparisons, missing, notes = (
-            compare(pair, impact=impact, config=config, prior_report=prior_report)
-            if run else ([], [], [], [])
+        suites, comparisons, missing, notes, runtime = (
+            _execute(pair, impact, config, python, prior_report) if run else ([], [], [], [], None)
         )
-    analysis = _analysis(config)
+    analysis = _analysis(config, runtime)
     return ReviewReport(
         repo=pair.repo,
         revisions=pair.revisions,
@@ -208,6 +232,13 @@ def _parser() -> argparse.ArgumentParser:
         help="Also run the frozen test suite and committed probes on both revisions (paired execution).",
     )
     parser.add_argument(
+        "--python",
+        default=None,
+        metavar="PATH",
+        help="Interpreter for the project's Python tests and probes (default: 'python' in behavior.json, "
+             "then $VIRTUAL_ENV, then .venv/ or venv/ in the repository, then behavior-review's own)",
+    )
+    parser.add_argument(
         "--prior-report",
         type=Path,
         default=None,
@@ -256,7 +287,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         report = pipeline(args.repo, args.base, args.head, args.max_hops, run=args.run,
-                          prior_report=args.prior_report)
+                          prior_report=args.prior_report, python=args.python)
     except (SnapshotError, ConfigError, RuntimeError) as exc:
         print(f"behavior-review: {exc}", file=sys.stderr)
         return 2

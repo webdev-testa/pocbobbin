@@ -331,7 +331,7 @@ def test_typescript_report_states_language_tier_and_its_limit(tmp_path: Path):
     report = pipeline(make_typescript_repo(tmp_path), "base", "head")
 
     typescript = {"language": "typescript", "adapter": "tree-sitter", "tier": "static_probe"}
-    assert report.analysis.model_dump() == {**typescript, "config_source": "behavior.json", "languages": [typescript]}
+    assert report.analysis.model_dump() == {**typescript, "config_source": "behavior.json", "languages": [typescript], "runtime": None}
     assert any("'typescript' is supported at tier 'static_probe'" in limit for limit in report.limits)
 
 def test_mixed_repository_reports_every_language_and_warns_per_weaker_tier(tmp_path: Path):

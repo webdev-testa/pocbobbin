@@ -142,6 +142,20 @@ class ReportRenderingTests(unittest.TestCase):
         self.assertLess(markdown.index("Analyzed as"), markdown.index("### Run"))
         self.assertNotIn("Additional report fields", markdown)
 
+    def test_the_interpreter_and_probe_runner_that_ran_are_named(self) -> None:
+        runtime = {
+            "python": ".venv/bin/python", "version": "3.12.4", "source": "venv",
+            "probe_runner": {"path": "tools/run_probe.py", "source": "packaged", "sha256": "sha256:6cb6af9507440174"},
+        }
+        report = {"schema_version": "0.1", "fixture": True,
+                  "analysis": {"language": "python", "tier": "full", "runtime": runtime}}
+        markdown = render_markdown(report)
+        self.assertIn(
+            "**Ran with:** `.venv/bin/python` 3.12.4 (chosen by `venv`); "
+            "probe runner `tools/run_probe.py` (packaged, `sha256:6cb6af9507440174`)",
+            markdown,
+        )
+
     def test_missing_optional_sections_do_not_crash_or_create_a_verdict(self) -> None:
         report = {"schema_version": "0.1", "fixture": True}
         web_data = to_web_data(report)
