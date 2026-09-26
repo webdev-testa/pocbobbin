@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { CircleAlert, Download, Info } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TONE_CLASSES } from "@/components/StatusBadge";
-import { buildDecision, downloadDecisions, MIN_RATIONALE } from "@/lib/decision-file";
+import { buildDecisions, downloadDecisions, MIN_RATIONALE, type DecisionInput } from "@/lib/decision-file";
 import { formatValue } from "@/lib/evidence";
 import type { Comparison, Decision, Intent, ReviewReport } from "@/lib/review-report";
 
@@ -32,19 +32,13 @@ function readyIntent(draft: Draft): Intent | null {
   return draft.intent === "intended" && draft.rationale.trim().length < MIN_RATIONALE ? null : draft.intent;
 }
 
-interface ReadyDecision {
-  comparison: Comparison;
-  intent: Intent;
-  rationale: string;
-}
-
 type SaveState = { status: "saved"; decisions: Decision[] } | { status: "error"; message: string } | null;
 
 function useDecisionDownload(report: ReviewReport) {
   const [save, setSave] = useState<SaveState>(null);
-  const download = async (items: ReadyDecision[]) => {
+  const download = async (items: DecisionInput[]) => {
     try {
-      const decisions = await Promise.all(items.map((item) => buildDecision(report, item.comparison, item.intent, item.rationale)));
+      const decisions = await buildDecisions(report, items);
       await downloadDecisions(decisions);
       setSave({ status: "saved", decisions });
     } catch (error: unknown) {
@@ -136,7 +130,7 @@ function DeltaDecision({ report, comparison, draft }: { report: ReviewReport; co
   );
 }
 
-function DownloadAll({ report, ready, total }: { report: ReviewReport; ready: ReadyDecision[]; total: number }) {
+function DownloadAll({ report, ready, total }: { report: ReviewReport; ready: DecisionInput[]; total: number }) {
   const { save, download } = useDecisionDownload(report);
   return (
     <div className="space-y-2">
@@ -149,7 +143,7 @@ function DownloadAll({ report, ready, total }: { report: ReviewReport; ready: Re
   );
 }
 
-function PriorDecision({ decision }: { decision: Decision }) {
+function LedgerDecision({ decision }: { decision: Decision }) {
   return (
     <li className="space-y-1 rounded-md border p-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -159,9 +153,25 @@ function PriorDecision({ decision }: { decision: Decision }) {
       </div>
       {decision.rationale ? <p className="max-w-prose text-sm">{decision.rationale}</p> : null}
       <p className="text-xs break-all text-muted-foreground">
-        {decision.target.path} · decision <code>{decision.id}</code>{decision.requirement_ref ? ` · ${decision.requirement_ref}` : ""}
+        {decision.target.path} · decision <code>{decision.id}</code>
+        {decision.supersedes ? <> · replaces <code>{decision.supersedes}</code></> : null}
+        {decision.requirement_ref ? ` · ${decision.requirement_ref}` : ""}
       </p>
     </li>
+  );
+}
+
+function LedgerSection({ title, decisions, empty }: { title: string; decisions: Decision[]; empty: string }) {
+  const headingId = useId();
+  return (
+    <section aria-labelledby={headingId} className="space-y-3">
+      <h3 id={headingId} className="font-medium">{title}</h3>
+      {decisions.length ? (
+        <ul className="space-y-2">{decisions.map((d) => <LedgerDecision key={d.id} decision={d} />)}</ul>
+      ) : (
+        <p className="text-sm text-muted-foreground">{empty}</p>
+      )}
+    </section>
   );
 }
 
@@ -210,14 +220,14 @@ export function DecisionPanel({ report }: { report: ReviewReport }) {
         </Alert>
         <PendingDecisions report={report} deltas={deltas} />
         <Separator />
-        <section aria-labelledby="prior-heading" className="space-y-3">
-          <h3 id="prior-heading" className="font-medium">Prior decisions from the ledger</h3>
-          {report.prior_decisions.length ? (
-            <ul className="space-y-2">{report.prior_decisions.map((d) => <PriorDecision key={d.id} decision={d} />)}</ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">No earlier decision covers these symbols.</p>
-          )}
-        </section>
+        {report.decisions.length ? (
+          <LedgerSection title="Committed in this PR (proposed until merged)" decisions={report.decisions} empty="" />
+        ) : null}
+        <LedgerSection
+          title="Prior decisions from the ledger"
+          decisions={report.prior_decisions}
+          empty="No earlier decision covers these symbols."
+        />
       </CardContent>
     </Card>
   );
