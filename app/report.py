@@ -1010,10 +1010,25 @@ def _render_links(lines: List[str], data: Mapping[str, Any]) -> None:
     lines.append("")
 
 
+def _render_analysis(lines: List[str], data: Mapping[str, Any]) -> None:
+    """One line naming each analyzed language and its tier; the tier's limits are in Limits."""
+
+    analysis = _mapping(data.get("analysis"))
+    if not analysis:
+        return
+    entries = [_mapping(entry) for entry in _items(analysis.get("languages"))] or [analysis]
+    rendered = [
+        f"{_inline(entry.get('language', 'unknown'))} (tier {_inline(entry.get('tier', 'unknown'))})"
+        for entry in entries
+    ]
+    lines.extend([f"**Analyzed as:** {', '.join(rendered)}", ""])
+
+
 def _render_extra_fields(lines: List[str], data: Mapping[str, Any]) -> None:
     known = {
         "schema_version",
         "fixture",
+        "analysis",
         "run",
         "revisions",
         "repo",
@@ -1074,6 +1089,8 @@ def render_markdown(report: Any) -> str:
             "> **Fixture data:** this report is synthetic and is not execution evidence.",
             "",
         ])
+
+    _render_analysis(lines, data)
 
     schema_version = data.get("schema_version", _MISSING)
     if schema_version is not _MISSING:

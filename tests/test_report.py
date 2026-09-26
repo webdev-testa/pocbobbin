@@ -125,6 +125,23 @@ class ReportRenderingTests(unittest.TestCase):
         self.assertIn('"value":"before"', markdown)
         self.assertIn('"value":"after"', markdown)
 
+    def test_every_analyzed_language_and_tier_is_named_at_the_top(self) -> None:
+        report = {
+            "schema_version": "0.1",
+            "fixture": True,
+            "analysis": {
+                "language": "python", "adapter": "python-ast", "tier": "full", "config_source": "detected",
+                "languages": [
+                    {"language": "python", "adapter": "python-ast", "tier": "full"},
+                    {"language": "typescript", "adapter": "tree-sitter", "tier": "static_probe"},
+                ],
+            },
+        }
+        markdown = render_markdown(report)
+        self.assertIn("**Analyzed as:** `python` (tier `full`), `typescript` (tier `static_probe`)", markdown)
+        self.assertLess(markdown.index("Analyzed as"), markdown.index("### Run"))
+        self.assertNotIn("Additional report fields", markdown)
+
     def test_missing_optional_sections_do_not_crash_or_create_a_verdict(self) -> None:
         report = {"schema_version": "0.1", "fixture": True}
         web_data = to_web_data(report)
